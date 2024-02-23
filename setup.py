@@ -51,7 +51,7 @@ setup(
     packages=find_packages(exclude=["docs", "tests"]),
     entry_points={
         "console_scripts": [
-            'labpdfproc = diffpy.snmf.stretchednmfapp:main',
+            'labpdfproc = diffpy.labpdfproc.labpdfprocapp:main',
         ],
     },
     include_package_data=True,
