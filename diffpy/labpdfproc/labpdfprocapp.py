@@ -1,44 +1,44 @@
 import sys
 import numpy as np
+from labpdfproc.functions import compute_cve, apply_corr
+from diffpy.utils.parsers.loaddata import loadData
+from argparse import ArgumentParser
 
-def load_data(input_file):
-    # we want to load .xy, xye, file types. These are the most common. For anyting else (.snc, .txt, .csv, .dat) we return an error message. Why: some of them have different delimineters.
-    # we want to load the tth column in a numpy array 
-    # we want to load the intensitie Im into a numpy array
-    # the input files should not contain any header. Typically, .xy or .xye files don't contain headers.
-    tth = np.loadtxt(input_file, usecols=0)
-    i_m = np.loadtxt(input_file, usecols=1)
-    # this should return an error if the first row contains anything except a float, and if the columns are not separated by a space. 
-    # I think the latter is also dealt with if we check if the first elemnt in one tth is a flaot.
-    if np.issubdtype(tth[0], np.floating) and np.issubdtype(i_m[0], np.floating):
-        return tth, i_m
-    else:
-        raise ValueError('Error: your .xy contains headers. Delete the header rows in your .xy or .xye file')
-    
-def tth_to_q(tth, wl):
-    tth_rad = np.deg2rad(tth)
-    q = (4 * np.pi / wl) * np.sin(tth_rad / 2)
-    return q
+known_sources = ["Ag", "Mo"]
+# def load_data(input_file):
+#     # we want to load .xy, xye, file types. These are the most common. For anyting else (.snc, .txt, .csv, .dat) we return an error message. Why: some of them have different delimineters.
+#     # we want to load the tth column in a numpy array 
+#     # we want to load the intensitie Im into a numpy array
+#     # the input files should not contain any header. Typically, .xy or .xye files don't contain headers.
+#     tth = np.loadtxt(input_file, usecols=0)
+#     i_m = np.loadtxt(input_file, usecols=1)
+#     # this should return an error if the first row contains anything except a float, and if the columns are not separated by a space. 
+#     # I think the latter is also dealt with if we check if the first elemnt in one tth is a flaot.
+#     if np.issubdtype(tth[0], np.floating) and np.issubdtype(i_m[0], np.floating):
+#         return tth, i_m
+#     else:
+#         raise ValueError('Error: your .xy contains headers. Delete the header rows in your .xy or .xye file')
 
-def compute_cve(tth, mu, wl, diameter):
-    # for a given mu and d and lambda, we will compute cve on a tth grid
-    
-    # something arbitrary for the moment
-    cve = np.ones(len(tth))
-    cve = cve * mu * wl * diameter
 
-    return cve
+# def tth_to_q(tth, wl):
+#     tth_rad = np.deg2rad(tth)
+#     q = (4 * np.pi / wl) * np.sin(tth_rad / 2)
+#     return q
 
-def apply_corr(i_m, cve):
-    # we apply the absorption correction by doing: I(tth) * c_ve
-    i_c = i_m * cve
-    return i_c
+
 
 # def write_files(base_name):
     # we save the corrected intensities in a two-column file on a q-grid and a tth-grid.
     # we need to know the x-ray wavelenth so that we can convert tth to q
     # we make a new two-column file .chi where column 1 contains the q grid and columnt 2 contains the corrected intensities.
-    
+
+def get_args():
+    p = ArgumentParser()
+    p.add_argument("filename", help="the filename of the datafile to load")
+    p.add_argument("mud", help="mu*D for your sample")
+    p.add_argument("--anode_type", help=f"x-ray source, allowed values:{*[known_sources],}", default="Mo")
+    args = p.parse_args()
+    return args
 
 def main():
     # we want the user to type the following:
@@ -46,15 +46,12 @@ def main():
 
     # if they give less or more than 4 positional arguments, we return an error message.
     if len(sys.argv) < 4:
-        print('usage: labpdfcor <input_file> <mu> <diameter> <lambda>')
+        print('usage: labpdfproc <input_file> <mu> <diameter> <lambda>')
     
+    args = get_args()
+    print(args.__dir__)
+    tth, i_m = loadData(input_file, unpack=True)
 
-    input_file = sys.argv[1]
-    tth, i_m = load_data(input_file)
-
-    mu = float(sys.argv[2])
-    diameter = float(sys.argv[3])
-    wl = float(sys.argv[4])
     cve = compute_cve(tth, mu, diameter, wl)
     i_c = apply_corr(i_m, cve)
     q = tth_to_q(tth, wl)
