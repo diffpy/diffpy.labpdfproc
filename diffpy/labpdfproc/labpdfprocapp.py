@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 
 from diffpy.labpdfproc.functions import compute_cve, apply_corr, wavelengths
 from diffpy.utils.parsers.loaddata import loadData
-from diffpy.utils.scattering_objects import DiffractionObject
+from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 
 known_sources = ["Ag", "Mo"]
@@ -51,7 +51,7 @@ def main():
     
     args = get_args()
     wavelength = wavelengths[args.anode_type]
-    input_pattern = DiffractionObject()
+    input_pattern = Diffraction_object()
     xarray, yarray = loadData(args.data_file, unpack=True)
     input_pattern.insert_scattering_quantity(xarray, yarray, "tth", metadata={ })
 
