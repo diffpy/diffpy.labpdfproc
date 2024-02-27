@@ -1,8 +1,10 @@
 import sys
-import numpy as np
-from labpdfproc.functions import compute_cve, apply_corr
-from diffpy.utils.parsers.loaddata import loadData
 from argparse import ArgumentParser
+
+from diffpy.labpdfproc.functions import compute_cve, apply_corr, wavelengths
+from diffpy.utils.parsers.loaddata import loadData
+from diffpy.utils.scattering_objects import DiffractionObject
+
 
 known_sources = ["Ag", "Mo"]
 # def load_data(input_file):
@@ -19,7 +21,6 @@ known_sources = ["Ag", "Mo"]
 #     else:
 #         raise ValueError('Error: your .xy contains headers. Delete the header rows in your .xy or .xye file')
 
-
 # def tth_to_q(tth, wl):
 #     tth_rad = np.deg2rad(tth)
 #     q = (4 * np.pi / wl) * np.sin(tth_rad / 2)
@@ -34,8 +35,8 @@ known_sources = ["Ag", "Mo"]
 
 def get_args():
     p = ArgumentParser()
-    p.add_argument("filename", help="the filename of the datafile to load")
-    p.add_argument("mud", help="mu*D for your sample")
+    p.add_argument("data_file", help="the filename of the datafile to load")
+    p.add_argument("mud", help="mu*D for your sample", type=float)
     p.add_argument("--anode_type", help=f"x-ray source, allowed values:{*[known_sources],}", default="Mo")
     args = p.parse_args()
     return args
@@ -49,19 +50,21 @@ def main():
         print('usage: labpdfproc <input_file> <mu> <diameter> <lambda>')
     
     args = get_args()
-    print(args.__dir__)
-    tth, i_m = loadData(input_file, unpack=True)
+    wavelength = wavelengths[args.anode_type]
+    input_pattern = DiffractionObject()
+    xarray, yarray = loadData(args.data_file, unpack=True)
+    input_pattern.insert_scattering_quantity(xarray, yarray, "tth", metadata={ })
 
-    cve = compute_cve(tth, mu, diameter, wl)
-    i_c = apply_corr(i_m, cve)
-    q = tth_to_q(tth, wl)
+    cve = compute_cve(input_pattern, args.mud, wavelength)
+    i_c = input_pattern * cve
 
     # get the basename from the input_file and save the corrected patter as a .tth and a .chi file.
-    base_name = input_file.split('.')[0]
-    output_chi = f"{base_name}.chi"
-    output_tth = f"{base_name}.tth"
-    np.savetxt(output_tth, np.column_stack((tth, i_c)), header='tth I(tth)')
-    np.savetxt(output_chi, np.column_stack((q, i_c)), header='tth I(tth)')
+    # base_name = input_file.split('.')[0]
+    # output_chi = f"{base_name}.chi"
+    # output_tth = f"{base_name}.tth"
+    # np.savetxt(output_tth, np.column_stack((tth, i_c)), header='tth I(tth)')
+    # np.savetxt(output_chi, np.column_stack((q, i_c)), header='tth I(tth)')
+    input_pattern.dump("filename", type="chi")
 
 if __name__ == '__main__':
     main()

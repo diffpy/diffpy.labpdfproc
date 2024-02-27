@@ -51,20 +51,20 @@ setup(
     author_email="sb2896@columbia.edu",
     url="https://github.com/sbillinge/diffpy.labpdfproc",
     python_requires=">={}".format(".".join(str(n) for n in min_version)),
-    packages=find_packages(os.path.join(MYDIR, "diffpy"), exclude=["docs", "tests"]),
+    # packages=find_packages(os.path.join(MYDIR, "diffpy"), exclude=["docs", "tests"]),
     entry_points={
         "console_scripts": [
             'labpdfproc = diffpy.labpdfproc.labpdfprocapp:main',
         ],
     },
     include_package_data=True,
-    # package_data={
-    #     "labpdfproc": [
-    #         # When adding files here, remember to update MANIFEST.in as well,
-    #         # or else they will not be included in the distribution on PyPI!
-    #         # 'path/to/data_file',
-    #     ]
-    # },
+    package_data={
+        "labpdfproc": [
+            # When adding files here, remember to update MANIFEST.in as well,
+            # or else they will not be included in the distribution on PyPI!
+            # 'path/to/data_file',
+        ]
+    },
     install_requires=requirements,
     license="BSD (3-clause)",
     classifiers=[
