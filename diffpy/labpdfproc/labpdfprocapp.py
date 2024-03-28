@@ -31,12 +31,13 @@ def main():
     wavelength = wavelengths[args.anode_type]
     input_pattern = Diffraction_object(wavelength=wavelength)
     xarray, yarray = loadData(args.data_file, unpack=True)
-    input_pattern.insert_scattering_quantity(xarray, yarray, "tth", metadata={ })
+    input_pattern.insert_scattering_quantity(xarray, yarray, "tth")
 
-    cve = compute_cve(input_pattern, args.mud, wavelength)
-    i_c = apply_corr(yarray, cve)
+    abdo = compute_cve(input_pattern, args.mud, wavelength)
+    abscormodo = apply_corr(input_pattern, abdo)
 
-    data_to_save = np.column_stack((xarray, i_c))
+    base_name = args.data_file.split('.')[0]
+    data_to_save = np.column_stack((abscormodo.on_tth[0], abscormodo.on_tth[1]))
     np.savetxt(f'{base_name}_proc.chi', data_to_save)
 
 if __name__ == '__main__':
