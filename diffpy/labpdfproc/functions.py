@@ -6,10 +6,11 @@ RADIUS_MM = 1
 N_POINTS_ON_DIAMETER = 249
 TTH_GRID = np.arange(1, 141, 1)
 
-wavelengths = {"Mo": 0.7107, "Ag": 0.59} # dont need to be capitalized because it's a function
+wavelengths = {"Mo": 0.7107, "Ag": 0.59}  # dont need to be capitalized because it's a function
 
-class Gridded_circle():
-    def __init__(self,radius,n_points_on_diameter,mu=None):
+
+class Gridded_circle:
+    def __init__(self, radius, n_points_on_diameter, mu=None):
         self.radius = radius
         self.npoints = n_points_on_diameter
         self.mu = mu
@@ -18,7 +19,7 @@ class Gridded_circle():
         self.get_grid_points()
 
     def get_grid_points(self):
-        '''
+        """
         given a radius and a grid size, return a grid of points to uniformly sample that circle
 
         Parameters
@@ -32,14 +33,13 @@ class Gridded_circle():
         -------
         the list of tuples that are the coordinates of the grid points
 
-        '''
+        """
         xs = np.linspace(-self.radius, self.radius, self.npoints)
         ys = np.linspace(-self.radius, self.radius, self.npoints)
-        self.grid = [(x, y) for x in xs for y in ys if x ** 2 + y ** 2 <= self.radius ** 2]
+        self.grid = [(x, y) for x in xs for y in ys if x**2 + y**2 <= self.radius**2]
         self.total_points_in_grid = len(self.grid)
 
-
-    def get_coordinate_index(self,coordinate): # I think we probably dont need this function?
+    def get_coordinate_index(self, coordinate):  # I think we probably dont need this function?
         count = 0
         for i, target in enumerate(self.grid):
             if coordinate == target:
@@ -51,7 +51,7 @@ class Gridded_circle():
 
     def set_distances_at_angle(self, angle):
         # newly added docstring
-        '''
+        """
         given an angle, set the distances from the grid points to the entry and exit coordinates
 
         Parameters
@@ -63,7 +63,7 @@ class Gridded_circle():
         -------
         the list of distances containing total distance, primary distance and secondary distance
 
-        '''
+        """
         self.primary_distances, self.secondary_distances, self.distances = [], [], []
         for coord in self.grid:
             distance, primary, secondary = get_path_length(coord, angle, self.radius)
@@ -73,7 +73,7 @@ class Gridded_circle():
 
     def set_muls_at_angle(self, angle):
         # newly added docstring
-        '''
+        """
         compute muls = exp(-mu*distance) for a given angle
 
         Parameters
@@ -85,18 +85,17 @@ class Gridded_circle():
         -------
         an array of floats containing the muls corresponding to each angle
 
-        '''
+        """
         mu = self.mu
         self.muls = []
         if len(self.distances) == 0:
             self.set_distances_at_angle(angle)
         for distance in self.distances:
-            self.muls.append(np.exp(-mu*distance))
-
+            self.muls.append(np.exp(-mu * distance))
 
 
 def get_entry_exit_coordinates(coordinate, angle, radius):
-    '''
+    """
     get the coordinates where the beam enters and leaves the circle for a given angle and grid point
 
     Parameters
@@ -130,21 +129,21 @@ def get_entry_exit_coordinates(coordinate, angle, radius):
     (1) the coordinate of the entry point and (2) of the exit point of a beam entering horizontally
     impinging on a coordinate point that lies in the circle and then exiting at some angle, angle.
 
-    '''
-    epsilon = 1e-7   # precision close to 90
+    """
+    epsilon = 1e-7  # precision close to 90
     angle = math.radians(angle)
     xgrid = coordinate[0]
     ygrid = coordinate[1]
 
-    entry_point = (-math.sqrt(radius ** 2 - ygrid ** 2), ygrid)
+    entry_point = (-math.sqrt(radius**2 - ygrid**2), ygrid)
 
     if not math.isclose(angle, math.pi / 2, abs_tol=epsilon):
         b = ygrid - xgrid * math.tan(angle)
         a = math.tan(angle)
-        xexit_root1, xexit_root2 = np.roots((1 + a ** 2, 2 * a * b, b ** 2 - radius ** 2))
+        xexit_root1, xexit_root2 = np.roots((1 + a**2, 2 * a * b, b**2 - radius**2))
         yexit_root1 = a * xexit_root1 + b
         yexit_root2 = a * xexit_root2 + b
-        if (yexit_root2 >= ygrid):  # We pick the point above
+        if yexit_root2 >= ygrid:  # We pick the point above
             exit_point = (xexit_root2, yexit_root2)
         else:
             exit_point = (xexit_root1, yexit_root1)
@@ -153,8 +152,9 @@ def get_entry_exit_coordinates(coordinate, angle, radius):
 
     return entry_point, exit_point
 
+
 def get_path_length(grid_point, angle, radius):
-    '''
+    """
     return the path length of a horizontal line entering the circle to the grid point then exiting at angle angle
 
     Parameters
@@ -172,7 +172,7 @@ def get_path_length(grid_point, angle, radius):
     -------
     floats total distance, primary distance and secondary distance
 
-    '''
+    """
 
     # move angle a tad above zero if it is zero to avoid it having the wrong sign due to some rounding error
     angle_delta = 0.000001
@@ -185,12 +185,9 @@ def get_path_length(grid_point, angle, radius):
     return total_distance, primary_distance, secondary_distance
 
 
-
-
-
 def compute_cve(diffraction_data, mud, wavelength):
     # newly added docstring
-    '''
+    """
     compute the cve for given diffraction data, mud and wavelength
 
     Parameters
@@ -211,9 +208,9 @@ def compute_cve(diffraction_data, mud, wavelength):
     then calculate corresponding cve for the given mud in the resample grid
     (since the same mu*D yields the same cve, we can assume that D/2=1, so mu=mud/2),
     and finally interpolate cve to the original grid in diffraction_data.
-    '''
+    """
 
-    mu_sample_invmm = mud/2
+    mu_sample_invmm = mud / 2
     abs_correction = Gridded_circle(RADIUS_MM, N_POINTS_ON_DIAMETER, mu=mu_sample_invmm)
     distances, muls = [], []
     for angle in TTH_GRID:
@@ -223,7 +220,7 @@ def compute_cve(diffraction_data, mud, wavelength):
         muls.append(sum(abs_correction.muls))
     distances = np.array(distances) / abs_correction.total_points_in_grid
     muls = np.array(muls) / abs_correction.total_points_in_grid
-    cve = 1/muls
+    cve = 1 / muls
 
     orig_grid = diffraction_data.on_tth[0]
     newcve = np.interp(orig_grid, TTH_GRID, cve)
@@ -235,7 +232,7 @@ def compute_cve(diffraction_data, mud, wavelength):
 
 def apply_corr(modo, abdo):
     # newly added docstring
-    '''
+    """
     Apply correction to the given diffraction object modo with the correction diffraction object abdo
 
     Parameters
@@ -249,7 +246,7 @@ def apply_corr(modo, abdo):
     -------
     a corrected diffraction object with the correction applied through multiplication
 
-    '''
+    """
 
     abscormodo = modo * abdo
     print(modo.on_tth[0])
@@ -262,6 +259,6 @@ def apply_corr(modo, abdo):
 
 
 # to be added in diffpy.utils
-#def dump(base_name, do):
+# def dump(base_name, do):
 #    data_to_save = np.column_stack((do.on_tth[0], do.on_tth[1]))
 #    np.savetxt(f'{base_name}_proc.chi', data_to_save)
