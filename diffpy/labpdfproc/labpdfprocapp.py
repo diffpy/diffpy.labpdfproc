@@ -2,12 +2,12 @@ import sys
 from argparse import ArgumentParser
 
 import numpy as np
-from diffpy.labpdfproc.functions import compute_cve, apply_corr, wavelengths
+from diffpy.labpdfproc.functions import compute_cve, apply_corr, WAVELENGTHS
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 
-known_sources = ["Ag", "Mo"]
+known_sources = [key for key in WAVELENGTHS.keys()]
 
 
 def get_args():
