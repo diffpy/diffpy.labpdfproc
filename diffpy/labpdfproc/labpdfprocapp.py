@@ -2,13 +2,12 @@ import sys
 from argparse import ArgumentParser
 
 import numpy as np
-from diffpy.labpdfproc.functions import compute_cve, apply_corr, wavelengths
+from diffpy.labpdfproc.functions import compute_cve, apply_corr, WAVELENGTHS
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 
-known_sources = ["Ag", "Mo"]
-
+known_sources = [key for key in WAVELENGTHS.keys()]
 
 
 def get_args():
@@ -19,14 +18,15 @@ def get_args():
     args = p.parse_args()
     return args
 
+
 def main():
     # we want the user to type the following:
     # labpdfproc <input_file> <mu> <diameter> <Ag, ag, Mo, mo, Cu, cu>
 
     # if they give less or more than 4 positional arguments, we return an error message.
     if len(sys.argv) < 4:
-        print('usage: labpdfproc <input_file> <mu> <diameter> <lambda>')
-    
+        print("usage: labpdfproc <input_file> <mu> <diameter> <lambda>")
+
     args = get_args()
     wavelength = wavelengths[args.anode_type]
     input_pattern = Diffraction_object(wavelength=wavelength)
@@ -36,9 +36,10 @@ def main():
     abdo = compute_cve(input_pattern, args.mud, wavelength)
     abscormodo = apply_corr(input_pattern, abdo)
 
-    base_name = args.data_file.split('.')[0]
+    base_name = args.data_file.split(".")[0]
     data_to_save = np.column_stack((abscormodo.on_tth[0], abscormodo.on_tth[1]))
-    np.savetxt(f'{base_name}_proc.chi', data_to_save)
+    np.savetxt(f"{base_name}_proc.chi", data_to_save)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

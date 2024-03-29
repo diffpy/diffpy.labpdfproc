@@ -2,8 +2,8 @@
 diffpy.labpdfproc
 =================
 
-.. image:: https://github.com/sbillinge/diffpy.labpdfproc/actions/workflows/testing.yml/badge.svg
-   :target: https://github.com/sbillinge/diffpy.labpdfproc/actions/workflows/testing.yml
+.. image:: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/testing.yml/badge.svg
+   :target: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/testing.yml
 
 
 .. image:: https://img.shields.io/pypi/v/diffpy.labpdfproc.svg
