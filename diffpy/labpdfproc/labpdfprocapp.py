@@ -16,11 +16,38 @@ def get_args():
     p.add_argument("mud", help="Value of mu*D for your sample. Required.", type=float)
     p.add_argument("-i", "--input-file", help="The filename of the datafile to load")
     p.add_argument("-a", "--anode-type", help=f"X-ray source, allowed values:{*[known_sources],}", default="Mo")
-    p.add_argument("-w", "--wavelength", help=f"X-ray source wavelength. Not needed if the anode-type is specified. This will override the wavelength if anode type is specified", default=None, type=float)
-    p.add_argument("-o", "--output-directory", help=f"the name of the output directory. If it doesn't exist it will be created.  Not currently implemented", default=None)
-    p.add_argument("-x", "--xtype", help=f"the quantity on the independnt variable axis. allowed values:{*XQUANTITIES,}. If not specified then two-theta is assumed for the independent variable. Only implemented for tth currently", default="tth")
-    p.add_argument("-c", "--output-correction", action='store_true', help=f"the quantity on the independnt variable axis. allowed values:{*XQUANTITIES,}. If not specified then two-theta is assumed for the independent variable. Only implemented for tth currently", default="tth")
-    p.add_argument("-f", "--force-overwrite", action='store_true', help="outputs will not overwrite existing file unless --force is spacified")
+    p.add_argument(
+        "-w",
+        "--wavelength",
+        help=f"X-ray source wavelength. Not needed if the anode-type is specified. This will override the wavelength if anode type is specified",
+        default=None,
+        type=float,
+    )
+    p.add_argument(
+        "-o",
+        "--output-directory",
+        help=f"the name of the output directory. If it doesn't exist it will be created.  Not currently implemented",
+        default=None,
+    )
+    p.add_argument(
+        "-x",
+        "--xtype",
+        help=f"the quantity on the independnt variable axis. allowed values:{*XQUANTITIES,}. If not specified then two-theta is assumed for the independent variable. Only implemented for tth currently",
+        default="tth",
+    )
+    p.add_argument(
+        "-c",
+        "--output-correction",
+        action="store_true",
+        help=f"the quantity on the independnt variable axis. allowed values:{*XQUANTITIES,}. If not specified then two-theta is assumed for the independent variable. Only implemented for tth currently",
+        default="tth",
+    )
+    p.add_argument(
+        "-f",
+        "--force-overwrite",
+        action="store_true",
+        help="outputs will not overwrite existing file unless --force is spacified",
+    )
     args = p.parse_args()
     return args
 
@@ -35,18 +62,24 @@ def main():
     corrfile = Path(corrfilestem + ".chi")
 
     if outfile.exists() and not args.force_overwrite:
-        sys.exit(f"output file {str(outfile)} already exists. Please rerun specifying -f if you want to overwrite it")
+        sys.exit(
+            f"output file {str(outfile)} already exists. Please rerun specifying -f if you want to overwrite it"
+        )
     if corrfile.exists() and args.output_correction and not args.force_overwrite:
-        sys.exit(f"corrections file {str(corrfile)} was requested and already exists. Please rerun specifying -f if you want to overwrite it")
+        sys.exit(
+            f"corrections file {str(corrfile)} was requested and already exists. Please rerun specifying -f if you want to overwrite it"
+        )
 
     input_pattern = Diffraction_object(wavelength=wavelength)
     xarray, yarray = loadData(args.input_file, unpack=True)
-    input_pattern.insert_scattering_quantity(xarray, yarray, "tth",
-                                             scat_quantity="x-ray",
-                                             name=str(args.input_file),
-                                             metadata={"muD": args.mud,
-                                                       "anode_type": args.anode_type}
-                                             )
+    input_pattern.insert_scattering_quantity(
+        xarray,
+        yarray,
+        "tth",
+        scat_quantity="x-ray",
+        name=str(args.input_file),
+        metadata={"muD": args.mud, "anode_type": args.anode_type},
+    )
 
     absorption_correction = compute_cve(input_pattern, args.mud, wavelength)
     corrected_data = apply_corr(input_pattern, absorption_correction)

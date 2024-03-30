@@ -54,24 +54,24 @@ setup(
     # packages=find_packages(os.path.join(MYDIR, "diffpy"), exclude=["docs", "tests"]),
     entry_points={
         "console_scripts": [
-            'labpdfproc = diffpy.labpdfproc.labpdfprocapp:main',
+            "labpdfproc = diffpy.labpdfproc.labpdfprocapp:main",
         ],
     },
     include_package_data=True,
     package_data={
-        "labpdfproc": [ "docs/examples/*" ]
-            # When adding files here, remember to update MANIFEST.in as well,
-            # or else they will not be included in the distribution on PyPI!
-            # 'path/to/data_file',
+        "labpdfproc": ["docs/examples/*"]
+        # When adding files here, remember to update MANIFEST.in as well,
+        # or else they will not be included in the distribution on PyPI!
+        # 'path/to/data_file',
     },
     install_requires=requirements,
     license="BSD (3-clause)",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
-        'Intended Audience :: Science/Research',
+        "Intended Audience :: Science/Research",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
-        'Topic :: Scientific/Engineering :: Chemistry',
-        'Topic :: Scientific/Engineering :: Physics',
+        "Topic :: Scientific/Engineering :: Chemistry",
+        "Topic :: Scientific/Engineering :: Physics",
     ],
 )
