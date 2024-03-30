@@ -5,7 +5,6 @@ import math
 RADIUS_MM = 1
 N_POINTS_ON_DIAMETER = 249
 TTH_GRID = np.arange(1, 141, 1)
-WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 
 
 class Gridded_circle_paths:

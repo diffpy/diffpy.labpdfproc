@@ -39,9 +39,7 @@ Wendy L. Queen and Simon J. L. Billinge, in preparation.
 Installation
 ------------
 
-The package is available on conda-forge and on pypi.  Assuming you are using conda/mamba (we recommend using miniconda)
-
-1. create a virtual environment, e.g.
+The package is available on conda-forge and on pypi.  Assuming you are using conda/mamba (we recommend using miniconda), create a virtual environment and install the package as follows:
 
 .. code-block:: python
 
@@ -51,3 +49,27 @@ The package is available on conda-forge and on pypi.  Assuming you are using con
    mamba install -c conda-forge diffpy.labpdfproc
 
 The code may also be installed from pipy using pip.  This is not recommended as the package has not been tested on all platforms.
+
+Usage
+-----
+
+Navigate to the directory that contains 1D diffraction patterns that you would like to process.  Activate the conda environment (`conda activate labpdfproc`) that contains the package and run the following command:
+
+.. code-block:: python
+
+   labpdfproc <muD> -i <path/to/inputfile.txt> --anode-type Mo
+
+
+Here replace <muD> with the value of muD for your sample and  <path/to/inputfile.txt> with the path and filename of your input file.  For example, if the uncorrected data case isc alled  zro2_mo.xy and is in the current directory and it has a muD of 2.5 then the commands would be
+
+.. code-block:: python
+
+   labpdfproc 2.5 -i zro2_mo.xy --anode-type Mo
+
+Please type
+.. code-block:: python
+
+   labpdfproc --help
+
+for more information on the available options.
+
