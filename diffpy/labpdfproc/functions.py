@@ -7,7 +7,7 @@ N_POINTS_ON_DIAMETER = 249
 TTH_GRID = np.arange(1, 141, 1)
 
 
-class Gridded_circle_paths:
+class Gridded_circle:
     def __init__(self, radius=1, n_points_on_diameter=N_POINTS_ON_DIAMETER, mu=None):
         self.radius = radius
         self.npoints = n_points_on_diameter
@@ -51,7 +51,7 @@ class Gridded_circle_paths:
         """
         self.primary_distances, self.secondary_distances, self.distances = [], [], []
         for coord in self.grid:
-            distance, primary, secondary = self.get_path_length(coord, angle, self.radius)
+            distance, primary, secondary = self.get_path_length(coord, angle)
             self.distances.append(distance)
             self.primary_distances.append(primary)
             self.secondary_distances.append(secondary)
