@@ -209,7 +209,12 @@ def compute_cve(diffraction_data, mud, wavelength):
     orig_grid = diffraction_data.on_tth[0]
     newcve = np.interp(orig_grid, TTH_GRID, cve)
     abdo = Diffraction_object(wavelength=wavelength)
-    abdo.insert_scattering_quantity(orig_grid, newcve, "tth")
+    abdo.insert_scattering_quantity(orig_grid, newcve, "tth",
+                                    metadata=diffraction_data.metadata,
+                                    name=f"absorption correction, cve, for {diffraction_data.name}",
+                                    wavelength=diffraction_data.wavelength,
+                                    scat_quantity="cve"
+                                    )
 
     return abdo
 
@@ -234,8 +239,3 @@ def apply_corr(diffraction_pattern, absorption_correction):
     corrected_pattern = diffraction_pattern * absorption_correction
     return corrected_pattern
 
-
-# to be added in diffpy.utils
-# def dump(base_name, do):
-#    data_to_save = np.column_stack((do.on_tth[0], do.on_tth[1]))
-#    np.savetxt(f'{base_name}_proc.chi', data_to_save)

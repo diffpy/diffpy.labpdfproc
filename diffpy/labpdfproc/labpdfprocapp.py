@@ -1,5 +1,6 @@
 import sys
 from argparse import ArgumentParser
+from pathlib import Path
 
 import numpy as np
 from diffpy.labpdfproc.functions import compute_cve, apply_corr
@@ -18,30 +19,42 @@ def get_args():
     p.add_argument("-w", "--wavelength", help=f"X-ray source wavelength. Not needed if the anode-type is specified. This will override the wavelength if anode type is specified", default=None, type=float)
     p.add_argument("-o", "--output-directory", help=f"the name of the output directory. If it doesn't exist it will be created.  Not currently implemented", default=None)
     p.add_argument("-x", "--xtype", help=f"the quantity on the independnt variable axis. allowed values:{*XQUANTITIES,}. If not specified then two-theta is assumed for the independent variable. Only implemented for tth currently", default="tth")
+    p.add_argument("-c", "--output-correction", action='store_true', help=f"the quantity on the independnt variable axis. allowed values:{*XQUANTITIES,}. If not specified then two-theta is assumed for the independent variable. Only implemented for tth currently", default="tth")
+    p.add_argument("-f", "--force-overwrite", action='store_true', help="outputs will not overwrite existing file unless --force is spacified")
     args = p.parse_args()
     return args
 
 
 def main():
-    # we want the user to type the following:
-    # labpdfproc <input_file> <mu> <diameter> <Ag, ag, Mo, mo, Cu, cu>
-
-    # if they give less or more than 4 positional arguments, we return an error message.
-    if len(sys.argv) < 4:
-        print("usage: labpdfproc <input_file> <mu> <diameter> <lambda>")
-
     args = get_args()
     wavelength = WAVELENGTHS[args.anode_type]
+    filepath = Path(args.input_file)
+    outfilestem = filepath.stem + "_corrected"
+    corrfilestem = filepath.stem + "_cve"
+    outfile = Path(outfilestem + ".chi")
+    corrfile = Path(corrfilestem + ".chi")
+
+    if outfile.exists() and not args.force_overwrite:
+        sys.exit(f"output file {str(outfile)} already exists. Please rerun specifying -f if you want to overwrite it")
+    if corrfile.exists() and args.output_correction and not args.force_overwrite:
+        sys.exit(f"corrections file {str(corrfile)} was requested and already exists. Please rerun specifying -f if you want to overwrite it")
+
     input_pattern = Diffraction_object(wavelength=wavelength)
     xarray, yarray = loadData(args.input_file, unpack=True)
-    input_pattern.insert_scattering_quantity(xarray, yarray, "tth")
+    input_pattern.insert_scattering_quantity(xarray, yarray, "tth",
+                                             scat_quantity="x-ray",
+                                             name=str(args.input_file),
+                                             metadata={"muD": args.mud,
+                                                       "anode_type": args.anode_type}
+                                             )
 
-    abdo = compute_cve(input_pattern, args.mud, wavelength)
-    abscormodo = apply_corr(input_pattern, abdo)
+    absorption_correction = compute_cve(input_pattern, args.mud, wavelength)
+    corrected_data = apply_corr(input_pattern, absorption_correction)
+    corrected_data.name = f"Absorption corrected input_data: {input_pattern.name}"
+    corrected_data.dump(f"{outfile}", xtype="tth")
 
-    base_name = args.input_file.split(".")[0]
-    data_to_save = np.column_stack((abscormodo.on_tth[0], abscormodo.on_tth[1]))
-    np.savetxt(f"{base_name}_proc.chi", data_to_save)
+    if args.output_correction:
+        absorption_correction.dump(f"{corrfile}", xtype="tth")
 
 
 if __name__ == "__main__":
