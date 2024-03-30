@@ -73,3 +73,14 @@ Please type
 
 for more information on the available options.
 
+Getting Started
+---------------
+
+An example input file can be found in the docs/examples directory in the distribtuion (you should find it in your miniconda envs locateion).  The file is called zro2_mo.xy.
+
+1. Copy this file to a new scratch directory
+2. Navigate to that directory in a terminal
+3. Activate the conda environment that contains the package
+4. Run the command (see above)
+
+An example output is also present in the example data and you can compare your output to this file.  The example was processed with a muD of 2.5, though for experimentation you can try processing data with different muD values.
