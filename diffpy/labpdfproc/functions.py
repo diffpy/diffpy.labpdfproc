@@ -78,7 +78,6 @@ class Gridded_circle:
         for distance in self.distances:
             self.muls.append(np.exp(-mu * distance))
 
-
     def _get_entry_exit_coordinates(self, coordinate, angle):
         """
         get the coordinates where the beam enters and leaves the circle for a given angle and grid point
@@ -136,7 +135,6 @@ class Gridded_circle:
             exit_point = (xgrid, math.sqrt(self.radius**2 - xgrid**2))
 
         return entry_point, exit_point
-
 
     def get_path_length(self, grid_point, angle):
         """
@@ -209,12 +207,15 @@ def compute_cve(diffraction_data, mud, wavelength):
     orig_grid = diffraction_data.on_tth[0]
     newcve = np.interp(orig_grid, TTH_GRID, cve)
     abdo = Diffraction_object(wavelength=wavelength)
-    abdo.insert_scattering_quantity(orig_grid, newcve, "tth",
-                                    metadata=diffraction_data.metadata,
-                                    name=f"absorption correction, cve, for {diffraction_data.name}",
-                                    wavelength=diffraction_data.wavelength,
-                                    scat_quantity="cve"
-                                    )
+    abdo.insert_scattering_quantity(
+        orig_grid,
+        newcve,
+        "tth",
+        metadata=diffraction_data.metadata,
+        name=f"absorption correction, cve, for {diffraction_data.name}",
+        wavelength=diffraction_data.wavelength,
+        scat_quantity="cve",
+    )
 
     return abdo
 
@@ -238,4 +239,3 @@ def apply_corr(diffraction_pattern, absorption_correction):
 
     corrected_pattern = diffraction_pattern * absorption_correction
     return corrected_pattern
-
