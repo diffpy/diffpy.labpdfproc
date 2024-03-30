@@ -1,8 +1,8 @@
-import sys
 import os
+import sys
 from os import path
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 import versioneer
 
@@ -45,7 +45,8 @@ setup(
     name="diffpy.labpdfproc",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    description="An app for preprocessing data from laboratory x-ray diffractometers before using PDFgetX3 to obtain PDFs",
+    description="An app for preprocessing data from laboratory x-ray "
+    "diffractometers before using PDFgetX3 to obtain PDFs",
     long_description=readme,
     author="diffpy project",
     author_email="sb2896@columbia.edu",
@@ -54,25 +55,24 @@ setup(
     # packages=find_packages(os.path.join(MYDIR, "diffpy"), exclude=["docs", "tests"]),
     entry_points={
         "console_scripts": [
-            'labpdfproc = diffpy.labpdfproc.labpdfprocapp:main',
+            "labpdfproc = diffpy.labpdfproc.labpdfprocapp:main",
         ],
     },
     include_package_data=True,
     package_data={
-        "labpdfproc": [
-            # When adding files here, remember to update MANIFEST.in as well,
-            # or else they will not be included in the distribution on PyPI!
-            # 'path/to/data_file',
-        ]
+        "labpdfproc": ["docs/examples/*"]
+        # When adding files here, remember to update MANIFEST.in as well,
+        # or else they will not be included in the distribution on PyPI!
+        # 'path/to/data_file',
     },
     install_requires=requirements,
     license="BSD (3-clause)",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
-        'Intended Audience :: Science/Research',
+        "Intended Audience :: Science/Research",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
-        'Topic :: Scientific/Engineering :: Chemistry',
-        'Topic :: Scientific/Engineering :: Physics',
+        "Topic :: Scientific/Engineering :: Chemistry",
+        "Topic :: Scientific/Engineering :: Physics",
     ],
 )

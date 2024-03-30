@@ -1,14 +1,15 @@
-from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
-import numpy as np
 import math
+
+import numpy as np
+
+from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 RADIUS_MM = 1
 N_POINTS_ON_DIAMETER = 249
 TTH_GRID = np.arange(1, 141, 1)
-WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 
 
-class Gridded_circle_paths:
+class Gridded_circle:
     def __init__(self, radius=1, n_points_on_diameter=N_POINTS_ON_DIAMETER, mu=None):
         self.radius = radius
         self.npoints = n_points_on_diameter
@@ -52,7 +53,7 @@ class Gridded_circle_paths:
         """
         self.primary_distances, self.secondary_distances, self.distances = [], [], []
         for coord in self.grid:
-            distance, primary, secondary = self.get_path_length(coord, angle, self.radius)
+            distance, primary, secondary = self.get_path_length(coord, angle)
             self.distances.append(distance)
             self.primary_distances.append(primary)
             self.secondary_distances.append(secondary)
@@ -78,7 +79,6 @@ class Gridded_circle_paths:
             self.set_distances_at_angle(angle)
         for distance in self.distances:
             self.muls.append(np.exp(-mu * distance))
-
 
     def _get_entry_exit_coordinates(self, coordinate, angle):
         """
@@ -138,10 +138,12 @@ class Gridded_circle_paths:
 
         return entry_point, exit_point
 
-
     def get_path_length(self, grid_point, angle):
         """
-        return the path length of a horizontal line entering the circle to the grid point then exiting at angle angle
+        return the path length
+
+        This is the pathlength of a horizontal line entering the circle at the
+        same height to the grid point then exiting at angle angle
 
         Parameters
         ----------
@@ -210,7 +212,15 @@ def compute_cve(diffraction_data, mud, wavelength):
     orig_grid = diffraction_data.on_tth[0]
     newcve = np.interp(orig_grid, TTH_GRID, cve)
     abdo = Diffraction_object(wavelength=wavelength)
-    abdo.insert_scattering_quantity(orig_grid, newcve, "tth")
+    abdo.insert_scattering_quantity(
+        orig_grid,
+        newcve,
+        "tth",
+        metadata=diffraction_data.metadata,
+        name=f"absorption correction, cve, for {diffraction_data.name}",
+        wavelength=diffraction_data.wavelength,
+        scat_quantity="cve",
+    )
 
     return abdo
 
@@ -234,9 +244,3 @@ def apply_corr(diffraction_pattern, absorption_correction):
 
     corrected_pattern = diffraction_pattern * absorption_correction
     return corrected_pattern
-
-
-# to be added in diffpy.utils
-# def dump(base_name, do):
-#    data_to_save = np.column_stack((do.on_tth[0], do.on_tth[1]))
-#    np.savetxt(f'{base_name}_proc.chi', data_to_save)
