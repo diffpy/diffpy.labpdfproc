@@ -2,10 +2,9 @@ import sys
 from argparse import ArgumentParser
 from pathlib import Path
 
-import numpy as np
-from diffpy.labpdfproc.functions import compute_cve, apply_corr
+from diffpy.labpdfproc.functions import apply_corr, compute_cve
 from diffpy.utils.parsers.loaddata import loadData
-from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object, XQUANTITIES
+from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 known_sources = [key for key in WAVELENGTHS.keys()]
@@ -13,33 +12,42 @@ known_sources = [key for key in WAVELENGTHS.keys()]
 
 def get_args():
     p = ArgumentParser()
-    p.add_argument("mud", help="Value of mu*D for your sample. Required.", type=float)
-    p.add_argument("-i", "--input-file", help="The filename of the datafile to load")
-    p.add_argument("-a", "--anode-type", help=f"X-ray source, allowed values:{*[known_sources],}", default="Mo")
+    p.add_argument("mud", help="Value of mu*D for your " "sample. Required.", type=float)
+    p.add_argument("-i", "--input-file", help="The filename of the " "datafile to load")
+    p.add_argument(
+        "-a", "--anode-type", help=f"X-ray source, allowed " f"values: {*[known_sources], }", default="Mo"
+    )
     p.add_argument(
         "-w",
         "--wavelength",
-        help=f"X-ray source wavelength. Not needed if the anode-type is specified. This will override the wavelength if anode type is specified",
+        help="X-ray source wavelength. Not needed if the anode-type "
+        "is specified. This will override the wavelength if anode "
+        "type is specified",
         default=None,
         type=float,
     )
     p.add_argument(
         "-o",
         "--output-directory",
-        help=f"the name of the output directory. If it doesn't exist it will be created.  Not currently implemented",
+        help="the name of the output directory. If it doesn't exist it "
+        "will be created.  Not currently implemented",
         default=None,
     )
     p.add_argument(
         "-x",
         "--xtype",
-        help=f"the quantity on the independnt variable axis. allowed values:{*XQUANTITIES,}. If not specified then two-theta is assumed for the independent variable. Only implemented for tth currently",
+        help=f"the quantity on the independnt variable axis. allowed "
+        f"values: {*XQUANTITIES, }. If not specified then two-theta "
+        f"is assumed for the independent variable. Only implemented for "
+        f"tth currently",
         default="tth",
     )
     p.add_argument(
         "-c",
         "--output-correction",
         action="store_true",
-        help=f"the quantity on the independnt variable axis. allowed values:{*XQUANTITIES,}. If not specified then two-theta is assumed for the independent variable. Only implemented for tth currently",
+        help="the absorption correction will be output to a file if this "
+        "flag is set. Default is that it is not output",
         default="tth",
     )
     p.add_argument(
@@ -63,11 +71,13 @@ def main():
 
     if outfile.exists() and not args.force_overwrite:
         sys.exit(
-            f"output file {str(outfile)} already exists. Please rerun specifying -f if you want to overwrite it"
+            f"output file {str(outfile)} already exists. Please rerun "
+            f"specifying -f if you want to overwrite it"
         )
     if corrfile.exists() and args.output_correction and not args.force_overwrite:
         sys.exit(
-            f"corrections file {str(corrfile)} was requested and already exists. Please rerun specifying -f if you want to overwrite it"
+            f"corrections file {str(corrfile)} was requested and already "
+            f"exists. Please rerun specifying -f if you want to overwrite it"
         )
 
     input_pattern = Diffraction_object(wavelength=wavelength)

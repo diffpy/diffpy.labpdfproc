@@ -1,6 +1,8 @@
-from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
-import numpy as np
 import math
+
+import numpy as np
+
+from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 RADIUS_MM = 1
 N_POINTS_ON_DIAMETER = 249
@@ -138,7 +140,10 @@ class Gridded_circle:
 
     def get_path_length(self, grid_point, angle):
         """
-        return the path length of a horizontal line entering the circle to the grid point then exiting at angle angle
+        return the path length
+
+        This is the pathlength of a horizontal line entering the circle at the
+        same height to the grid point then exiting at angle angle
 
         Parameters
         ----------

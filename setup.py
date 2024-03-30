@@ -1,8 +1,8 @@
-import sys
 import os
+import sys
 from os import path
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 import versioneer
 
@@ -45,7 +45,8 @@ setup(
     name="diffpy.labpdfproc",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    description="An app for preprocessing data from laboratory x-ray diffractometers before using PDFgetX3 to obtain PDFs",
+    description="An app for preprocessing data from laboratory x-ray "
+    "diffractometers before using PDFgetX3 to obtain PDFs",
     long_description=readme,
     author="diffpy project",
     author_email="sb2896@columbia.edu",
