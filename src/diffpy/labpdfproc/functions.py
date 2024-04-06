@@ -128,7 +128,7 @@ class Gridded_circle:
             xexit_root1, xexit_root2 = np.roots((1 + a**2, 2 * a * b, b**2 - self.radius**2))
             yexit_root1 = a * xexit_root1 + b
             yexit_root2 = a * xexit_root2 + b
-            if yexit_root2 >= ygrid:  # We pick the point above
+            if yexit_root2 >= yexit_root1:  # We pick the point above
                 exit_point = (xexit_root2, yexit_root2)
             else:
                 exit_point = (xexit_root1, yexit_root1)
