@@ -52,6 +52,6 @@ jobs:
         shell: bash -l {0}
         run: |
           conda activate test
-          coverage pytest
+          coverage run pytest -s
           coverage report -m
           codecov
