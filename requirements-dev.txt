@@ -5,7 +5,6 @@ codecov
 coverage
 flake8
 isort
-metadata
 nbstripout
 pre-commit
 pre-commit-hooks
