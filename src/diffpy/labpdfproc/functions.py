@@ -23,7 +23,7 @@ class Gridded_circle:
         """
         xs = np.linspace(-self.radius, self.radius, self.npoints)
         ys = np.linspace(-self.radius, self.radius, self.npoints)
-        self.grid = [(x, y) for x in xs for y in ys if x**2 + y**2 <= self.radius**2]
+        self.grid = {(x, y) for x in xs for y in ys if x**2 + y**2 <= self.radius**2}
         self.total_points_in_grid = len(self.grid)
 
     # def get_coordinate_index(self, coordinate):  # I think we probably dont need this function?
