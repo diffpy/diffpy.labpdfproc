@@ -23,7 +23,7 @@ class Gridded_circle:
         """
         xs = np.linspace(-self.radius, self.radius, self.npoints)
         ys = np.linspace(-self.radius, self.radius, self.npoints)
-        self.grid = [(x, y) for x in xs for y in ys if x**2 + y**2 <= self.radius**2]
+        self.grid = {(x, y) for x in xs for y in ys if x**2 + y**2 <= self.radius**2}
         self.total_points_in_grid = len(self.grid)
 
     # def get_coordinate_index(self, coordinate):  # I think we probably dont need this function?
@@ -128,7 +128,7 @@ class Gridded_circle:
             xexit_root1, xexit_root2 = np.roots((1 + a**2, 2 * a * b, b**2 - self.radius**2))
             yexit_root1 = a * xexit_root1 + b
             yexit_root2 = a * xexit_root2 + b
-            if yexit_root2 >= ygrid:  # We pick the point above
+            if yexit_root2 >= yexit_root1:  # We pick the point above
                 exit_point = (xexit_root2, yexit_root2)
             else:
                 exit_point = (xexit_root1, yexit_root1)
