@@ -1,3 +1,7 @@
-def test_one_plus_one_is_two():
+from diffpy.labpdfproc.functions import Gridded_circle
+
+
+def test_lpp():
     "Check that one and one are indeed two."
-    assert 1 + 1 == 2
+    gc = Gridded_circle()
+    assert False
