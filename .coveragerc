@@ -1,6 +1,7 @@
 [run]
 source =
-    labpdfproc
+    src
+
 [report]
 omit =
     */python?.?/*
