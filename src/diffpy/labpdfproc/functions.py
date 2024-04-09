@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+
 from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 RADIUS_MM = 1

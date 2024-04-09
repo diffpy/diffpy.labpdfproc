@@ -2,10 +2,9 @@ import sys
 from argparse import ArgumentParser
 from pathlib import Path
 
+from diffpy.labpdfproc.functions import apply_corr, compute_cve
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
-
-from diffpy.labpdfproc.functions import apply_corr, compute_cve
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 known_sources = [key for key in WAVELENGTHS.keys()]

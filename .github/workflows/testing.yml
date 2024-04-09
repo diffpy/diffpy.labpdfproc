@@ -39,8 +39,6 @@ jobs:
       - name: install diffpy.labpdfproc requirements
         shell: bash -l {0}
         run: |
-          pwd
-          ls
           conda config --set always_yes yes --set changeps1 no
           conda config --add channels conda-forge
           conda activate test
@@ -51,6 +49,8 @@ jobs:
       - name: Validate diffpy.labpdfproc
         shell: bash -l {0}
         run: |
+          pwd
+          ls
           conda activate test
           coverage run -m pytest -s
           coverage report -m
