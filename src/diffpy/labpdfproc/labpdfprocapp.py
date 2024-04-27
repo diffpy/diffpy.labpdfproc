@@ -88,14 +88,16 @@ def main():
         "tth",
         scat_quantity="x-ray",
         name=str(args.input_file),
-        metadata={"muD": args.mud,
-                  "input_file": args.input_file,
-                  "anode_type": args.anode_type,
-                  "wavelength": wavelength,
-                  "output_directory": args.output_directory,
-                  "xtype": args.xtype,
-                  "output_correction": args.output_correction,
-                  "force_overwrite": args.force_overwrite},
+        metadata={
+            "muD": args.mud,
+            "input_file": args.input_file,
+            "anode_type": args.anode_type,
+            "wavelength": wavelength,
+            "output_directory": args.output_directory,
+            "xtype": args.xtype,
+            "output_correction": args.output_correction,
+            "force_overwrite": args.force_overwrite,
+        },
     )
 
     absorption_correction = compute_cve(input_pattern, args.mud, wavelength)
