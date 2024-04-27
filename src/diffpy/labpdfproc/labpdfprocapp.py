@@ -36,7 +36,7 @@ def get_args():
     p.add_argument(
         "-x",
         "--xtype",
-        help=f"the quantity on the independnt variable axis. allowed "
+        help=f"the quantity on the independent variable axis. allowed "
         f"values: {*XQUANTITIES, }. If not specified then two-theta "
         f"is assumed for the independent variable. Only implemented for "
         f"tth currently",
@@ -54,7 +54,7 @@ def get_args():
         "-f",
         "--force-overwrite",
         action="store_true",
-        help="outputs will not overwrite existing file unless --force is spacified",
+        help="outputs will not overwrite existing file unless --force is specified",
     )
     args = p.parse_args()
     return args
@@ -88,7 +88,14 @@ def main():
         "tth",
         scat_quantity="x-ray",
         name=str(args.input_file),
-        metadata={"muD": args.mud, "anode_type": args.anode_type},
+        metadata={"muD": args.mud,
+                  "input_file": args.input_file,
+                  "anode_type": args.anode_type,
+                  "wavelength": wavelength,
+                  "output_directory": args.output_directory,
+                  "xtype": args.xtype,
+                  "output_correction": args.output_correction,
+                  "force_overwrite": args.force_overwrite},
     )
 
     absorption_correction = compute_cve(input_pattern, args.mud, wavelength)
