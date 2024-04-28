@@ -41,6 +41,9 @@ template = "{tag}"
 dev_template = "{tag}"
 dirty_template = "{tag}"
 
+[project.scripts]
+labpdfproc = "diffpy.labpdfproc.labpdfprocapp:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]  # list of folders that contain the packages (["."] by default)
 include = ["diffpy*"]  # package names should match these glob patterns (["*"] by default)
