@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
-from diffpy.labpdfproc.user_functions import load_wavelength
+from diffpy.labpdfproc.tools import load_wavelength
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
@@ -63,7 +63,7 @@ def get_args():
 
 def main():
     args = get_args()
-    wavelength = load_wavelength(args, WAVELENGTHS)
+    wavelength = load_wavelength(args.wavelength, args.anode_type, WAVELENGTHS)
 
     filepath = Path(args.input_file)
     outfilestem = filepath.stem + "_corrected"
