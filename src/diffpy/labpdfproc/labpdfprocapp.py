@@ -64,8 +64,9 @@ def main():
     args = get_args()
     wavelength = WAVELENGTHS[args.anode_type]
     filepath = Path(args.input_file)
-    output_dir = Path(args.output_directory) if args.output_directory else Path("corrected")
+    output_dir = Path(args.output_directory).resolve() if args.output_directory else Path.cwd()
     output_dir.mkdir(parents=True, exist_ok=True)
+    args.output_directory = output_dir
     outfilestem = filepath.stem + "_corrected"
     corrfilestem = filepath.stem + "_cve"
     outfile = output_dir / (outfilestem + ".chi")
