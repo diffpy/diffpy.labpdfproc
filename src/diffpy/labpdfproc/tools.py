@@ -1,7 +1,10 @@
-def load_wavelength(args_wavelength, args_anode_type, WAVELENGTHS):
+WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
+
+
+def set_wavelength(args):
     wavelength = WAVELENGTHS["Mo"]
-    if args_wavelength:
-        wavelength = args_wavelength
-    elif args_anode_type:
-        wavelength = WAVELENGTHS[args_anode_type]
+    if args.wavelength:
+        wavelength = args.wavelength
+    elif args.anode_type:
+        wavelength = WAVELENGTHS[args.anode_type]
     return wavelength
