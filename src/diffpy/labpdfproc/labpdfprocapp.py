@@ -62,7 +62,13 @@ def get_args():
 
 def main():
     args = get_args()
-    wavelength = WAVELENGTHS[args.anode_type]
+
+    wavelength = WAVELENGTHS["Mo"]
+    if args.wavelength:
+        wavelength = args.wavelength
+    elif args.anode_type:
+        wavelength = WAVELENGTHS[args.anode_type]
+
     filepath = Path(args.input_file)
     outfilestem = filepath.stem + "_corrected"
     corrfilestem = filepath.stem + "_cve"
