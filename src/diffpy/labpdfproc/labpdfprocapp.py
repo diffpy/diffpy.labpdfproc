@@ -64,10 +64,12 @@ def main():
     args = get_args()
     wavelength = WAVELENGTHS[args.anode_type]
     filepath = Path(args.input_file)
+    output_dir = Path(args.output_directory) if args.output_directory else Path("corrected")
+    output_dir.mkdir(parents=True, exist_ok=True)
     outfilestem = filepath.stem + "_corrected"
     corrfilestem = filepath.stem + "_cve"
-    outfile = Path(outfilestem + ".chi")
-    corrfile = Path(corrfilestem + ".chi")
+    outfile = output_dir / (outfilestem + ".chi")
+    corrfile = output_dir / (corrfilestem + ".chi")
 
     if outfile.exists() and not args.force_overwrite:
         sys.exit(
