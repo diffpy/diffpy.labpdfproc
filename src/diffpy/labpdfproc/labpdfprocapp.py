@@ -90,7 +90,12 @@ def main():
             )
 
         input_pattern = Diffraction_object(wavelength=wavelength)
-        xarray, yarray = loadData(filepath.name, unpack=True)
+        try:
+            xarray, yarray = loadData(filepath, unpack=True)
+        except Exception as e:
+            print(f"Non-readable data file {filepath}: {e}")
+            continue
+
         input_pattern.insert_scattering_quantity(
             xarray,
             yarray,
