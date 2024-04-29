@@ -29,14 +29,15 @@ def get_args():
     p.add_argument(
         "-o",
         "--output-directory",
-        help="the name of the output directory. If it doesn't exist it "
-        "will be created.  Not currently implemented",
+        help="the name of the output directory. If not specified "
+        "then corrected files will be written to the current directory."
+        "If the specified directory doesn't exist it will be created.",
         default=None,
     )
     p.add_argument(
         "-x",
         "--xtype",
-        help=f"the quantity on the independnt variable axis. allowed "
+        help=f"the quantity on the independent variable axis. allowed "
         f"values: {*XQUANTITIES, }. If not specified then two-theta "
         f"is assumed for the independent variable. Only implemented for "
         f"tth currently",
@@ -54,7 +55,7 @@ def get_args():
         "-f",
         "--force-overwrite",
         action="store_true",
-        help="outputs will not overwrite existing file unless --force is spacified",
+        help="outputs will not overwrite existing file unless --force is specified",
     )
     args = p.parse_args()
     return args
