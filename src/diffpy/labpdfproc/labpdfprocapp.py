@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
+from diffpy.labpdfproc.tools import set_output_directory
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
@@ -65,13 +66,11 @@ def main():
     args = get_args()
     wavelength = WAVELENGTHS[args.anode_type]
     filepath = Path(args.input_file)
-    output_dir = Path(args.output_directory).resolve() if args.output_directory else Path.cwd()
-    output_dir.mkdir(parents=True, exist_ok=True)
-    args.output_directory = output_dir
+    args.output_directory = set_output_directory(args)
     outfilestem = filepath.stem + "_corrected"
     corrfilestem = filepath.stem + "_cve"
-    outfile = output_dir / (outfilestem + ".chi")
-    corrfile = output_dir / (corrfilestem + ".chi")
+    outfile = args.output_directory / (outfilestem + ".chi")
+    corrfile = args.output_directory / (corrfilestem + ".chi")
 
     if outfile.exists() and not args.force_overwrite:
         sys.exit(
