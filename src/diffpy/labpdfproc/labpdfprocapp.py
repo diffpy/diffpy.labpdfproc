@@ -62,8 +62,8 @@ def get_args():
         "--additional-info",
         metavar=("KEY=VALUE"),
         action="append",
-        help="specify key-value pairs to be loaded into metadata. You can specify multiple "
-        "paris by calling -add multiple times",
+        help="specify key-value pairs to be loaded into metadata by using key=value. "
+        "You can specify multiple paris by calling -add multiple times.",
     )
     args = p.parse_args()
     return args
