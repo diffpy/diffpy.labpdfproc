@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
+from diffpy.labpdfproc.tools import load_additional_info
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
@@ -56,12 +57,21 @@ def get_args():
         action="store_true",
         help="outputs will not overwrite existing file unless --force is spacified",
     )
+    p.add_argument(
+        "-add",
+        "--additional-info",
+        metavar=("KEY=VALUE"),
+        action="append",
+        help="specify key-value pairs to be loaded into metadata. You can specify multiple "
+        "paris by calling -add multiple times",
+    )
     args = p.parse_args()
     return args
 
 
 def main():
     args = get_args()
+    args = load_additional_info(args)
     wavelength = WAVELENGTHS[args.anode_type]
     filepath = Path(args.input_file)
     outfilestem = filepath.stem + "_corrected"
