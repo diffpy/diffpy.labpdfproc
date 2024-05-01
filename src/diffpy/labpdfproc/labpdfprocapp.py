@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
+from diffpy.labpdfproc.tools import set_wavelength
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
@@ -62,7 +63,7 @@ def get_args():
 
 def main():
     args = get_args()
-    wavelength = WAVELENGTHS[args.anode_type]
+    args.wavelength = set_wavelength(args)
     filepath = Path(args.input_file)
     outfilestem = filepath.stem + "_corrected"
     corrfilestem = filepath.stem + "_cve"
@@ -80,7 +81,7 @@ def main():
             f"exists. Please rerun specifying -f if you want to overwrite it"
         )
 
-    input_pattern = Diffraction_object(wavelength=wavelength)
+    input_pattern = Diffraction_object(wavelength=args.wavelength)
     xarray, yarray = loadData(args.input_file, unpack=True)
     input_pattern.insert_scattering_quantity(
         xarray,
@@ -91,7 +92,7 @@ def main():
         metadata={"muD": args.mud, "anode_type": args.anode_type},
     )
 
-    absorption_correction = compute_cve(input_pattern, args.mud, wavelength)
+    absorption_correction = compute_cve(input_pattern, args.mud, args.wavelength)
     corrected_data = apply_corr(input_pattern, absorption_correction)
     corrected_data.name = f"Absorption corrected input_data: {input_pattern.name}"
     corrected_data.dump(f"{outfile}", xtype="tth")
