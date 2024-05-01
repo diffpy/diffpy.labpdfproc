@@ -3,6 +3,22 @@ known_sources = [key for key in WAVELENGTHS.keys()]
 
 
 def set_wavelength(args):
+    """
+    Set the wavelength based on the given input arguments
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+        float: the wavelength value
+
+    we raise an ValueError if the input wavelength is non-positive
+    or if the input anode_type is not one of the known sources
+
+    """
     if args.wavelength and args.wavelength <= 0:
         raise ValueError("Please rerun the program specifying a positive float number.")
     if not args.wavelength and args.anode_type and args.anode_type not in WAVELENGTHS:
