@@ -13,9 +13,9 @@ params5 = [
 
 
 @pytest.mark.parametrize("inputs, expected", params5)
-def test_load_additional_info(inputs, expected):
+def test_load_user_metadata(inputs, expected):
     actual_parser = ArgumentParser()
-    actual_parser.add_argument("-u", "--user-metadata", action="append", metavar=("KEY=VALUE"))
+    actual_parser.add_argument("-u", "--user-metadata", action="append", metavar="KEY=VALUE", nargs="+")
     actual_args = actual_parser.parse_args([])
     expected_parser = ArgumentParser()
     expected_args = expected_parser.parse_args([])

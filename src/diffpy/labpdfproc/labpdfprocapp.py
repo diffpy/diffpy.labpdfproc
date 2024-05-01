@@ -60,10 +60,11 @@ def get_args():
     p.add_argument(
         "-u",
         "--user-metadata",
-        metavar=("KEY=VALUE"),
-        action="append",
-        help="specify key-value pairs to be loaded into metadata by using key=value. "
-        "You can specify multiple paris by calling -u multiple times.",
+        metavar="KEY=VALUE",
+        nargs="+",
+        help="specify (multiple) key-value pairs to be loaded into metadata by using key=value. "
+        "Do not leave whitespaces before or after = sign. "
+        "If a key or value contains whitespace, you should define it with quotes. ",
     )
     args = p.parse_args()
     return args
