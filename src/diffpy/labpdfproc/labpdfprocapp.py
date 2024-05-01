@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
-from diffpy.labpdfproc.tools import load_additional_info
+from diffpy.labpdfproc.tools import load_user_metadata
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
@@ -37,7 +37,7 @@ def get_args():
     p.add_argument(
         "-x",
         "--xtype",
-        help=f"the quantity on the independnt variable axis. allowed "
+        help=f"the quantity on the independent variable axis. allowed "
         f"values: {*XQUANTITIES, }. If not specified then two-theta "
         f"is assumed for the independent variable. Only implemented for "
         f"tth currently",
@@ -55,15 +55,15 @@ def get_args():
         "-f",
         "--force-overwrite",
         action="store_true",
-        help="outputs will not overwrite existing file unless --force is spacified",
+        help="outputs will not overwrite existing file unless --force is specified",
     )
     p.add_argument(
-        "-add",
-        "--additional-info",
+        "-u",
+        "--user-metadata",
         metavar=("KEY=VALUE"),
         action="append",
         help="specify key-value pairs to be loaded into metadata by using key=value. "
-        "You can specify multiple paris by calling -add multiple times.",
+        "You can specify multiple paris by calling -u multiple times.",
     )
     args = p.parse_args()
     return args
@@ -71,7 +71,7 @@ def get_args():
 
 def main():
     args = get_args()
-    args = load_additional_info(args)
+    args = load_user_metadata(args)
     wavelength = WAVELENGTHS[args.anode_type]
     filepath = Path(args.input_file)
     outfilestem = filepath.stem + "_corrected"
