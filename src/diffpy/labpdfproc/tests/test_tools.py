@@ -28,11 +28,11 @@ def test_set_output_directory(inputs, expected):
 
 
 def test_set_output_directory_bad():
-    existing_dir = Path().cwd().resolve() / "existing_dir.py"
-    with open(existing_dir, "w"):
+    existing_file = Path().cwd().resolve() / "existing_file.py"
+    with open(existing_file, "w"):
         pass
 
-    actual_args = argparse.Namespace(output_directory="existing_dir.py")
+    actual_args = argparse.Namespace(output_directory="existing_file.py")
     with pytest.raises(FileExistsError):
         actual_args.output_directory = set_output_directory(actual_args)
         assert Path(actual_args.output_directory).exists()
