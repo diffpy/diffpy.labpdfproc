@@ -64,7 +64,6 @@ def get_args():
 def main():
     args = get_args()
     args.wavelength = set_wavelength(args)
-
     filepath = Path(args.input_file)
     outfilestem = filepath.stem + "_corrected"
     corrfilestem = filepath.stem + "_cve"
