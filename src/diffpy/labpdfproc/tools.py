@@ -8,7 +8,7 @@ def set_output_directory(args):
     Parameters
     ----------
     args argparse.Namespace
-        input arguments provided by the user
+        the arguments from the parser
 
     Returns
     -------
@@ -18,9 +18,8 @@ def set_output_directory(args):
     If user provides an output directory, use it.
     Otherwise, we set it to the current directory if nothing is provided.
     We then create the directory if it does not exist.
-    If the provided directory is an existed file then we raise the FileExistsError.
 
     """
-    output_dir = Path(args.output_directory).resolve() if args.output_directory else Path.cwd()
+    output_dir = Path(args.output_directory).resolve() if args.output_directory else Path.cwd().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir
