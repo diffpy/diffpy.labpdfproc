@@ -19,7 +19,7 @@ def set_wavelength(args):
     or if the input anode_type is not one of the known sources
 
     """
-    if args.wavelength and args.wavelength <= 0:
+    if args.wavelength is not None and args.wavelength <= 0:
         raise ValueError("Please rerun the program specifying a positive float number.")
     if not args.wavelength and args.anode_type and args.anode_type not in WAVELENGTHS:
         raise ValueError(

@@ -20,10 +20,15 @@ def test_set_wavelength(inputs, expected):
     assert actual_wavelength == expected_wavelength
 
 
-def test_set_wavelength_bad():
+params3 = [
+    ([None, "invalid"]),
+    ([0, None]),
+    ([-1, "Mo"]),
+]
+
+
+@pytest.mark.parametrize("inputs", params3)
+def test_set_wavelength_bad(inputs):
     with pytest.raises(ValueError):
-        actual_args = argparse.Namespace(wavelength=None, anode_type="invalid")
-        actual_args.wavelength = set_wavelength(actual_args)
-    with pytest.raises(ValueError):
-        actual_args = argparse.Namespace(wavelength=0, anode_type=None)
+        actual_args = argparse.Namespace(wavelength=inputs[0], anode_type=inputs[1])
         actual_args.wavelength = set_wavelength(actual_args)
