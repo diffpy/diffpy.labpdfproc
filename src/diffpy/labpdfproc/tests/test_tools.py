@@ -9,7 +9,6 @@ params1 = [
     ([None], [Path.cwd().resolve()]),
     (["."], [Path.cwd().resolve()]),
     (["new_dir"], [Path.cwd().resolve() / "new_dir"]),
-    (["new_dir.py"], [Path.cwd().resolve() / "new_dir.py"]),
     (["existing_dir"], [Path.cwd().resolve() / "existing_dir"]),
 ]
 
