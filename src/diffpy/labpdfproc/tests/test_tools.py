@@ -28,8 +28,7 @@ def test_set_output_directory(inputs, expected):
 
 def test_set_output_directory_bad():
     existing_file = Path().cwd().resolve() / "existing_file.py"
-    with open(existing_file, "w"):
-        pass
+    existing_file.touch()
 
     actual_args = argparse.Namespace(output_directory="existing_file.py")
     with pytest.raises(FileExistsError):
