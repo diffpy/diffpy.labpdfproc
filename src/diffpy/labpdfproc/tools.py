@@ -20,12 +20,12 @@ def set_wavelength(args):
 
     """
     if args.wavelength is not None and args.wavelength <= 0:
-        raise ValueError("Please rerun the program specifying a positive float number.")
+        raise ValueError(
+            "No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength"
+        )
     if not args.wavelength and args.anode_type and args.anode_type not in WAVELENGTHS:
         raise ValueError(
-            f"Invalid anode type {args.anode_type}. "
-            f"Please rerun the program to either specify a wavelength as a positive float number "
-            f"or specify anode_type as one of {known_sources}."
+            f"Anode type not recognized. please rerun specifying an anode_type from {*known_sources, }"
         )
 
     if args.wavelength:
@@ -67,3 +67,6 @@ def load_user_metadata(args):
 # question 2: more than one =?
 # if i have key is hello, value is hello=world, then i can have hello=hello=world to process okay
 # if i have = in key then it's still processing as value => would this be an issue?
+
+
+# user specified the same key: same key we defined, same key they defined
