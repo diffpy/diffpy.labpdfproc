@@ -2,7 +2,7 @@ import argparse
 
 import pytest
 
-from diffpy.labpdfproc.tools import WAVELENGTHS, set_wavelength
+from diffpy.labpdfproc.tools import known_sources, set_wavelength
 
 params2 = [
     ([None, None], [0.71]),
@@ -23,7 +23,7 @@ def test_set_wavelength(inputs, expected):
 params3 = [
     (
         [None, "invalid"],
-        [f"Anode type not recognized. please rerun specifying an anode_type from {*WAVELENGTHS, }"],
+        [f"Anode type not recognized. please rerun specifying an anode_type from {*known_sources, }"],
     ),
     ([0, None], ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength"]),
     ([-1, "Mo"], ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength"]),
