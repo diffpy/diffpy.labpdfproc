@@ -1,7 +1,7 @@
 import argparse
-from argparse import ArgumentParser
 
 import re
+from argparse import ArgumentParser
 
 import pytest
 
