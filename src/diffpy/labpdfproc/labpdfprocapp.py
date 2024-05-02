@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
-from diffpy.labpdfproc.tools import known_sources, set_wavelength, set_output_directory
+from diffpy.labpdfproc.tools import known_sources, set_output_directory, set_wavelength
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
