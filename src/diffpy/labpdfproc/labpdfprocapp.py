@@ -3,12 +3,9 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
-from diffpy.labpdfproc.tools import load_user_metadata, set_wavelength
+from diffpy.labpdfproc.tools import known_sources, load_user_metadata, set_wavelength
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
-
-WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
-known_sources = [key for key in WAVELENGTHS.keys()]
 
 
 def get_args():
@@ -16,14 +13,17 @@ def get_args():
     p.add_argument("mud", help="Value of mu*D for your " "sample. Required.", type=float)
     p.add_argument("-i", "--input-file", help="The filename of the " "datafile to load")
     p.add_argument(
-        "-a", "--anode-type", help=f"X-ray source, allowed " f"values: {*[known_sources], }", default="Mo"
+        "-a",
+        "--anode-type",
+        help=f"The type of the x-ray source. Allowed values are "
+        f"{*[known_sources], }. Either specify a known x-ray source or specify wavelength",
+        default="Mo",
     )
     p.add_argument(
         "-w",
         "--wavelength",
-        help="X-ray source wavelength. Not needed if the anode-type "
-        "is specified. This will override the wavelength if anode "
-        "type is specified",
+        help="X-ray source wavelength in angstroms. Not needed if the anode-type "
+        "is specified. This wavelength will override the anode wavelength if both are specified",
         default=None,
         type=float,
     )
