@@ -1,4 +1,5 @@
 import argparse
+import re
 
 import pytest
 
@@ -33,5 +34,5 @@ params3 = [
 @pytest.mark.parametrize("inputs, msg", params3)
 def test_set_wavelength_bad(inputs, msg):
     actual_args = argparse.Namespace(wavelength=inputs[0], anode_type=inputs[1])
-    with pytest.raises(ValueError, match=msg[0]):
+    with pytest.raises(ValueError, match=re.escape(msg[0])):
         actual_args.wavelength = set_wavelength(actual_args)
