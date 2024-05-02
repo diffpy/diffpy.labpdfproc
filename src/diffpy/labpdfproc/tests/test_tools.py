@@ -1,24 +1,29 @@
 import argparse
+import os
+import re
 from pathlib import Path
 
 import pytest
 
-from diffpy.labpdfproc.tools import set_output_directory, set_wavelength
+from diffpy.labpdfproc.tools import known_sources, set_output_directory, set_wavelength
 
 params1 = [
-    ([None], [Path.cwd().resolve()]),
-    (["."], [Path.cwd().resolve()]),
-    (["new_dir"], [Path.cwd().resolve() / "new_dir"]),
-    (["existing_dir"], [Path.cwd().resolve() / "existing_dir"]),
+    ([None], ["."]),
+    (["."], ["."]),
+    (["new_dir"], ["new_dir"]),
+    (["existing_dir"], ["existing_dir"]),
 ]
 
 
 @pytest.mark.parametrize("inputs, expected", params1)
-def test_set_output_directory(inputs, expected):
+def test_set_output_directory(inputs, expected, tmp_path):
+    directory = Path(tmp_path)
+    os.chdir(directory)
+
     existing_dir = Path().cwd().resolve() / "existing_dir"
     existing_dir.mkdir(parents=True, exist_ok=True)
 
-    expected_output_directory = expected[0]
+    expected_output_directory = Path.cwd().resolve() / expected[0]
     actual_args = argparse.Namespace(output_directory=inputs[0])
     actual_args.output_directory = set_output_directory(actual_args)
     assert actual_args.output_directory == expected_output_directory
@@ -26,7 +31,10 @@ def test_set_output_directory(inputs, expected):
     assert Path(actual_args.output_directory).is_dir()
 
 
-def test_set_output_directory_bad():
+def test_set_output_directory_bad(tmp_path):
+    directory = Path(tmp_path)
+    os.chdir(directory)
+
     existing_file = Path().cwd().resolve() / "existing_file.py"
     existing_file.touch()
 
@@ -54,14 +62,17 @@ def test_set_wavelength(inputs, expected):
 
 
 params3 = [
-    ([None, "invalid"]),
-    ([0, None]),
-    ([-1, "Mo"]),
+    (
+        [None, "invalid"],
+        [f"Anode type not recognized. please rerun specifying an anode_type from {*known_sources, }"],
+    ),
+    ([0, None], ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength"]),
+    ([-1, "Mo"], ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength"]),
 ]
 
 
-@pytest.mark.parametrize("inputs", params3)
-def test_set_wavelength_bad(inputs):
-    with pytest.raises(ValueError):
-        actual_args = argparse.Namespace(wavelength=inputs[0], anode_type=inputs[1])
+@pytest.mark.parametrize("inputs, msg", params3)
+def test_set_wavelength_bad(inputs, msg):
+    actual_args = argparse.Namespace(wavelength=inputs[0], anode_type=inputs[1])
+    with pytest.raises(ValueError, match=re.escape(msg[0])):
         actual_args.wavelength = set_wavelength(actual_args)
