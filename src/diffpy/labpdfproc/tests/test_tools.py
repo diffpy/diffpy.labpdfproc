@@ -23,9 +23,12 @@ def test_set_output_directory(inputs, expected, tmp_path):
     existing_dir = Path(tmp_path).resolve() / "existing_dir"
     existing_dir.mkdir(parents=True, exist_ok=True)
 
-    expected_output_directory = Path(tmp_path).resolve() / expected[0]
-    actual_args = argparse.Namespace(output_directory=inputs[0])
+    actual_parser = argparse.ArgumentParser()
+    actual_parser.add_argument("--output_directory")
+    actual_args = actual_parser.parse_args(["--output_directory", inputs[0]])
     actual_args.output_directory = set_output_directory(actual_args)
+
+    expected_output_directory = Path(tmp_path).resolve() / expected[0]
     assert actual_args.output_directory == expected_output_directory
     assert Path(actual_args.output_directory).exists()
     assert Path(actual_args.output_directory).is_dir()
@@ -38,7 +41,10 @@ def test_set_output_directory_bad(tmp_path):
     existing_file = Path(tmp_path).resolve() / "existing_file.py"
     existing_file.touch()
 
-    actual_args = argparse.Namespace(output_directory="existing_file.py")
+    actual_parser = argparse.ArgumentParser()
+    actual_parser.add_argument("--output_directory")
+    actual_args = actual_parser.parse_args(["--output_directory", "existing_file.py"])
+
     with pytest.raises(FileExistsError):
         actual_args.output_directory = set_output_directory(actual_args)
         assert Path(actual_args.output_directory).exists()
@@ -60,9 +66,12 @@ def test_set_input_directory(inputs, expected, tmp_path):
     existing_dir = Path(tmp_path).resolve() / "existing_dir"
     existing_dir.mkdir(parents=True, exist_ok=True)
 
-    expected_input_directory = Path(tmp_path).resolve() / expected[0]
-    actual_args = argparse.Namespace(input_file=inputs[0])
+    actual_parser = argparse.ArgumentParser()
+    actual_parser.add_argument("--input_file")
+    actual_args = actual_parser.parse_args(["--input_file", inputs[0]])
     actual_args = set_input_directory(actual_args)
+
+    expected_input_directory = Path(tmp_path).resolve() / expected[0]
     assert actual_args.input_directory == expected_input_directory
 
 
