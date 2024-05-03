@@ -43,15 +43,7 @@ def set_input_directory(args):
         the arguments from the parser with a new argument input_directory
 
     """
-    if args.input_file and args.input_file.endswith("/"):
-        raise ValueError("Please remove the forward slash at the end and rerun specifying a valid file name.")
     input_dir = Path.cwd() / Path(args.input_file).parent if args.input_file else Path.cwd()
-    if not input_dir.exists() or not input_dir.is_dir():
-        raise ValueError(
-            "Path to input file doesn't exist. "
-            "Please rerun specifying a valid input file with a valid directory. "
-            "Please avoid forward slashes in your path or file name."
-        )
     setattr(args, "input_directory", input_dir)
     return args
 

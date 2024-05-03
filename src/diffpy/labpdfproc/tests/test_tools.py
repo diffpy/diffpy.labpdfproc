@@ -66,28 +66,6 @@ def test_set_input_directory(inputs, expected, tmp_path):
     assert actual_args.input_directory == expected_input_directory
 
 
-params3 = [
-    (
-        ["new_dir/data.xy"],
-        [
-            "Path to input file doesn't exist. "
-            "Please rerun specifying a valid input file with a valid directory. "
-            "Please avoid forward slashes in your path or file name."
-        ],
-    ),
-    (["data.xy/"], ["Please remove the forward slash at the end and rerun specifying a valid file name."]),
-]
-
-
-@pytest.mark.parametrize("inputs, msg", params3)
-def test_set_input_directory_bad(inputs, msg, tmp_path):
-    directory = Path(tmp_path)
-    os.chdir(directory)
-    actual_args = argparse.Namespace(input_file=inputs[0])
-    with pytest.raises(ValueError, match=re.escape(msg[0])):
-        actual_args = set_input_directory(actual_args)
-
-
 params2 = [
     ([None, None], [0.71]),
     ([None, "Ag"], [0.59]),
