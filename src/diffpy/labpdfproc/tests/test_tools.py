@@ -1,10 +1,50 @@
 import argparse
+import os
 import re
 from argparse import ArgumentParser
+from pathlib import Path
 
 import pytest
 
-from diffpy.labpdfproc.tools import known_sources, load_user_metadata, set_wavelength
+from diffpy.labpdfproc.tools import known_sources, load_user_metadata, set_output_directory, set_wavelength
+
+params1 = [
+    ([None], ["."]),
+    (["."], ["."]),
+    (["new_dir"], ["new_dir"]),
+    (["existing_dir"], ["existing_dir"]),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params1)
+def test_set_output_directory(inputs, expected, tmp_path):
+    directory = Path(tmp_path)
+    os.chdir(directory)
+
+    existing_dir = Path(tmp_path).resolve() / "existing_dir"
+    existing_dir.mkdir(parents=True, exist_ok=True)
+
+    expected_output_directory = Path(tmp_path).resolve() / expected[0]
+    actual_args = argparse.Namespace(output_directory=inputs[0])
+    actual_args.output_directory = set_output_directory(actual_args)
+    assert actual_args.output_directory == expected_output_directory
+    assert Path(actual_args.output_directory).exists()
+    assert Path(actual_args.output_directory).is_dir()
+
+
+def test_set_output_directory_bad(tmp_path):
+    directory = Path(tmp_path)
+    os.chdir(directory)
+
+    existing_file = Path(tmp_path).resolve() / "existing_file.py"
+    existing_file.touch()
+
+    actual_args = argparse.Namespace(output_directory="existing_file.py")
+    with pytest.raises(FileExistsError):
+        actual_args.output_directory = set_output_directory(actual_args)
+        assert Path(actual_args.output_directory).exists()
+        assert not Path(actual_args.output_directory).is_dir()
+
 
 params2 = [
     ([None, None], [0.71]),
@@ -25,10 +65,10 @@ def test_set_wavelength(inputs, expected):
 params3 = [
     (
         [None, "invalid"],
-        [f"Anode type not recognized. please rerun specifying an anode_type from {*known_sources, }"],
+        [f"Anode type not recognized. Please rerun specifying an anode_type from {*known_sources, }."],
     ),
-    ([0, None], ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength"]),
-    ([-1, "Mo"], ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength"]),
+    ([0, None], ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength."]),
+    ([-1, "Mo"], ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength."]),
 ]
 
 
