@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from diffpy.labpdfproc.tools import known_sources, set_output_directory, set_wavelength
+from diffpy.labpdfproc.tools import known_sources, set_input_directory, set_output_directory, set_wavelength
 
 params1 = [
     ([None], ["."]),
@@ -43,6 +43,24 @@ def test_set_output_directory_bad(tmp_path):
         actual_args.output_directory = set_output_directory(actual_args)
         assert Path(actual_args.output_directory).exists()
         assert not Path(actual_args.output_directory).is_dir()
+
+
+params2 = [
+    ([None], ["."]),
+    (["data.xy"], ["."]),
+    (["research/data.xy"], ["research"]),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params2)
+def test_set_input_directory(inputs, expected, tmp_path):
+    directory = Path(tmp_path)
+    os.chdir(directory)
+
+    expected_input_directory = Path(tmp_path).resolve() / expected[0]
+    actual_args = argparse.Namespace(input_file=inputs[0])
+    actual_args = set_input_directory(actual_args)
+    assert actual_args.input_directory == expected_input_directory
 
 
 params2 = [

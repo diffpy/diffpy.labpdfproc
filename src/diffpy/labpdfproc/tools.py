@@ -28,6 +28,26 @@ def set_output_directory(args):
     return output_dir
 
 
+def set_input_directory(args):
+    """
+    Set the input directory based on input file, default is current working directory if nothing is given
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    args argparse.Namespace
+        the arguments from the parser with a new argument input_directory
+
+    """
+    input_dir = Path.cwd() / Path(args.input_file).parent if args.input_file else Path.cwd()
+    setattr(args, "input_directory", input_dir)
+    return args
+
+
 def set_wavelength(args):
     """
     Set the wavelength based on the given input arguments
