@@ -85,6 +85,8 @@ params5 = [
         [["facility=NSLS II", "beamline=28ID-2", "favorite color=blue"]],
         [["facility", "NSLS II"], ["beamline", "28ID-2"], ["favorite color", "blue"]],
     ),
+    ([["facility=NSLS II", "facility=NSLS III"]], [["facility", "NSLS III"]]),
+    ([["x=y=z"]], [["x", "y=z"]]),
 ]
 
 
