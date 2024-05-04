@@ -2,7 +2,7 @@ import sys
 from argparse import ArgumentParser
 from pathlib import Path
 
-from diffpy.labpdfproc.functions import apply_corr, compute_cve
+from diffpy.labpdfproc.functions import apply_corr, compute_cve, interpolate_cve
 from diffpy.labpdfproc.tools import known_sources, set_output_directory, set_wavelength
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
@@ -95,7 +95,8 @@ def main():
         metadata={"muD": args.mud, "anode_type": args.anode_type},
     )
 
-    absorption_correction = compute_cve(input_pattern, args.mud, args.wavelength)
+    absorption_correction_resampled = compute_cve(args.mud, args.wavelength)
+    absorption_correction = interpolate_cve(input_pattern, absorption_correction_resampled, args.wavelength)
     corrected_data = apply_corr(input_pattern, absorption_correction)
     corrected_data.name = f"Absorption corrected input_data: {input_pattern.name}"
     corrected_data.dump(f"{outfile}", xtype="tth")

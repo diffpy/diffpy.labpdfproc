@@ -5,7 +5,7 @@ import numpy as np
 from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 RADIUS_MM = 1
-N_POINTS_ON_DIAMETER = 249
+N_POINTS_ON_DIAMETER = 250
 TTH_GRID = np.arange(1, 141, 1)
 
 
@@ -172,14 +172,12 @@ class Gridded_circle:
         return total_distance, primary_distance, secondary_distance
 
 
-def compute_cve(diffraction_data, mud, wavelength):
+def compute_cve(mud, wavelength):
     """
-    compute the cve for given diffraction data, mud and wavelength
+    compute the cve for given mud
 
     Parameters
     ----------
-    diffraction_data Diffraction_object
-      the diffraction pattern
     mud float
       the mu*D of the diffraction object, where D is the diameter of the circle
     wavelength float
@@ -187,13 +185,12 @@ def compute_cve(diffraction_data, mud, wavelength):
 
     Returns
     -------
-    the diffraction object with cve curves
+    the diffraction object with cve curves on the resampled grid
 
     it is computed as follows:
-    We first resample data and absorption correction to a more reasonable grid,
-    then calculate corresponding cve for the given mud in the resample grid
-    (since the same mu*D yields the same cve, we can assume that D/2=1, so mu=mud/2),
-    and finally interpolate cve to the original grid in diffraction_data.
+    We resample data and absorption correction to a more reasonable grid,
+    and calculate corresponding cve for the given mud in the resample grid
+    (since the same mu*D yields the same cve, we can assume that D/2=1, so mu=mud/2).
     """
 
     mu_sample_invmm = mud / 2
@@ -208,7 +205,40 @@ def compute_cve(diffraction_data, mud, wavelength):
     muls = np.array(muls) / abs_correction.total_points_in_grid
     cve = 1 / muls
 
+    abdo_resampled = Diffraction_object(wavelength=wavelength)
+    abdo_resampled.insert_scattering_quantity(
+        TTH_GRID,
+        cve,
+        "tth",
+        name=f"absorption correction, cve, for mud {mud}",
+        wavelength=wavelength,
+        scat_quantity="cve",
+    )
+
+    return abdo_resampled
+
+
+def interpolate_cve(diffraction_data, abdo_resampled, wavelength):
+    """
+    interpolate cve to the original grid in diffraction_data
+
+    Parameters
+    ----------
+    diffraction_data Diffraction_object
+      the diffraction pattern
+    abdo_resampled Diffraction_object
+      the diffraction object with cve curves on the resampled grid
+    wavelength float
+      the wavelength of the diffraction object
+
+    Returns
+    -------
+    the diffraction object with cve curves
+
+    """
+
     orig_grid = diffraction_data.on_tth[0]
+    cve = abdo_resampled.on_tth[1]
     newcve = np.interp(orig_grid, TTH_GRID, cve)
     abdo = Diffraction_object(wavelength=wavelength)
     abdo.insert_scattering_quantity(
