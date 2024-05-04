@@ -1,5 +1,4 @@
 import argparse
-import os
 import re
 from pathlib import Path
 
@@ -16,31 +15,21 @@ params1 = [
 
 
 @pytest.mark.parametrize("inputs, expected", params1)
-def test_set_output_directory(inputs, expected, tmp_path):
-    directory = Path(tmp_path)
-    os.chdir(directory)
-
-    existing_dir = Path(tmp_path).resolve() / "existing_dir"
-    existing_dir.mkdir(parents=True, exist_ok=True)
+def test_set_output_directory(inputs, expected, user_filesystem):
+    tmp_dir = user_filesystem
+    expected_output_directory = tmp_dir / expected[0]
 
     actual_parser = argparse.ArgumentParser()
     actual_parser.add_argument("--output_directory")
     actual_args = actual_parser.parse_args(["--output_directory", inputs[0]])
     actual_args.output_directory = set_output_directory(actual_args)
-
-    expected_output_directory = Path(tmp_path).resolve() / expected[0]
     assert actual_args.output_directory == expected_output_directory
     assert Path(actual_args.output_directory).exists()
     assert Path(actual_args.output_directory).is_dir()
 
 
-def test_set_output_directory_bad(tmp_path):
-    directory = Path(tmp_path)
-    os.chdir(directory)
-
-    existing_file = Path(tmp_path).resolve() / "existing_file.py"
-    existing_file.touch()
-
+def test_set_output_directory_bad(user_filesystem):
+    # tmp_dir = user_filesystem
     actual_parser = argparse.ArgumentParser()
     actual_parser.add_argument("--output_directory")
     actual_args = actual_parser.parse_args(["--output_directory", "existing_file.py"])
@@ -53,25 +42,21 @@ def test_set_output_directory_bad(tmp_path):
 
 params2 = [
     ([None], ["."]),
-    (["data.xy"], ["."]),
-    (["existing_dir/data.xy"], ["existing_dir"]),
+    (["existing_input_file.xy"], ["."]),
+    (["existing_dir/existing_input_file.xy"], ["existing_dir"]),
+    # ([Path.cwd()], [Path.cwd()]),
 ]
 
 
 @pytest.mark.parametrize("inputs, expected", params2)
-def test_set_input_directory(inputs, expected, tmp_path):
-    directory = Path(tmp_path)
-    os.chdir(directory)
-
-    existing_dir = Path(tmp_path).resolve() / "existing_dir"
-    existing_dir.mkdir(parents=True, exist_ok=True)
+def test_set_input_directory(inputs, expected, user_filesystem):
+    tmp_dir = user_filesystem
+    expected_input_directory = tmp_dir / expected[0]
 
     actual_parser = argparse.ArgumentParser()
     actual_parser.add_argument("--input_file")
     actual_args = actual_parser.parse_args(["--input_file", inputs[0]])
     actual_args = set_input_directory(actual_args)
-
-    expected_input_directory = Path(tmp_path).resolve() / expected[0]
     assert actual_args.input_directory == expected_input_directory
 
 

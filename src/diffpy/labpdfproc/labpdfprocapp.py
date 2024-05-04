@@ -1,3 +1,4 @@
+import glob
 import sys
 from argparse import ArgumentParser
 from pathlib import Path
@@ -67,42 +68,49 @@ def main():
     args = set_input_directory(args)
     args.output_directory = set_output_directory(args)
     args.wavelength = set_wavelength(args)
+    input_files = glob.glob(str(args.input_directory) + "/*", recursive=True)
 
-    filepath = Path(args.input_file)
-    outfilestem = filepath.stem + "_corrected"
-    corrfilestem = filepath.stem + "_cve"
-    outfile = args.output_directory / (outfilestem + ".chi")
-    corrfile = args.output_directory / (corrfilestem + ".chi")
+    for input_file in input_files:
+        filepath = Path(input_file)
+        outfilestem = filepath.stem + "_corrected"
+        corrfilestem = filepath.stem + "_cve"
+        outfile = args.output_directory / (outfilestem + ".chi")
+        corrfile = args.output_directory / (corrfilestem + ".chi")
 
-    if outfile.exists() and not args.force_overwrite:
-        sys.exit(
-            f"Output file {str(outfile)} already exists. Please rerun "
-            f"specifying -f if you want to overwrite it."
+        if outfile.exists() and not args.force_overwrite:
+            sys.exit(
+                f"Output file {str(outfile)} already exists. Please rerun "
+                f"specifying -f if you want to overwrite it."
+            )
+        if corrfile.exists() and args.output_correction and not args.force_overwrite:
+            sys.exit(
+                f"Corrections file {str(corrfile)} was requested and already "
+                f"exists. Please rerun specifying -f if you want to overwrite it."
+            )
+
+        input_pattern = Diffraction_object(wavelength=args.wavelength)
+
+        try:
+            xarray, yarray = loadData(args.input_file, unpack=True)
+        except Exception as e:
+            raise ValueError(f"Failed to load data from {filepath}: {e}.")
+
+        input_pattern.insert_scattering_quantity(
+            xarray,
+            yarray,
+            "tth",
+            scat_quantity="x-ray",
+            name=str(args.input_file),
+            metadata={"muD": args.mud, "anode_type": args.anode_type},
         )
-    if corrfile.exists() and args.output_correction and not args.force_overwrite:
-        sys.exit(
-            f"Corrections file {str(corrfile)} was requested and already "
-            f"exists. Please rerun specifying -f if you want to overwrite it."
-        )
 
-    input_pattern = Diffraction_object(wavelength=args.wavelength)
-    xarray, yarray = loadData(args.input_file, unpack=True)
-    input_pattern.insert_scattering_quantity(
-        xarray,
-        yarray,
-        "tth",
-        scat_quantity="x-ray",
-        name=str(args.input_file),
-        metadata={"muD": args.mud, "anode_type": args.anode_type},
-    )
+        absorption_correction = compute_cve(input_pattern, args.mud, args.wavelength)
+        corrected_data = apply_corr(input_pattern, absorption_correction)
+        corrected_data.name = f"Absorption corrected input_data: {input_pattern.name}"
+        corrected_data.dump(f"{outfile}", xtype="tth")
 
-    absorption_correction = compute_cve(input_pattern, args.mud, args.wavelength)
-    corrected_data = apply_corr(input_pattern, absorption_correction)
-    corrected_data.name = f"Absorption corrected input_data: {input_pattern.name}"
-    corrected_data.dump(f"{outfile}", xtype="tth")
-
-    if args.output_correction:
-        absorption_correction.dump(f"{corrfile}", xtype="tth")
+        if args.output_correction:
+            absorption_correction.dump(f"{corrfile}", xtype="tth")
 
 
 if __name__ == "__main__":
