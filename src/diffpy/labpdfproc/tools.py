@@ -60,3 +60,18 @@ def set_wavelength(args):
         return WAVELENGTHS[args.anode_type]
     else:
         return WAVELENGTHS["Mo"]
+
+
+def load_metadata(args):
+    """
+    Load metadata from arguments
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+    Returns
+    -------
+    A dictionary with all arguments from the parser
+    """
+    metadata = vars(args)
+    return metadata

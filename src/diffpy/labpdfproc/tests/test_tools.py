@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from diffpy.labpdfproc.tools import known_sources, set_output_directory, set_wavelength
+from diffpy.labpdfproc.tools import known_sources, load_metadata, set_output_directory, set_wavelength
 
 params1 = [
     ([None], ["."]),
@@ -76,3 +76,61 @@ def test_set_wavelength_bad(inputs, msg):
     actual_args = argparse.Namespace(wavelength=inputs[0], anode_type=inputs[1])
     with pytest.raises(ValueError, match=re.escape(msg[0])):
         actual_args.wavelength = set_wavelength(actual_args)
+
+
+params6 = [
+    (
+        ["2.5", "zro2_mo.xy", "Mo", "0.71", "output_directory", "tth", "tth", False],
+        [
+            {
+                "mud": 2.5,
+                "input_file": "zro2_mo.xy",
+                "anode_type": "Mo",
+                "wavelength": 0.71,
+                "output_directory": "output_directory",
+                "xtype": "tth",
+                "output_correction": "tth",
+                "force_overwrite": False,
+            }
+        ],
+    ),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params6)
+def test_load_metadata(inputs, expected):
+    expected_metadata = expected[0]
+
+    actual_parser = argparse.ArgumentParser()
+    actual_parser.add_argument("--mud", type=float)
+    actual_parser.add_argument("--input_file")
+    actual_parser.add_argument("--anode_type")
+    actual_parser.add_argument("--wavelength", type=float)
+    actual_parser.add_argument("--output_directory")
+    actual_parser.add_argument("--xtype")
+    actual_parser.add_argument("--output_correction")
+    actual_parser.add_argument("--force_overwrite")
+
+    actual_args = actual_parser.parse_args(
+        [
+            "--mud",
+            inputs[0],
+            "--input_file",
+            inputs[1],
+            "--anode_type",
+            inputs[2],
+            "--wavelength",
+            inputs[3],
+            "--output_directory",
+            inputs[4],
+            "--xtype",
+            inputs[5],
+            "--output_correction",
+            inputs[6],
+            "--force_overwrite",
+            inputs[7],
+        ]
+    )
+
+    actual_metadata = load_metadata(actual_args)
+    assert actual_metadata == expected_metadata

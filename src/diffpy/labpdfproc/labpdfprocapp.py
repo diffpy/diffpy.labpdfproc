@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
-from diffpy.labpdfproc.tools import known_sources, set_output_directory, set_wavelength
+from diffpy.labpdfproc.tools import known_sources, load_metadata, set_output_directory, set_wavelength
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
@@ -92,7 +92,7 @@ def main():
         "tth",
         scat_quantity="x-ray",
         name=str(args.input_file),
-        metadata={"muD": args.mud, "anode_type": args.anode_type},
+        metadata=load_metadata(args),
     )
 
     absorption_correction = compute_cve(input_pattern, args.mud, args.wavelength)
