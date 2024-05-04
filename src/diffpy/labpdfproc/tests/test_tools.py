@@ -1,10 +1,12 @@
 import argparse
+import os
 import re
 from pathlib import Path
 
 import pytest
 
 from diffpy.labpdfproc.tools import known_sources, set_input_directory, set_output_directory, set_wavelength
+from diffpy.utils.parsers.loaddata import loadData
 
 params1 = [
     ([None], ["."]),
@@ -29,7 +31,6 @@ def test_set_output_directory(inputs, expected, user_filesystem):
 
 
 def test_set_output_directory_bad(user_filesystem):
-    # tmp_dir = user_filesystem
     actual_parser = argparse.ArgumentParser()
     actual_parser.add_argument("--output_directory")
     actual_args = actual_parser.parse_args(["--output_directory", "existing_file.py"])
@@ -58,6 +59,16 @@ def test_set_input_directory(inputs, expected, user_filesystem):
     actual_args = actual_parser.parse_args(["--input_file", inputs[0]])
     actual_args = set_input_directory(actual_args)
     assert actual_args.input_directory == expected_input_directory
+
+
+def test_input_files(user_filesystem):
+    os.chdir("input_directory")
+    xarray_chi, yarray_chi = loadData("good_data.chi", unpack=True)
+    xarray_xy, yarray_xy = loadData("good_data.xy", unpack=True)
+    with pytest.raises(ValueError):
+        xarray_txt, yarray_txt = loadData("unreadable_file.txt", unpack=True)
+    with pytest.raises(ValueError):
+        xarray_pkl, yarray_pkl = loadData("binary.pkl", unpack=True)
 
 
 params2 = [
