@@ -71,10 +71,27 @@ def _load_key_value_pair(s):
 
 
 def load_user_metadata(args):
+    """
+    Load user metadata into the provided argparse Namespace, raise ValueError if in incorrect format
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    the updated argparse Namespace with user metadata inserted as key-value pairs
+
+    """
+
     if args.user_metadata:
         for item in args.user_metadata:
             if "=" not in item:
-                raise ValueError("please provide key-value pairs in the format key=value.")
+                raise ValueError(
+                    "Please provide key-value pairs in the format key=value. "
+                    "For more information, use `labpdfproc --help.`"
+                )
             key, value = _load_key_value_pair(item)
             setattr(args, key, value)
     delattr(args, "user_metadata")

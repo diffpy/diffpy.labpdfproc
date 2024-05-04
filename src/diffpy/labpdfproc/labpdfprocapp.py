@@ -63,9 +63,11 @@ def get_args():
         "--user-metadata",
         metavar="KEY=VALUE",
         nargs="+",
-        help="specify (multiple) key-value pairs to be loaded into metadata by using key=value. "
-        "Do not leave whitespaces before or after = sign. "
-        "If a key or value contains whitespace, you should define it with quotes. ",
+        help="Specify (multiple) key-value pairs to be loaded into metadata using the format key=value. "
+        "Please separate each pair with whitespace, and make sure no whitespaces before or after the = sign. "
+        "Please avoid putting = in a key. If you repeat key names, it will replace previous values. "
+        "If a key or value contains whitespace, enclose it in quotes. "
+        'For example, you can specify -u "facility=NSLS II" beamline=28ID-2 "favorite color"=blue',
     )
     args = p.parse_args()
     return args

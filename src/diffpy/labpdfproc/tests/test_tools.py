@@ -80,23 +80,39 @@ def test_set_wavelength_bad(inputs, msg):
 
 
 params5 = [
-    ([[]], []),
-    ([["toast=for breakfast"]], [["toast", "for breakfast"]]),
-    ([["mylist=[1,2,3.0]"]], [["mylist", "[1,2,3.0]"]]),
-    ([["weather=rainy", "day=tuesday"]], [["weather", "rainy"], ["day", "tuesday"]]),
+    ([None], []),
+    (
+        [["facility=NSLS II", "beamline=28ID-2", "favorite color=blue"]],
+        [["facility", "NSLS II"], ["beamline", "28ID-2"], ["favorite color", "blue"]],
+    ),
 ]
 
 
 @pytest.mark.parametrize("inputs, expected", params5)
 def test_load_user_metadata(inputs, expected):
-    actual_parser = ArgumentParser()
-    actual_parser.add_argument("-u", "--user-metadata", action="append", metavar="KEY=VALUE", nargs="+")
-    actual_args = actual_parser.parse_args([])
     expected_parser = ArgumentParser()
     expected_args = expected_parser.parse_args([])
-
-    setattr(actual_args, "user_metadata", inputs[0])
-    actual_args = load_user_metadata(actual_args)
     for expected_pair in expected:
         setattr(expected_args, expected_pair[0], expected_pair[1])
+
+    actual_parser = ArgumentParser()
+    actual_parser.add_argument("--user-metadata")
+    actual_args = actual_parser.parse_args(["--user-metadata", inputs[0]])
+    actual_args = load_user_metadata(actual_args)
     assert actual_args == expected_args
+
+
+params6 = [
+    ([["facility=NSLS", "II"]]),
+    ([["favorite", "color=blue"]]),
+    ([["beamline", "=", "28ID-2"]]),
+]
+
+
+@pytest.mark.parametrize("inputs", params6)
+def test_load_user_metadata_bad(inputs):
+    actual_parser = ArgumentParser()
+    actual_parser.add_argument("--user-metadata")
+    actual_args = actual_parser.parse_args(["--user-metadata", inputs[0]])
+    with pytest.raises(ValueError):
+        actual_args = load_user_metadata(actual_args)
