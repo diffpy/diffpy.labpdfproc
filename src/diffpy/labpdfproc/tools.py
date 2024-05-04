@@ -79,20 +79,3 @@ def load_user_metadata(args):
             setattr(args, key, value)
     delattr(args, "user_metadata")
     return args
-
-
-# Notes, can ignore
-# ideal inputs: "key1=value1" "key2=value2"
-# (different pairs are separated by white spaces, key and value are separated by =)
-
-# question 1: white spaces in key, value, both?
-# if value contains whitespace, you can specify key="value value" or "key=value value"
-# if key contains whitespace, for example, you have "key key=value",
-# then you can access like getattr(args, 'key key'), but we dont recommend this
-
-# question 2: more than one =?
-# if i have key is hello, value is hello=world, then i can have hello=hello=world to process okay
-# if i have = in key then it's still processing as value => would this be an issue?
-
-
-# user specified the same key: same key we defined, same key they defined
