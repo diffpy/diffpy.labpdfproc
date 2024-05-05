@@ -93,6 +93,8 @@ def load_user_metadata(args):
                     "For more information, use `labpdfproc --help.`"
                 )
             key, value = _load_key_value_pair(item)
+            if hasattr(args, key):
+                raise ValueError(f"Please do not specify repeated keys: {key}. ")
             setattr(args, key, value)
     delattr(args, "user_metadata")
     return args

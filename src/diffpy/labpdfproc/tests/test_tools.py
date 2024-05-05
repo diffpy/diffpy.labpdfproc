@@ -85,7 +85,6 @@ params5 = [
         [["facility=NSLS II", "beamline=28ID-2", "favorite color=blue"]],
         [["facility", "NSLS II"], ["beamline", "28ID-2"], ["favorite color", "blue"]],
     ),
-    ([["facility=NSLS II", "facility=NSLS III"]], [["facility", "NSLS III"]]),
     ([["x=y=z"]], [["x", "y=z"]]),
 ]
 
@@ -105,16 +104,33 @@ def test_load_user_metadata(inputs, expected):
 
 
 params6 = [
-    ([["facility=NSLS", "II"]]),
-    ([["favorite", "color=blue"]]),
-    ([["beamline", "=", "28ID-2"]]),
+    (
+        [["facility=NSLS", "II"]],
+        [
+            "Please provide key-value pairs in the format key=value. "
+            "For more information, use `labpdfproc --help.`"
+        ],
+    ),
+    (
+        [["favorite", "color=blue"]],
+        "Please provide key-value pairs in the format key=value. "
+        "For more information, use `labpdfproc --help.`",
+    ),
+    (
+        [["beamline", "=", "28ID-2"]],
+        "Please provide key-value pairs in the format key=value. "
+        "For more information, use `labpdfproc --help.`",
+    ),
+    ([["facility=NSLS II", "facility=NSLS III"]], ["Please do not specify repeated keys: facility. "]),
+    ([["wavelength=2"]], ["Please do not specify repeated keys: wavelength. "]),
 ]
 
 
-@pytest.mark.parametrize("inputs", params6)
-def test_load_user_metadata_bad(inputs):
+@pytest.mark.parametrize("inputs, msg", params6)
+def test_load_user_metadata_bad(inputs, msg):
     actual_parser = ArgumentParser()
+    actual_parser.add_argument("--wavelength")
     actual_parser.add_argument("--user-metadata")
     actual_args = actual_parser.parse_args(["--user-metadata", inputs[0]])
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=re.escape(msg[0])):
         actual_args = load_user_metadata(actual_args)
