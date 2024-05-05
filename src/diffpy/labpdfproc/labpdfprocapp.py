@@ -1,10 +1,9 @@
-import glob
 import sys
 from argparse import ArgumentParser
 from pathlib import Path
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
-from diffpy.labpdfproc.tools import known_sources, set_input_directory, set_output_directory, set_wavelength
+from diffpy.labpdfproc.tools import known_sources, set_input_files, set_output_directory, set_wavelength
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
@@ -65,12 +64,11 @@ def get_args():
 
 def main():
     args = get_args()
-    args = set_input_directory(args)
+    args = set_input_files(args)
     args.output_directory = set_output_directory(args)
     args.wavelength = set_wavelength(args)
-    input_files = glob.glob(str(args.input_directory) + "/*", recursive=True)
 
-    for input_file in input_files:
+    for input_file in args.input_file:
         filepath = Path(input_file)
         outfilestem = filepath.stem + "_corrected"
         corrfilestem = filepath.stem + "_cve"

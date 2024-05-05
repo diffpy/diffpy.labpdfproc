@@ -1,3 +1,5 @@
+import glob
+import os
 from pathlib import Path
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
@@ -28,9 +30,9 @@ def set_output_directory(args):
     return output_dir
 
 
-def set_input_directory(args):
+def set_input_files(args):
     """
-    Set the input directory based on input file, default is current working directory if nothing is given
+    Set input directory and files, default is current working directory and all files in it
 
     Parameters
     ----------
@@ -40,11 +42,15 @@ def set_input_directory(args):
     Returns
     -------
     args argparse.Namespace
-        the arguments from the parser with a new argument input_directory
+        the arguments from the parser with a new argument input_directory and processed input_files
 
     """
     input_dir = Path.cwd() / Path(args.input_file).parent if args.input_file else Path.cwd()
     setattr(args, "input_directory", input_dir)
+    if not args.input_file:
+        input_files = glob.glob(str(input_dir) + "/*", recursive=True)
+        input_file_names = [os.path.basename(input_file_path) for input_file_path in input_files]
+        args.input_file = input_file_names
     return args
 
 
