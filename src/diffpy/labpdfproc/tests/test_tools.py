@@ -132,5 +132,5 @@ def test_load_user_metadata_bad(inputs, msg):
     actual_parser.add_argument("--wavelength")
     actual_parser.add_argument("--user-metadata")
     actual_args = actual_parser.parse_args(["--user-metadata", inputs[0]])
-    with pytest.raises(ValueError, match=re.escape(msg[0])):
+    with pytest.raises(ValueError, match=msg[0]):
         actual_args = load_user_metadata(actual_args)
