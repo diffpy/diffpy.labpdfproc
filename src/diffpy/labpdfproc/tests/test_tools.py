@@ -82,10 +82,10 @@ def test_set_wavelength_bad(inputs, msg):
 params5 = [
     ([], []),
     (
-        ["-u", "facility=NSLS II", "beamline=28ID-2", "favorite color=blue"],
+        ["--user-metadata", "facility=NSLS II", "beamline=28ID-2", "favorite color=blue"],
         [["facility", "NSLS II"], ["beamline", "28ID-2"], ["favorite color", "blue"]],
     ),
-    (["-u", "x=y=z"], [["x", "y=z"]]),
+    (["--user-metadata", "x=y=z"], [["x", "y=z"]]),
 ]
 
 
@@ -104,24 +104,30 @@ def test_load_user_metadata(inputs, expected):
 
 params6 = [
     (
-        ["-u", "facility=", "NSLS II"],
+        ["--user-metadata", "facility=", "NSLS II"],
         [
             "Please provide key-value pairs in the format key=value. "
             "For more information, use `labpdfproc --help.`"
         ],
     ),
     (
-        ["-u", "favorite", "color=blue"],
+        ["--user-metadata", "favorite", "color=blue"],
         "Please provide key-value pairs in the format key=value. "
         "For more information, use `labpdfproc --help.`",
     ),
     (
-        ["-u", "beamline", "=", "28ID-2"],
+        ["--user-metadata", "beamline", "=", "28ID-2"],
         "Please provide key-value pairs in the format key=value. "
         "For more information, use `labpdfproc --help.`",
     ),
-    (["-u", "facility=NSLS II", "facility=NSLS III"], "Please do not specify repeated keys: facility. "),
-    (["-u", "wavelength=2"], "wavelength is a reserved name.  Please rerun using a different key name. "),
+    (
+        ["--user-metadata", "facility=NSLS II", "facility=NSLS III"],
+        "Please do not specify repeated keys: facility. ",
+    ),
+    (
+        ["--user-metadata", "wavelength=2"],
+        "wavelength is a reserved name.  Please rerun using a different key name. ",
+    ),
 ]
 
 
