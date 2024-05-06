@@ -1,11 +1,11 @@
 import argparse
 import os
 import re
-from argparse import ArgumentParser
 from pathlib import Path
 
 import pytest
 
+from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import known_sources, load_user_metadata, set_output_directory, set_wavelength
 
 params1 = [
@@ -80,57 +80,54 @@ def test_set_wavelength_bad(inputs, msg):
 
 
 params5 = [
-    ([None], []),
+    ([], []),
     (
-        [["facility=NSLS II", "beamline=28ID-2", "favorite color=blue"]],
+        ["-u", "facility=NSLS II", "beamline=28ID-2", "favorite color=blue"],
         [["facility", "NSLS II"], ["beamline", "28ID-2"], ["favorite color", "blue"]],
     ),
-    ([["x=y=z"]], [["x", "y=z"]]),
+    (["-u", "x=y=z"], [["x", "y=z"]]),
 ]
 
 
 @pytest.mark.parametrize("inputs, expected", params5)
 def test_load_user_metadata(inputs, expected):
-    expected_parser = ArgumentParser()
-    expected_args = expected_parser.parse_args([])
+    expected_args = get_args(["2.5"])
     for expected_pair in expected:
         setattr(expected_args, expected_pair[0], expected_pair[1])
+    delattr(expected_args, "user_metadata")
 
-    actual_parser = ArgumentParser()
-    actual_parser.add_argument("--user-metadata")
-    actual_args = actual_parser.parse_args(["--user-metadata", inputs[0]])
+    cli_inputs = ["2.5"] + inputs
+    actual_args = get_args(cli_inputs)
     actual_args = load_user_metadata(actual_args)
     assert actual_args == expected_args
 
 
 params6 = [
     (
-        [["facility=NSLS", "II"]],
+        ["-u", "facility=", "NSLS II"],
         [
             "Please provide key-value pairs in the format key=value. "
             "For more information, use `labpdfproc --help.`"
         ],
     ),
     (
-        [["favorite", "color=blue"]],
+        ["-u", "favorite", "color=blue"],
         "Please provide key-value pairs in the format key=value. "
         "For more information, use `labpdfproc --help.`",
     ),
     (
-        [["beamline", "=", "28ID-2"]],
+        ["-u", "beamline", "=", "28ID-2"],
         "Please provide key-value pairs in the format key=value. "
         "For more information, use `labpdfproc --help.`",
     ),
-    ([["facility=NSLS II", "facility=NSLS III"]], ["Please do not specify repeated keys: facility. "]),
-    ([["wavelength=2"]], ["Please do not specify repeated keys: wavelength. "]),
+    (["-u", "facility=NSLS II", "facility=NSLS III"], "Please do not specify repeated keys: facility. "),
+    (["-u", "wavelength=2"], "wavelength is a reserved name.  Please rerun using a different key name. "),
 ]
 
 
 @pytest.mark.parametrize("inputs, msg", params6)
 def test_load_user_metadata_bad(inputs, msg):
-    actual_parser = ArgumentParser()
-    actual_parser.add_argument("--wavelength")
-    actual_parser.add_argument("--user-metadata")
-    actual_args = actual_parser.parse_args(["--user-metadata", inputs[0]])
+    cli_inputs = ["2.5"] + inputs
+    actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
         actual_args = load_user_metadata(actual_args)

@@ -8,7 +8,7 @@ from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
 
-def get_args():
+def get_args(override_cli_inputs=None):
     p = ArgumentParser()
     p.add_argument("mud", help="Value of mu*D for your " "sample. Required.", type=float)
     p.add_argument("-i", "--input-file", help="The filename of the " "datafile to load.")
@@ -66,10 +66,11 @@ def get_args():
         help="Specify key-value pairs to be loaded into metadata using the format key=value. "
         "Separate pairs with whitespace, and ensure no whitespaces before or after the = sign. "
         "Avoid using = in keys. If multiple = signs are present, only the first separates the key and value. "
-        "Please do not repeat key names. If a key or value contains whitespace, enclose it in quotes. "
-        'For example, you can specify -u "facility=NSLS II" beamline=28ID-2 "favorite color"=blue',
+        "If a key or value contains whitespace, enclose it in quotes. "
+        "For example, facility='NSLS II', 'facility=NSLS II', beamline=28ID-2, "
+        "'beamline'='28ID-2', 'favorite color'=blue, are all valid key=value items. ",
     )
-    args = p.parse_args()
+    args = p.parse_args(override_cli_inputs)
     return args
 
 

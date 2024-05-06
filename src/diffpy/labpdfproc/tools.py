@@ -85,6 +85,8 @@ def load_user_metadata(args):
 
     """
 
+    reserved_keys = vars(args).keys()
+
     if args.user_metadata:
         for item in args.user_metadata:
             if "=" not in item:
@@ -93,6 +95,8 @@ def load_user_metadata(args):
                     "For more information, use `labpdfproc --help.`"
                 )
             key, value = _load_key_value_pair(item)
+            if key in reserved_keys:
+                raise ValueError(f"{key} is a reserved name.  Please rerun using a different key name. ")
             if hasattr(args, key):
                 raise ValueError(f"Please do not specify repeated keys: {key}. ")
             setattr(args, key, value)
