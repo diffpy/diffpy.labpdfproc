@@ -8,9 +8,9 @@ from diffpy.labpdfproc.tools import known_sources, set_output_directory, set_wav
 
 params1 = [
     ([], ["."]),
-    (["-o", "."], ["."]),
-    (["-o", "new_dir"], ["new_dir"]),
-    (["-o", "input_dir"], ["input_dir"]),
+    (["--output-directory", "."], ["."]),
+    (["--output-directory", "new_dir"], ["new_dir"]),
+    (["--output-directory", "input_dir"], ["input_dir"]),
 ]
 
 
@@ -28,7 +28,7 @@ def test_set_output_directory(inputs, expected, user_filesystem):
 
 
 def test_set_output_directory_bad(user_filesystem):
-    cli_inputs = ["2.5", "-o", "good_data.chi"]
+    cli_inputs = ["2.5", "--output-directory", "good_data.chi"]
     actual_args = get_args(cli_inputs)
     with pytest.raises(FileExistsError):
         actual_args.output_directory = set_output_directory(actual_args)
@@ -38,9 +38,9 @@ def test_set_output_directory_bad(user_filesystem):
 
 params2 = [
     ([], [0.71]),
-    (["-a", "Ag"], [0.59]),
-    (["-w", "0.25"], [0.25]),
-    (["-w", "0.25", "-a", "Ag"], [0.25]),
+    (["--anode-type", "Ag"], [0.59]),
+    (["--wavelength", "0.25"], [0.25]),
+    (["--wavelength", "0.25", "--anode-type", "Ag"], [0.25]),
 ]
 
 
@@ -55,12 +55,15 @@ def test_set_wavelength(inputs, expected):
 
 params3 = [
     (
-        ["-a", "invalid"],
+        ["--anode-type", "invalid"],
         [f"Anode type not recognized. Please rerun specifying an anode_type from {*known_sources, }."],
     ),
-    (["-w", "0"], ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength."]),
     (
-        ["-w", "-1", "-a", "Mo"],
+        ["--wavelength", "0"],
+        ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength."],
+    ),
+    (
+        ["--wavelength", "-1", "--anode-type", "Mo"],
         ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength."],
     ),
 ]
