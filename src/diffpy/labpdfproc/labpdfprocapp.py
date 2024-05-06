@@ -8,7 +8,7 @@ from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
 
-def get_args():
+def get_args(override_cli_inputs=None):
     p = ArgumentParser()
     p.add_argument("mud", help="Value of mu*D for your " "sample. Required.", type=float)
     p.add_argument("-i", "--input-file", help="The filename of the " "datafile to load.")
@@ -58,7 +58,7 @@ def get_args():
         action="store_true",
         help="Outputs will not overwrite existing file unless --force is specified.",
     )
-    args = p.parse_args()
+    args = p.parse_args(override_cli_inputs)
     return args
 
 
