@@ -5,7 +5,7 @@ import numpy as np
 from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 RADIUS_MM = 1
-N_POINTS_ON_DIAMETER = 249
+N_POINTS_ON_DIAMETER = 300
 TTH_GRID = np.arange(1, 141, 1)
 
 
