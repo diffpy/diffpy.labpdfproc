@@ -76,9 +76,9 @@ def get_args(override_cli_inputs=None):
 
 def main():
     args = get_args()
-    args = load_user_metadata(args)
     args.output_directory = set_output_directory(args)
     args.wavelength = set_wavelength(args)
+    args = load_user_metadata(args)
 
     filepath = Path(args.input_file)
     outfilestem = filepath.stem + "_corrected"
