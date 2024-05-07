@@ -13,21 +13,36 @@ from diffpy.labpdfproc.tools import (
 )
 from diffpy.utils.parsers.loaddata import loadData
 
-params1 = [
+# Use cases can be found here: https://github.com/diffpy/diffpy.labpdfproc/issues/48
+params_input = [
+    (["good_data.chi"], [".", "good_data.chi"]),
+    (["input_dir/good_data.chi"], ["input_dir", "good_data.chi"]),
+    (["./input_dir/good_data.chi"], ["input_dir", "good_data.chi"]),
     (
-        ["--input-file", "."],
+        ["."],
         [
             ".",
             ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
         ],
     ),
-    (["--input-file", "good_data.chi"], [".", "good_data.chi"]),
-    (["--input-file", "input_dir/unreadable_file.txt"], ["input_dir", "unreadable_file.txt"]),
-    # ([Path.cwd()], [Path.cwd()]),
+    (
+        ["./input_dir"],
+        [
+            "input_dir",
+            ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
+        ],
+    ),
+    (
+        ["input_dir"],
+        [
+            "input_dir",
+            ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
+        ],
+    ),
 ]
 
 
-@pytest.mark.parametrize("inputs, expected", params1)
+@pytest.mark.parametrize("inputs, expected", params_input)
 def test_set_input_files(inputs, expected, user_filesystem):
     expected_input_directory = Path(user_filesystem) / expected[0]
     expected_input_files = expected[1]
@@ -37,6 +52,21 @@ def test_set_input_files(inputs, expected, user_filesystem):
     actual_args = set_input_files(actual_args)
     assert actual_args.input_directory == expected_input_directory
     assert set(actual_args.input_file) == set(expected_input_files)
+
+
+params_input_bad = [
+    (["new_file.xy"]),
+    (["./input_dir/new_file.xy"]),
+    (["./new_dir"]),
+]
+
+
+@pytest.mark.parametrize("inputs", params_input_bad)
+def test_set_input_files_bad(inputs, user_filesystem):
+    cli_inputs = ["2.5"] + inputs
+    actual_args = get_args(cli_inputs)
+    with pytest.raises(ValueError):
+        actual_args = set_input_files(actual_args)
 
 
 def test_loadData_with_input_files(user_filesystem):
@@ -60,7 +90,7 @@ params1 = [
 @pytest.mark.parametrize("inputs, expected", params1)
 def test_set_output_directory(inputs, expected, user_filesystem):
     expected_output_directory = Path(user_filesystem) / expected[0]
-    cli_inputs = ["2.5"] + inputs
+    cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args.output_directory = set_output_directory(actual_args)
     assert actual_args.output_directory == expected_output_directory
@@ -69,7 +99,7 @@ def test_set_output_directory(inputs, expected, user_filesystem):
 
 
 def test_set_output_directory_bad(user_filesystem):
-    cli_inputs = ["2.5", "--output-directory", "good_data.chi"]
+    cli_inputs = ["2.5", "data.xy", "--output-directory", "good_data.chi"]
     actual_args = get_args(cli_inputs)
     with pytest.raises(FileExistsError):
         actual_args.output_directory = set_output_directory(actual_args)
@@ -88,7 +118,7 @@ params2 = [
 @pytest.mark.parametrize("inputs, expected", params2)
 def test_set_wavelength(inputs, expected):
     expected_wavelength = expected[0]
-    cli_inputs = ["2.5"] + inputs
+    cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args.wavelength = set_wavelength(actual_args)
     assert actual_args.wavelength == expected_wavelength
@@ -112,7 +142,7 @@ params3 = [
 
 @pytest.mark.parametrize("inputs, msg", params3)
 def test_set_wavelength_bad(inputs, msg):
-    cli_inputs = ["2.5"] + inputs
+    cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=re.escape(msg[0])):
         actual_args.wavelength = set_wavelength(actual_args)
@@ -130,12 +160,12 @@ params5 = [
 
 @pytest.mark.parametrize("inputs, expected", params5)
 def test_load_user_metadata(inputs, expected):
-    expected_args = get_args(["2.5"])
+    expected_args = get_args(["2.5", "data.xy"])
     for expected_pair in expected:
         setattr(expected_args, expected_pair[0], expected_pair[1])
     delattr(expected_args, "user_metadata")
 
-    cli_inputs = ["2.5"] + inputs
+    cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = load_user_metadata(actual_args)
     assert actual_args == expected_args
@@ -172,7 +202,7 @@ params6 = [
 
 @pytest.mark.parametrize("inputs, msg", params6)
 def test_load_user_metadata_bad(inputs, msg):
-    cli_inputs = ["2.5"] + inputs
+    cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
         actual_args = load_user_metadata(actual_args)

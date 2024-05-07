@@ -20,19 +20,18 @@ def set_input_files(args):
     args argparse.Namespace
 
     """
-    if not args.input_file or not Path(args.input_file).exists():
+    if not Path(args.input).exists():
         raise ValueError("Please specify valid input file or directory.")
 
-    if not Path(args.input_file).is_dir():
-        input_dir = Path.cwd() / Path(args.input_file).parent
-        input_file_name = Path(args.input_file).name
-        args.input_file = input_file_name
+    if not Path(args.input).is_dir():
+        input_dir = Path.cwd() / Path(args.input).parent
+        input_file_name = Path(args.input).name
     else:
-        input_dir = Path(args.input_file).resolve()
+        input_dir = Path(args.input).resolve()
         input_files = [file for file in glob.glob(str(input_dir) + "/*", recursive=True) if os.path.isfile(file)]
-        input_file_names = [os.path.basename(input_file_path) for input_file_path in input_files]
-        args.input_file = input_file_names
+        input_file_name = [os.path.basename(input_file_path) for input_file_path in input_files]
     setattr(args, "input_directory", input_dir)
+    setattr(args, "input_file", input_file_name)
     return args
 
 
