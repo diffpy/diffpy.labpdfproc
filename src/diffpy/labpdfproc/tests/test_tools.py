@@ -6,7 +6,50 @@ from pathlib import Path
 import pytest
 
 from diffpy.labpdfproc.labpdfprocapp import get_args
-from diffpy.labpdfproc.tools import known_sources, load_user_metadata, set_output_directory, set_wavelength
+from diffpy.labpdfproc.tools import (
+    known_sources,
+    load_user_metadata,
+    set_input_files,
+    set_output_directory,
+    set_wavelength,
+)
+from diffpy.utils.parsers.loaddata import loadData
+
+params1 = [
+    (
+        [],
+        [
+            ".",
+            ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl", "input_dir"],
+        ],
+    ),
+    (["--input-file", "good_data.chi"], [".", "good_data.chi"]),
+    (["--input-file", "input_dir/unreadable_file.txt"], ["input_dir", "input_dir/unreadable_file.txt"]),
+    # ([Path.cwd()], [Path.cwd()]),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params1)
+def test_set_input_files(inputs, expected, user_filesystem):
+    expected_input_directory = Path(user_filesystem) / expected[0]
+    expected_input_files = expected[1]
+
+    cli_inputs = ["2.5"] + inputs
+    actual_args = get_args(cli_inputs)
+    actual_args = set_input_files(actual_args)
+    assert actual_args.input_directory == expected_input_directory
+    assert set(actual_args.input_file) == set(expected_input_files)
+
+
+def test_loadData_with_input_files(user_filesystem):
+    xarray_chi, yarray_chi = loadData("good_data.chi", unpack=True)
+    xarray_xy, yarray_xy = loadData("good_data.xy", unpack=True)
+    xarray_txt, yarray_txt = loadData("good_data.txt", unpack=True)
+    with pytest.raises(ValueError):
+        xarray_txt, yarray_txt = loadData("unreadable_file.txt", unpack=True)
+    with pytest.raises(ValueError):
+        xarray_pkl, yarray_pkl = loadData("binary.pkl", unpack=True)
+
 
 params1 = [
     ([None], ["."]),
