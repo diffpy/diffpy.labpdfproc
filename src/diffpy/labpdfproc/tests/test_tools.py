@@ -15,14 +15,14 @@ from diffpy.utils.parsers.loaddata import loadData
 
 params1 = [
     (
-        [],
+        ["--input-file", "."],
         [
             ".",
-            ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl", "input_dir"],
+            ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
         ],
     ),
     (["--input-file", "good_data.chi"], [".", "good_data.chi"]),
-    (["--input-file", "input_dir/unreadable_file.txt"], ["input_dir", "input_dir/unreadable_file.txt"]),
+    (["--input-file", "input_dir/unreadable_file.txt"], ["input_dir", "unreadable_file.txt"]),
     # ([Path.cwd()], [Path.cwd()]),
 ]
 
