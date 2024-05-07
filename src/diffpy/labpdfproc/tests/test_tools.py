@@ -39,6 +39,11 @@ params_input = [
             ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
         ],
     ),
+    # ([".chi"], [".", ["file1.chi", "file2.chi", "file10.chi"]]),
+    # (["input_dir/.chi"], ["input_dir", ["file1.chi", "file2.chi", "file10.chi"]]),
+    # (["file1.chi", "file10.chi"], [".", ["file1.chi", "file10.chi"]]),
+    # (["file1.chi", "file10.chi"], [".", ["file1.chi", "file10.chi"]]),
+    # (["input_file_list.txt"], [".", ["file1.chi", "file10.chi"]]),
 ]
 
 
