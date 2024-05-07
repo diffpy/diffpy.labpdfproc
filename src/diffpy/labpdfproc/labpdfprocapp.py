@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
-from diffpy.labpdfproc.tools import known_sources, set_output_directory, set_wavelength
+from diffpy.labpdfproc.tools import known_sources, load_user_metadata, set_output_directory, set_wavelength
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
@@ -58,6 +58,18 @@ def get_args(override_cli_inputs=None):
         action="store_true",
         help="Outputs will not overwrite existing file unless --force is specified.",
     )
+    p.add_argument(
+        "-u",
+        "--user-metadata",
+        metavar="KEY=VALUE",
+        nargs="+",
+        help="Specify key-value pairs to be loaded into metadata using the format key=value. "
+        "Separate pairs with whitespace, and ensure no whitespaces before or after the = sign. "
+        "Avoid using = in keys. If multiple = signs are present, only the first separates the key and value. "
+        "If a key or value contains whitespace, enclose it in quotes. "
+        "For example, facility='NSLS II', 'facility=NSLS II', beamline=28ID-2, "
+        "'beamline'='28ID-2', 'favorite color'=blue, are all valid key=value items. ",
+    )
     args = p.parse_args(override_cli_inputs)
     return args
 
@@ -66,6 +78,7 @@ def main():
     args = get_args()
     args.output_directory = set_output_directory(args)
     args.wavelength = set_wavelength(args)
+    args = load_user_metadata(args)
 
     filepath = Path(args.input_file)
     outfilestem = filepath.stem + "_corrected"
