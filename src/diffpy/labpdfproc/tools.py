@@ -60,3 +60,45 @@ def set_wavelength(args):
         return WAVELENGTHS[args.anode_type]
     else:
         return WAVELENGTHS["Mo"]
+
+
+def _load_key_value_pair(s):
+    items = s.split("=")
+    key = items[0].strip()
+    if len(items) > 1:
+        value = "=".join(items[1:])
+    return (key, value)
+
+
+def load_user_metadata(args):
+    """
+    Load user metadata into the provided argparse Namespace, raise ValueError if in incorrect format
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    the updated argparse Namespace with user metadata inserted as key-value pairs
+
+    """
+
+    reserved_keys = vars(args).keys()
+
+    if args.user_metadata:
+        for item in args.user_metadata:
+            if "=" not in item:
+                raise ValueError(
+                    "Please provide key-value pairs in the format key=value. "
+                    "For more information, use `labpdfproc --help.`"
+                )
+            key, value = _load_key_value_pair(item)
+            if key in reserved_keys:
+                raise ValueError(f"{key} is a reserved name.  Please rerun using a different key name. ")
+            if hasattr(args, key):
+                raise ValueError(f"Please do not specify repeated keys: {key}. ")
+            setattr(args, key, value)
+    delattr(args, "user_metadata")
+    return args
