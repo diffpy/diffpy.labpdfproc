@@ -17,7 +17,7 @@ from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Dif
 def get_args(override_cli_inputs=None):
     p = ArgumentParser()
     p.add_argument("mud", help="Value of mu*D for your " "sample. Required.", type=float)
-    p.add_argument("input", help="The filename or directory of the " "datafile to load.")
+    p.add_argument("input", help="The filename or directory of the datafile to load. Required.")
     p.add_argument(
         "-a",
         "--anode-type",

@@ -14,6 +14,9 @@ from diffpy.labpdfproc.tools import (
 from diffpy.utils.parsers.loaddata import loadData
 
 # Use cases can be found here: https://github.com/diffpy/diffpy.labpdfproc/issues/48
+
+# This test covers existing single input file or directory
+# We store absolute path into input_directory and file names into input_file
 params_input = [
     (["good_data.chi"], [".", "good_data.chi"]),
     (["input_dir/good_data.chi"], ["input_dir", "good_data.chi"]),
@@ -39,11 +42,6 @@ params_input = [
             ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
         ],
     ),
-    # ([".chi"], [".", ["file1.chi", "file2.chi", "file10.chi"]]),
-    # (["input_dir/.chi"], ["input_dir", ["file1.chi", "file2.chi", "file10.chi"]]),
-    # (["file1.chi", "file10.chi"], [".", ["file1.chi", "file10.chi"]]),
-    # (["file1.chi", "file10.chi"], [".", ["file1.chi", "file10.chi"]]),
-    # (["input_file_list.txt"], [".", ["file1.chi", "file10.chi"]]),
 ]
 
 
@@ -59,21 +57,23 @@ def test_set_input_files(inputs, expected, user_filesystem):
     assert set(actual_args.input_file) == set(expected_input_files)
 
 
+# This test covers non-existing single input file or directory, in this case we raise an error with message
 params_input_bad = [
-    (["new_file.xy"]),
-    (["./input_dir/new_file.xy"]),
-    (["./new_dir"]),
+    (["non_existing_file.xy"], "Please specify valid input file or directory."),
+    (["./input_dir/non_existing_file.xy"], "Please specify valid input file or directory."),
+    (["./non_existing_dir"], "Please specify valid input file or directory."),
 ]
 
 
-@pytest.mark.parametrize("inputs", params_input_bad)
-def test_set_input_files_bad(inputs, user_filesystem):
+@pytest.mark.parametrize("inputs, msg", params_input_bad)
+def test_set_input_files_bad(inputs, msg, user_filesystem):
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=msg[0]):
         actual_args = set_input_files(actual_args)
 
 
+# Pass files to loadData and use it to check if file is valid or not
 def test_loadData_with_input_files(user_filesystem):
     xarray_chi, yarray_chi = loadData("good_data.chi", unpack=True)
     xarray_xy, yarray_xy = loadData("good_data.xy", unpack=True)
