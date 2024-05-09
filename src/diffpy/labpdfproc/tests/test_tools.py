@@ -17,7 +17,7 @@ from diffpy.utils.parsers.loaddata import loadData
 # Use cases can be found here: https://github.com/diffpy/diffpy.labpdfproc/issues/48
 
 # This test covers existing single input file, directory, a file list, and multiple files
-# We store absolute paths into input_directory and file names into input_file
+# We store absolute path into input_directory and file names into input_file
 params_input = [
     (["good_data.chi"], [".", "good_data.chi"]),  # single good file, same directory
     (["input_dir/good_data.chi"], ["input_dir", "good_data.chi"]),  # single good file, input directory
@@ -35,14 +35,14 @@ params_input = [
             ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
         ],
     ),
-    (  # list of files provided (we skip if encountering an invalid files)
+    (  # list of files provided (we skip if encountering invalid files)
         ["good_data.chi", "good_data.xy", "unreadable_file.txt", "missing_file.txt"],
         [
             ".",
             ["good_data.chi", "good_data.xy", "unreadable_file.txt"],
         ],
     ),
-    (  # list of files provided (with invalid files and files in different directory)
+    (  # list of files provided (with invalid files and files in different directories)
         ["input_dir/good_data.chi", "good_data.xy", "missing_file.txt"],
         [
             ".",
@@ -53,7 +53,7 @@ params_input = [
         ["file_list_dir/file_list.txt"],
         [".", ["good_data.chi", "good_data.xy", "good_data.txt"]],
     ),
-    (  # file_list_example2.txt list of files provided with different paths
+    (  # file_list_example2.txt list of files provided in different directories
         ["file_list_dir/file_list_example2.txt"],
         [".", ["input_dir/good_data.chi", "good_data.xy", "input_dir/good_data.txt"]],
     ),
