@@ -39,4 +39,13 @@ def user_filesystem(tmp_path):
     with open(os.path.join(input_dir, "binary.pkl"), "wb") as f:
         f.write(binary_data)
 
+    file_list_dir = Path(tmp_path).resolve() / "file_list_dir"
+    file_list_dir.mkdir(parents=True, exist_ok=True)
+    with open(os.path.join(file_list_dir, "file_list.txt"), "w") as f:
+        f.write("good_data.chi \n good_data.xy \n good_data.txt")
+    with open(os.path.join(file_list_dir, "invalid_file_list.txt"), "w") as f:
+        f.write("good_data.chi \n non_existing_file.xy \n non_existing_file.txt")
+    with open(os.path.join(file_list_dir, "invalid_format_file_list.txt"), "w") as f:
+        f.write("good_data.chi good_data.xy \n non_existing_file.txt")
+
     yield tmp_path

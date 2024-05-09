@@ -1,3 +1,4 @@
+import os
 import re
 from pathlib import Path
 
@@ -15,7 +16,7 @@ from diffpy.utils.parsers.loaddata import loadData
 
 # Use cases can be found here: https://github.com/diffpy/diffpy.labpdfproc/issues/48
 
-# This test covers existing single input file or directory
+# This test covers existing single input file, directory, or a file list
 # We store absolute path into input_directory and file names into input_file
 params_input = [
     (["good_data.chi"], [".", "good_data.chi"]),
@@ -42,6 +43,7 @@ params_input = [
             ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
         ],
     ),
+    (["file_list_dir/file_list.txt"], ["file_list_dir", ["good_data.chi", "good_data.xy", "good_data.txt"]]),
 ]
 
 
@@ -51,6 +53,28 @@ def test_set_input_files(inputs, expected, user_filesystem):
     expected_input_files = expected[1]
 
     cli_inputs = ["2.5"] + inputs
+    actual_args = get_args(cli_inputs)
+    actual_args = set_input_files(actual_args)
+    assert actual_args.input_directory == expected_input_directory
+    assert set(actual_args.input_file) == set(expected_input_files)
+
+
+# This test is for existing single input file or directory absolute path not in cwd
+# Here we are in user_filesystem/input_dir, testing for a file or directory in user_filesystem
+params_input_not_cwd = [
+    (["good_data.chi"], [".", "good_data.chi"]),
+    (["."], [".", ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"]]),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params_input_not_cwd)
+def test_set_input_files_not_cwd(inputs, expected, user_filesystem):
+    expected_input_directory = Path(user_filesystem) / expected[0]
+    expected_input_files = expected[1]
+    actual_input = [str(Path(user_filesystem) / inputs[0])]
+    os.chdir("input_dir")
+
+    cli_inputs = ["2.5"] + actual_input
     actual_args = get_args(cli_inputs)
     actual_args = set_input_files(actual_args)
     assert actual_args.input_directory == expected_input_directory

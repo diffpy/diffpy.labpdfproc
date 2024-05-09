@@ -15,21 +15,42 @@ def set_input_files(args):
     args argparse.Namespace
         the arguments from the parser
 
+    It is implemented as this:
+    If input is a file, we first try to read it as a file list and store all listed file names.
+    If any filename is invalid, then proceed to treat it as a data file.
+    Otherwise if we have a directory, glob all files within it.
+
     Returns
     -------
     args argparse.Namespace
 
     """
+
     if not Path(args.input).exists():
         raise ValueError("Please specify valid input file or directory.")
 
     if not Path(args.input).is_dir():
         input_dir = Path.cwd() / Path(args.input).parent
-        input_file_name = Path(args.input).name
+        file_names = []
+        with open(args.input, "r") as f:
+            for line in f:
+                if not os.path.isfile(line.strip()):
+                    file_names = []
+                    break
+                else:
+                    file_name = line.strip()
+                    file_names.append(file_name)
+
+        if len(file_names) > 0:
+            input_file_name = file_names
+        else:
+            input_file_name = Path(args.input).name
+
     else:
         input_dir = Path(args.input).resolve()
         input_files = [file for file in glob.glob(str(input_dir) + "/*", recursive=True) if os.path.isfile(file)]
         input_file_name = [os.path.basename(input_file_path) for input_file_path in input_files]
+
     setattr(args, "input_directory", input_dir)
     setattr(args, "input_file", input_file_name)
     return args
