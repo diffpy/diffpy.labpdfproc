@@ -16,34 +16,47 @@ from diffpy.utils.parsers.loaddata import loadData
 
 # Use cases can be found here: https://github.com/diffpy/diffpy.labpdfproc/issues/48
 
-# This test covers existing single input file, directory, or a file list
-# We store absolute path into input_directory and file names into input_file
+# This test covers existing single input file, directory, a file list, and multiple files
+# We store absolute paths into input_directory and file names into input_file
 params_input = [
-    (["good_data.chi"], [".", "good_data.chi"]),
-    (["input_dir/good_data.chi"], ["input_dir", "good_data.chi"]),
-    (["./input_dir/good_data.chi"], ["input_dir", "good_data.chi"]),
-    (
+    (["good_data.chi"], [".", "good_data.chi"]),  # single good file, same directory
+    (["input_dir/good_data.chi"], ["input_dir", "good_data.chi"]),  # single good file, input directory
+    (  # glob current directory
         ["."],
         [
             ".",
             ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
         ],
     ),
-    (
+    (  # glob input directory
         ["./input_dir"],
         [
             "input_dir",
             ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
         ],
     ),
-    (
-        ["input_dir"],
+    (  # list of files provided (we skip if encountering an invalid files)
+        ["good_data.chi", "good_data.xy", "unreadable_file.txt", "missing_file.txt"],
         [
-            "input_dir",
-            ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
+            ".",
+            ["good_data.chi", "good_data.xy", "unreadable_file.txt"],
         ],
     ),
-    (["file_list_dir/file_list.txt"], ["file_list_dir", ["good_data.chi", "good_data.xy", "good_data.txt"]]),
+    (  # list of files provided (with invalid files and files in different directory)
+        ["input_dir/good_data.chi", "good_data.xy", "missing_file.txt"],
+        [
+            ".",
+            ["input_dir/good_data.chi", "good_data.xy"],
+        ],
+    ),
+    (  # file_list.txt list of files provided
+        ["file_list_dir/file_list.txt"],
+        [".", ["good_data.chi", "good_data.xy", "good_data.txt"]],
+    ),
+    (  # file_list_example2.txt list of files provided with different paths
+        ["file_list_dir/file_list_example2.txt"],
+        [".", ["input_dir/good_data.chi", "good_data.xy", "input_dir/good_data.txt"]],
+    ),
 ]
 
 
