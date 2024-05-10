@@ -1,10 +1,104 @@
+import os
 import re
 from pathlib import Path
 
 import pytest
 
 from diffpy.labpdfproc.labpdfprocapp import get_args
-from diffpy.labpdfproc.tools import known_sources, load_user_metadata, set_output_directory, set_wavelength
+from diffpy.labpdfproc.tools import (
+    known_sources,
+    load_user_metadata,
+    set_input_lists,
+    set_output_directory,
+    set_wavelength,
+)
+
+# Use cases can be found here: https://github.com/diffpy/diffpy.labpdfproc/issues/48
+
+# This test covers existing single input file, directory, a file list, and multiple files
+# We store absolute path into input_directory and file names into input_file
+params_input = [
+    (["good_data.chi"], ["good_data.chi"]),  # single good file, same directory
+    (["input_dir/good_data.chi"], ["input_dir/good_data.chi"]),  # single good file, input directory
+    (  # glob current directory
+        ["."],
+        ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
+    ),
+    (  # glob input directory
+        ["./input_dir"],
+        [
+            "input_dir/good_data.chi",
+            "input_dir/good_data.xy",
+            "input_dir/good_data.txt",
+            "input_dir/unreadable_file.txt",
+            "input_dir/binary.pkl",
+        ],
+    ),
+    (  # glob list of input directories
+        [".", "./input_dir"],
+        [
+            "./good_data.chi",
+            "./good_data.xy",
+            "./good_data.txt",
+            "./unreadable_file.txt",
+            "./binary.pkl",
+            "input_dir/good_data.chi",
+            "input_dir/good_data.xy",
+            "input_dir/good_data.txt",
+            "input_dir/unreadable_file.txt",
+            "input_dir/binary.pkl",
+        ],
+    ),
+    (  # file_list.txt list of files provided
+        ["input_dir/file_list.txt"],
+        ["good_data.chi", "good_data.xy", "good_data.txt"],
+    ),
+    (  # file_list_example2.txt list of files provided in different directories
+        ["input_dir/file_list_example2.txt"],
+        ["input_dir/good_data.chi", "good_data.xy", "input_dir/good_data.txt"],
+    ),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params_input)
+def test_set_input_lists(inputs, expected, user_filesystem):
+    base_dir = Path(user_filesystem)
+    os.chdir(base_dir)
+    expected_paths = [base_dir.resolve() / expected_path for expected_path in expected]
+
+    cli_inputs = ["2.5"] + inputs
+    actual_args = get_args(cli_inputs)
+    actual_args = set_input_lists(actual_args)
+    assert list(actual_args.input_paths).sort() == expected_paths.sort()
+
+
+# This test covers non-existing single input file or directory, in this case we raise an error with message
+params_input_bad = [
+    (
+        ["non_existing_file.xy"],
+        "Cannot find non_existing_file.xy. Please specify valid input file(s) or directories.",
+    ),
+    (
+        ["./input_dir/non_existing_file.xy"],
+        "Cannot find ./input_dir/non_existing_file.xy. Please specify valid input file(s) or directories.",
+    ),
+    (["./non_existing_dir"], "Cannot find ./non_existing_dir. Please specify valid input file(s) or directories."),
+    (  # list of files provided (with missing files)
+        ["good_data.chi", "good_data.xy", "unreadable_file.txt", "missing_file.txt"],
+        "Cannot find missing_file.txt. Please specify valid input file(s) or directories.",
+    ),
+]
+
+
+@pytest.mark.parametrize("inputs, msg", params_input_bad)
+def test_set_input_files_bad(inputs, msg, user_filesystem):
+    base_dir = Path(user_filesystem)
+    os.chdir(base_dir)
+    cli_inputs = ["2.5"] + inputs
+    actual_args = get_args(cli_inputs)
+    with pytest.raises(FileNotFoundError, match=msg[0]):
+        actual_args = set_input_lists(actual_args)
+
 
 params1 = [
     ([], ["."]),
@@ -16,6 +110,7 @@ params1 = [
 
 @pytest.mark.parametrize("inputs, expected", params1)
 def test_set_output_directory(inputs, expected, user_filesystem):
+    os.chdir(user_filesystem)
     expected_output_directory = Path(user_filesystem) / expected[0]
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
@@ -26,6 +121,7 @@ def test_set_output_directory(inputs, expected, user_filesystem):
 
 
 def test_set_output_directory_bad(user_filesystem):
+    os.chdir(user_filesystem)
     cli_inputs = ["2.5", "data.xy", "--output-directory", "good_data.chi"]
     actual_args = get_args(cli_inputs)
     with pytest.raises(FileExistsError):
