@@ -28,6 +28,10 @@ def set_output_directory(args):
     return output_dir
 
 
+def set_input_lists(args):
+    return args
+
+
 def set_wavelength(args):
     """
     Set the wavelength based on the given input arguments

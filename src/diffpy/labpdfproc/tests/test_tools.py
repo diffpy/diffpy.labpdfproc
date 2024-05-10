@@ -8,7 +8,7 @@ from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
     known_sources,
     load_user_metadata,
-    set_input_files,
+    set_input_lists,
     set_output_directory,
     set_wavelength,
 )
@@ -34,7 +34,22 @@ params_input = [
             "input_dir/binary.pkl",
         ],
     ),
-    (  # list of files provided (we skip if encountering invalid files)
+    (  # glob list of input directories
+        [".", "./input_dir"],
+        [
+            "./good_data.chi",
+            "./good_data.xy",
+            "./good_data.txt",
+            "./unreadable_file.txt",
+            "./binary.pkl",
+            "input_dir/good_data.chi",
+            "input_dir/good_data.xy",
+            "input_dir/good_data.txt",
+            "input_dir/unreadable_file.txt",
+            "input_dir/binary.pkl",
+        ],
+    ),
+    (  # list of files provided (we skip if encountering missing files)
         ["good_data.chi", "good_data.xy", "unreadable_file.txt", "missing_file.txt"],
         ["good_data.chi", "good_data.xy", "unreadable_file.txt"],
     ),
@@ -43,26 +58,26 @@ params_input = [
         ["input_dir/good_data.chi", "good_data.chi"],
     ),
     (  # file_list.txt list of files provided
-        ["file_list_dir/file_list.txt"],
+        ["input_dir/file_list.txt"],
         ["good_data.chi", "good_data.xy", "good_data.txt"],
     ),
     (  # file_list_example2.txt list of files provided in different directories
-        ["file_list_dir/file_list_example2.txt"],
+        ["input_dir/file_list_example2.txt"],
         ["input_dir/good_data.chi", "good_data.xy", "input_dir/good_data.txt"],
     ),
 ]
 
 
 @pytest.mark.parametrize("inputs, expected", params_input)
-def test_set_input_files(inputs, expected, user_filesystem):
-    expected_input_directory = []
-    for expected_path in expected:
-        expected_input_directory.append(Path(user_filesystem) / expected_path)
+def test_set_input_lists(inputs, expected, user_filesystem):
+    base_dir = Path(user_filesystem)
+    os.chdir(base_dir)
+    expected_paths = [Path(user_filesystem).resolve() / expected_path for expected_path in expected]
 
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
-    actual_args = set_input_files(actual_args)
-    assert set(actual_args.input_directory) == set(expected_input_directory)
+    actual_args = set_input_lists(actual_args)
+    assert actual_args.input_directory == expected_paths
 
 
 # This test is for existing single input file or directory absolute path not in cwd
@@ -83,7 +98,7 @@ def test_set_input_files_not_cwd(inputs, expected, user_filesystem):
 
     cli_inputs = ["2.5"] + actual_input
     actual_args = get_args(cli_inputs)
-    actual_args = set_input_files(actual_args)
+    actual_args = set_input_lists(actual_args)
     assert set(actual_args.input_directory) == set(expected_input_directory)
 
 
@@ -100,7 +115,7 @@ def test_set_input_files_bad(inputs, msg, user_filesystem):
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
-        actual_args = set_input_files(actual_args)
+        actual_args = set_input_lists(actual_args)
 
 
 # Pass files to loadData and use it to check if file is valid or not
