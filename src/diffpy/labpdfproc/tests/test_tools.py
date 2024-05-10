@@ -19,7 +19,7 @@ params1 = [
 def test_set_output_directory(inputs, expected, user_filesystem):
     os.chdir(user_filesystem)
     expected_output_directory = Path(user_filesystem) / expected[0]
-    cli_inputs = ["2.5"] + inputs
+    cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args.output_directory = set_output_directory(actual_args)
     assert actual_args.output_directory == expected_output_directory
@@ -29,7 +29,7 @@ def test_set_output_directory(inputs, expected, user_filesystem):
 
 def test_set_output_directory_bad(user_filesystem):
     os.chdir(user_filesystem)
-    cli_inputs = ["2.5", "--output-directory", "good_data.chi"]
+    cli_inputs = ["2.5", "data.xy", "--output-directory", "good_data.chi"]
     actual_args = get_args(cli_inputs)
     with pytest.raises(FileExistsError):
         actual_args.output_directory = set_output_directory(actual_args)
@@ -48,7 +48,7 @@ params2 = [
 @pytest.mark.parametrize("inputs, expected", params2)
 def test_set_wavelength(inputs, expected):
     expected_wavelength = expected[0]
-    cli_inputs = ["2.5"] + inputs
+    cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args.wavelength = set_wavelength(actual_args)
     assert actual_args.wavelength == expected_wavelength
@@ -72,7 +72,7 @@ params3 = [
 
 @pytest.mark.parametrize("inputs, msg", params3)
 def test_set_wavelength_bad(inputs, msg):
-    cli_inputs = ["2.5"] + inputs
+    cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=re.escape(msg[0])):
         actual_args.wavelength = set_wavelength(actual_args)
@@ -90,12 +90,12 @@ params5 = [
 
 @pytest.mark.parametrize("inputs, expected", params5)
 def test_load_user_metadata(inputs, expected):
-    expected_args = get_args(["2.5"])
+    expected_args = get_args(["2.5", "data.xy"])
     for expected_pair in expected:
         setattr(expected_args, expected_pair[0], expected_pair[1])
     delattr(expected_args, "user_metadata")
 
-    cli_inputs = ["2.5"] + inputs
+    cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = load_user_metadata(actual_args)
     assert actual_args == expected_args
@@ -132,7 +132,7 @@ params6 = [
 
 @pytest.mark.parametrize("inputs, msg", params6)
 def test_load_user_metadata_bad(inputs, msg):
-    cli_inputs = ["2.5"] + inputs
+    cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
         actual_args = load_user_metadata(actual_args)
