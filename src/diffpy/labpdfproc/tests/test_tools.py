@@ -27,9 +27,6 @@ params_input = [
     (  # glob input directory
         ["./input_dir"],
         [
-            "./good_data.chi",
-            "./good_data.xy",
-            "./good_data.txt",
             "input_dir/good_data.chi",
             "input_dir/good_data.xy",
             "input_dir/good_data.txt",
@@ -72,7 +69,7 @@ def test_set_input_lists(inputs, expected, user_filesystem):
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_input_lists(actual_args)
-    assert set(actual_args.input_paths) == set(expected_paths)
+    assert sorted(actual_args.input_paths) == sorted(expected_paths)
 
 
 # This test covers non-existing single input file or directory, in this case we raise an error with message
