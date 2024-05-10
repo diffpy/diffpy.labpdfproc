@@ -69,7 +69,7 @@ def test_set_input_lists(inputs, expected, user_filesystem):
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_input_lists(actual_args)
-    assert list(actual_args.input_directory).sort() == expected_paths.sort()
+    assert list(actual_args.input_paths).sort() == expected_paths.sort()
 
 
 # This test covers non-existing single input file or directory, in this case we raise an error with message
