@@ -11,7 +11,20 @@ from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Dif
 def get_args(override_cli_inputs=None):
     p = ArgumentParser()
     p.add_argument("mud", help="Value of mu*D for your " "sample. Required.", type=float)
-    p.add_argument("-i", "--input-file", help="The filename of the " "datafile to load.")
+    p.add_argument(
+        "input",
+        nargs="+",
+        help="The filename(s) or folder(s) of the datafile(s) to load.  "
+        "Required.\nSupply a space-separated list of files or directories."
+        "Long lists can be supplied, one per line, in a file with name "
+        "file_list.txt. If one or more directory is provided, all valid "
+        "data-files in that directory will be processed. Examples of valid "
+        "inputs are 'file.xy', 'data/file.xy', 'file.xy, data/file.xy', "
+        "'.' (load everything in the current directory), 'data' (load"
+        "everything in the folder ./data', 'data/file_list.txt' (load"
+        " the list of files contained in the text-file called "
+        "file_list.txt that can be found in the folder ./data).",
+    )
     p.add_argument(
         "-a",
         "--anode-type",
