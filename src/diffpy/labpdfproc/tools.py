@@ -29,6 +29,38 @@ def set_output_directory(args):
 
 
 def set_input_lists(args):
+    """
+    Set input directory and files.
+
+    It takes cli inputs, checks if they are files or directories and creates
+    a list of files to be processed which is stored in the args Namespace.
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    args argparse.Namespace
+
+    """
+
+    input_paths = []
+    for input in args.input:
+        input_path = Path(input).resolve()
+        if input_path.exists():
+            if input_path.is_file():
+                input_paths.append(input_path)
+            elif input_path.is_dir():
+                input_files = input_path.glob("*")
+                input_files = [file.resolve() for file in input_files if file.is_file()]
+                input_paths.extend(input_files)
+            else:
+                raise FileNotFoundError(f"Cannot find {input}. Please specify valid input file(s) or directories.")
+        else:
+            raise FileNotFoundError(f"Cannot find {input}")
+    setattr(args, "input_directory", input_paths)
     return args
 
 

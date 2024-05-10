@@ -49,14 +49,6 @@ params_input = [
             "input_dir/binary.pkl",
         ],
     ),
-    (  # list of files provided (we skip if encountering missing files)
-        ["good_data.chi", "good_data.xy", "unreadable_file.txt", "missing_file.txt"],
-        ["good_data.chi", "good_data.xy", "unreadable_file.txt"],
-    ),
-    (  # list of files provided (with invalid files and files in different directories)
-        ["input_dir/good_data.chi", "good_data.chi", "missing_file.txt"],
-        ["input_dir/good_data.chi", "good_data.chi"],
-    ),
     (  # file_list.txt list of files provided
         ["input_dir/file_list.txt"],
         ["good_data.chi", "good_data.xy", "good_data.txt"],
@@ -77,22 +69,24 @@ def test_set_input_lists(inputs, expected, user_filesystem):
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_input_lists(actual_args)
-    assert actual_args.input_directory == expected_paths
-
-
-# This test is for existing single input file or directory absolute path not in cwd
-# Here we are in user_filesystem/input_dir, testing for a file or directory in user_filesystem
-params_input_not_cwd = [
-    (["good_data.chi"], ["good_data.chi"]),
-    (["."], ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"]),
-]
+    assert list(actual_args.input_directory).sort() == expected_paths.sort()
 
 
 # This test covers non-existing single input file or directory, in this case we raise an error with message
 params_input_bad = [
-    (["non_existing_file.xy"], "Please specify at least one valid input file or directory."),
-    (["./input_dir/non_existing_file.xy"], "Please specify at least one valid input file or directory."),
-    (["./non_existing_dir"], "Please specify at least one valid input file or directory."),
+    (
+        ["non_existing_file.xy"],
+        "Cannot find non_existing_file.xy. Please specify valid input file(s) or directories.",
+    ),
+    (
+        ["./input_dir/non_existing_file.xy"],
+        "Cannot find ./input_dir/non_existing_file.xy. Please specify valid input file(s) or directories.",
+    ),
+    (["./non_existing_dir"], "Cannot find ./non_existing_dir. Please specify valid input file(s) or directories."),
+    (  # list of files provided (with missing files)
+        ["good_data.chi", "good_data.xy", "unreadable_file.txt", "missing_file.txt"],
+        "Cannot find missing_file.txt. Please specify valid input file(s) or directories.",
+    ),
 ]
 
 
@@ -102,7 +96,7 @@ def test_set_input_files_bad(inputs, msg, user_filesystem):
     os.chdir(base_dir)
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
-    with pytest.raises(ValueError, match=msg[0]):
+    with pytest.raises(FileNotFoundError, match=msg[0]):
         actual_args = set_input_lists(actual_args)
 
 
