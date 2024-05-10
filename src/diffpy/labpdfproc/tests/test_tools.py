@@ -1,3 +1,4 @@
+import os
 import re
 from pathlib import Path
 
@@ -16,6 +17,7 @@ params1 = [
 
 @pytest.mark.parametrize("inputs, expected", params1)
 def test_set_output_directory(inputs, expected, user_filesystem):
+    os.chdir(user_filesystem)
     expected_output_directory = Path(user_filesystem) / expected[0]
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
@@ -26,6 +28,7 @@ def test_set_output_directory(inputs, expected, user_filesystem):
 
 
 def test_set_output_directory_bad(user_filesystem):
+    os.chdir(user_filesystem)
     cli_inputs = ["2.5", "--output-directory", "good_data.chi"]
     actual_args = get_args(cli_inputs)
     with pytest.raises(FileExistsError):
