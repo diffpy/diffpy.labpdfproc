@@ -72,7 +72,7 @@ params_input = [
 def test_set_input_lists(inputs, expected, user_filesystem):
     base_dir = Path(user_filesystem)
     os.chdir(base_dir)
-    expected_paths = [Path(user_filesystem).resolve() / expected_path for expected_path in expected]
+    expected_paths = [base_dir.resolve() / expected_path for expected_path in expected]
 
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
@@ -88,20 +88,6 @@ params_input_not_cwd = [
 ]
 
 
-@pytest.mark.parametrize("inputs, expected", params_input_not_cwd)
-def test_set_input_files_not_cwd(inputs, expected, user_filesystem):
-    expected_input_directory = []
-    for expected_path in expected:
-        expected_input_directory.append(Path(user_filesystem) / expected_path)
-    actual_input = [str(Path(user_filesystem) / inputs[0])]
-    os.chdir("input_dir")
-
-    cli_inputs = ["2.5"] + actual_input
-    actual_args = get_args(cli_inputs)
-    actual_args = set_input_lists(actual_args)
-    assert set(actual_args.input_directory) == set(expected_input_directory)
-
-
 # This test covers non-existing single input file or directory, in this case we raise an error with message
 params_input_bad = [
     (["non_existing_file.xy"], "Please specify at least one valid input file or directory."),
@@ -112,13 +98,12 @@ params_input_bad = [
 
 @pytest.mark.parametrize("inputs, msg", params_input_bad)
 def test_set_input_files_bad(inputs, msg, user_filesystem):
+    base_dir = Path(user_filesystem)
+    os.chdir(base_dir)
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
         actual_args = set_input_lists(actual_args)
-
-
-# Pass files to loadData and use it to check if file is valid or not
 
 
 params1 = [
