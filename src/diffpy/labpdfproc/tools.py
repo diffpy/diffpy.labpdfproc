@@ -16,11 +16,12 @@ def set_input_files(args):
         the arguments from the parser
 
     It is implemented as the following:
-    If user input multiple files, we store their common directory as input directory and all of their names.
+    For each input, we try to read it as a file or a directory.
     If input is a file, we first try to read it as a file list and store all listed file names.
     If the first filename is invalid, then we proceed to treat it as a data file.
     Otherwise if we have a directory, glob all files within it.
-    If there are any invalid filenames (for the cases of multiple files, file list, or directory), we skip them.
+    If any file does not exist, we raise a ValueError telling which file(s) does not exist.
+    If all files are invalid, we raise an Error telling user to specify at least one valid file or directory.
 
     Returns
     -------
@@ -28,47 +29,39 @@ def set_input_files(args):
 
     """
 
-    if len(args.input) > 1:
-        input_paths = []
-        input_paths_parent = []
-        for input in args.input:
-            if Path(input).is_file():
-                input_paths.append(Path(input).resolve())
-                input_paths_parent.append(Path(input).resolve().parent)
-        input_dir = Path(os.path.commonprefix([str(path) for path in input_paths_parent]))
-        input_file_name = [str(path.relative_to(input_dir)) for path in input_paths]
-        setattr(args, "input_directory", input_dir)
-        setattr(args, "input_file", input_file_name)
-        return args
+    input_paths = []
+    for input in args.input:
+        try:
+            if Path(input).exists():
+                if not Path(input).is_dir():
+                    with open(args.input[0], "r") as f:
+                        lines = [line.strip() for line in f]
+                        if not os.path.isfile(lines[0]):
+                            input_paths.append(Path(input).resolve())
+                        else:
+                            for line in lines:
+                                try:
+                                    if os.path.isfile(line):
+                                        input_paths.append(Path(line).resolve())
+                                except Exception as e:
+                                    raise ValueError(f"{line} does not exist. {e}.")
 
-    if not Path(args.input[0]).exists():
-        raise ValueError("Please specify valid input file or directory.")
+                else:
+                    input_dir = Path(input).resolve()
+                    input_files = [
+                        Path(file).resolve()
+                        for file in glob.glob(str(input_dir) + "/*", recursive=True)
+                        if os.path.isfile(file)
+                    ]
+                    input_paths.extend(input_files)
 
-    if not Path(args.input[0]).is_dir():
-        input_paths = []
-        input_paths_parent = []
-        with open(args.input[0], "r") as f:
-            lines = [line.strip() for line in f]
-            if not os.path.isfile(lines[0]):
-                input_dir = Path.cwd() / Path(args.input[0]).parent
-                input_file_name = Path(args.input[0]).name
-            else:
-                for line in lines:
-                    if not os.path.isfile(line):
-                        continue
-                    else:
-                        input_paths.append(Path(line).resolve())
-                        input_paths_parent.append(Path(line).resolve().parent)
-                input_dir = Path(os.path.commonprefix([str(path) for path in input_paths_parent]))
-                input_file_name = [str(path.relative_to(input_dir)) for path in input_paths]
+        except Exception as e:
+            raise ValueError(f"{input} does not exist. {e}.")
 
-    else:
-        input_dir = Path(args.input[0]).resolve()
-        input_files = [file for file in glob.glob(str(input_dir) + "/*", recursive=True) if os.path.isfile(file)]
-        input_file_name = [os.path.basename(input_file_path) for input_file_path in input_files]
+    if len(input_paths) == 0:
+        raise ValueError("Please specify at least one valid input file or directory.")
 
-    setattr(args, "input_directory", input_dir)
-    setattr(args, "input_file", input_file_name)
+    setattr(args, "input_directory", input_paths)
     return args
 
 

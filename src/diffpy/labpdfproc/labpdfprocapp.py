@@ -1,6 +1,5 @@
 import sys
 from argparse import ArgumentParser
-from pathlib import Path
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
 from diffpy.labpdfproc.tools import (
@@ -20,8 +19,11 @@ def get_args(override_cli_inputs=None):
     p.add_argument(
         "input",
         nargs="+",
-        help="The filename or directory of the datafile to load. Required. "
-        "Supports either a single input file, a directory, a file containing a list of files, or multiple files. ",
+        help="The filename(s) or folder(s) of the datafile(s) to load.  Required. "
+        "Supports multiple arguments of input file or directory. "
+        "The file can be either a data file or a file containing a list of files. "
+        "If a directory is provided, we will load all data files in it. "
+        "For example, file.xy, data/file.xy, file_list.txt, ./data/file.xy, ./data are all valid inputs. ",
     )
     p.add_argument(
         "-a",
@@ -92,8 +94,7 @@ def main():
     args.wavelength = set_wavelength(args)
     args = load_user_metadata(args)
 
-    for input_file in args.input_file:
-        filepath = Path(args.input_file)
+    for filepath in args.input_directory:
         outfilestem = filepath.stem + "_corrected"
         corrfilestem = filepath.stem + "_cve"
         outfile = args.output_directory / (outfilestem + ".chi")
