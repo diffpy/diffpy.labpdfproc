@@ -28,6 +28,24 @@ def set_output_directory(args):
     return output_dir
 
 
+def _parse_file_list_file(input_path):
+    with open(input_path, "r") as f:
+        lines = [line.strip() for line in f]
+        input_files = [Path(line).resolve() for line in lines if Path(line).is_file()]
+        return input_files
+
+
+def _parse_input_paths(input_path):
+    # Takes a path to return either a list of files paths if it is a file list,
+    # a list of single file path if it is a data file, or nothing
+    if "file_list" in input_path.name:
+        return _parse_file_list_file(input_path)
+    elif input_path.is_file():
+        return [input_path]
+    else:
+        return []
+
+
 def set_input_lists(args):
     """
     Set input directory and files.
@@ -51,16 +69,16 @@ def set_input_lists(args):
         input_path = Path(input).resolve()
         if input_path.exists():
             if input_path.is_file():
-                input_paths.append(input_path)
+                input_paths.extend(_parse_input_paths(input_path))
             elif input_path.is_dir():
                 input_files = input_path.glob("*")
-                input_files = [file.resolve() for file in input_files if file.is_file()]
-                input_paths.extend(input_files)
+                for file in input_files:
+                    input_paths.extend(_parse_input_paths(file))
             else:
                 raise FileNotFoundError(f"Cannot find {input}. Please specify valid input file(s) or directories.")
         else:
             raise FileNotFoundError(f"Cannot find {input}")
-    setattr(args, "input_paths", input_paths)
+    setattr(args, "input_paths", list(set(input_paths)))
     return args
 
 

@@ -21,7 +21,7 @@ def get_args(override_cli_inputs=None):
         "data-files in that directory will be processed. Examples of valid "
         "inputs are 'file.xy', 'data/file.xy', 'file.xy, data/file.xy', "
         "'.' (load everything in the current directory), 'data' (load"
-        "everything in the folder ./data', 'data/file_list.txt' (load"
+        "everything in the folder ./data), 'data/file_list.txt' (load"
         " the list of files contained in the text-file called "
         "file_list.txt that can be found in the folder ./data).",
     )
