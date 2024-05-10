@@ -60,7 +60,7 @@ def set_input_lists(args):
                 raise FileNotFoundError(f"Cannot find {input}. Please specify valid input file(s) or directories.")
         else:
             raise FileNotFoundError(f"Cannot find {input}")
-    setattr(args, "input_directory", input_paths)
+    setattr(args, "input_paths", input_paths)
     return args
 
 
