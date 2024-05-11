@@ -28,20 +28,27 @@ def set_output_directory(args):
     return output_dir
 
 
-def _parse_file_list_file(file_list_path):
-    with open(file_list_path, "r") as f:
-        # file_paths = [Path(file_path.strip()).resolve() for file_path in f.readlines()
-        # if Path(file_path.strip()).is_file()]
-        file_paths = [file_path.strip() for file_path in f.readlines()]
-        return file_paths
+def expand_list_file(args):
+    """
+    Expands the list of inputs by adding files from file lists and removing the file list.
 
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
 
-def expand_list_file(input):
-    file_list_inputs = [input_name for input_name in input if "file_list" in str(input_name)]
+    Returns
+    -------
+    the arguments with the modified input list
+
+    """
+    file_list_inputs = [input_name for input_name in args.input if "file_list" in input_name]
     for file_list_input in file_list_inputs:
-        input.remove(file_list_input)
-        input.extend(_parse_file_list_file(file_list_input))
-    return input
+        with open(file_list_input, "r") as f:
+            file_inputs = [input_name.strip() for input_name in f.readlines()]
+        args.input.extend(file_inputs)
+        args.input.remove(file_list_input)
+    return args
 
 
 def set_input_lists(args):
@@ -63,9 +70,8 @@ def set_input_lists(args):
     """
 
     input_paths = []
-    expanded_input = expand_list_file(args.input)
-    for input in expanded_input:
-        input_path = Path(input).resolve()
+    for input_name in args.input:
+        input_path = Path(input_name).resolve()
         if input_path.exists():
             if input_path.is_file():
                 input_paths.append(input_path)
@@ -76,9 +82,11 @@ def set_input_lists(args):
                 ]
                 input_paths.extend(input_files)
             else:
-                raise FileNotFoundError(f"Cannot find {input}. Please specify valid input file(s) or directories.")
+                raise FileNotFoundError(
+                    f"Cannot find {input_name}. Please specify valid input file(s) or directories."
+                )
         else:
-            raise FileNotFoundError(f"Cannot find {input}")
+            raise FileNotFoundError(f"Cannot find {input_name}")
     setattr(args, "input_paths", list(set(input_paths)))
     return args
 

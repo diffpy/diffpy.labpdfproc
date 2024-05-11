@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
 from diffpy.labpdfproc.tools import (
+    expand_list_file,
     known_sources,
     load_user_metadata,
     set_input_lists,
@@ -94,6 +95,7 @@ def get_args(override_cli_inputs=None):
 
 def main():
     args = get_args()
+    args = expand_list_file(args)
     args = set_input_lists(args)
     args.output_directory = set_output_directory(args)
     args.wavelength = set_wavelength(args)

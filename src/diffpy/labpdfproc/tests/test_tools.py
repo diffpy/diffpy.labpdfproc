@@ -6,6 +6,7 @@ import pytest
 
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
+    expand_list_file,
     known_sources,
     load_user_metadata,
     set_input_lists,
@@ -49,10 +50,6 @@ params_input = [
             "input_dir/binary.pkl",
         ],
     ),
-    (  # file_list.txt list of files provided
-        ["input_dir/file_list.txt"],
-        ["good_data.chi", "good_data.xy", "good_data.txt"],
-    ),
     (  # file_list_example2.txt list of files provided in different directories
         ["input_dir/file_list_example2.txt"],
         ["input_dir/good_data.chi", "good_data.xy", "input_dir/good_data.txt"],
@@ -68,6 +65,7 @@ def test_set_input_lists(inputs, expected, user_filesystem):
 
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
+    actual_args = expand_list_file(actual_args)
     actual_args = set_input_lists(actual_args)
     assert sorted(actual_args.input_paths) == sorted(expected_paths)
 
@@ -87,6 +85,10 @@ params_input_bad = [
         ["good_data.chi", "good_data.xy", "unreadable_file.txt", "missing_file.txt"],
         "Cannot find missing_file.txt. Please specify valid input file(s) or directories.",
     ),
+    (  # file_list.txt list of files provided (with missing files)
+        ["input_dir/file_list.txt"],
+        "Cannot find missing_file.txt. Please specify valid input file(s) or directories.",
+    ),
 ]
 
 
@@ -96,6 +98,7 @@ def test_set_input_files_bad(inputs, msg, user_filesystem):
     os.chdir(base_dir)
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
+    actual_args = expand_list_file(actual_args)
     with pytest.raises(FileNotFoundError, match=msg[0]):
         actual_args = set_input_lists(actual_args)
 
