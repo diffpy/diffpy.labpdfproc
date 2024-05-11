@@ -28,6 +28,29 @@ def set_output_directory(args):
     return output_dir
 
 
+def expand_list_file(args):
+    """
+    Expands the list of inputs by adding files from file lists and removing the file list.
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    the arguments with the modified input list
+
+    """
+    file_list_inputs = [input_name for input_name in args.input if "file_list" in input_name]
+    for file_list_input in file_list_inputs:
+        with open(file_list_input, "r") as f:
+            file_inputs = [input_name.strip() for input_name in f.readlines()]
+        args.input.extend(file_inputs)
+        args.input.remove(file_list_input)
+    return args
+
+
 def set_input_lists(args):
     """
     Set input directory and files.
@@ -47,20 +70,24 @@ def set_input_lists(args):
     """
 
     input_paths = []
-    for input in args.input:
-        input_path = Path(input).resolve()
+    for input_name in args.input:
+        input_path = Path(input_name).resolve()
         if input_path.exists():
             if input_path.is_file():
                 input_paths.append(input_path)
             elif input_path.is_dir():
                 input_files = input_path.glob("*")
-                input_files = [file.resolve() for file in input_files if file.is_file()]
+                input_files = [
+                    file.resolve() for file in input_files if file.is_file() and "file_list" not in file.name
+                ]
                 input_paths.extend(input_files)
             else:
-                raise FileNotFoundError(f"Cannot find {input}. Please specify valid input file(s) or directories.")
+                raise FileNotFoundError(
+                    f"Cannot find {input_name}. Please specify valid input file(s) or directories."
+                )
         else:
-            raise FileNotFoundError(f"Cannot find {input}")
-    setattr(args, "input_paths", input_paths)
+            raise FileNotFoundError(f"Cannot find {input_name}")
+    setattr(args, "input_paths", list(set(input_paths)))
     return args
 
 
