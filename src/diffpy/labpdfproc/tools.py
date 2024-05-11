@@ -28,11 +28,20 @@ def set_output_directory(args):
     return output_dir
 
 
-def _parse_file_list_file(input_path):
-    with open(input_path, "r") as f:
-        lines = [line.strip() for line in f]
-        input_files = [Path(line).resolve() for line in lines if Path(line).is_file()]
-        return input_files
+def _parse_file_list_file(file_list_path):
+    with open(file_list_path, "r") as f:
+        # file_paths = [Path(file_path.strip()).resolve() for file_path in f.readlines()
+        # if Path(file_path.strip()).is_file()]
+        file_paths = [file_path.strip() for file_path in f.readlines()]
+        return file_paths
+
+
+def expand_list_file(input):
+    file_list_inputs = [input_name for input_name in input if "file_list" in str(input_name)]
+    for file_list_input in file_list_inputs:
+        input.remove(file_list_input)
+        input.extend(_parse_file_list_file(file_list_input))
+    return input
 
 
 def set_input_lists(args):
@@ -54,14 +63,12 @@ def set_input_lists(args):
     """
 
     input_paths = []
-    for input in args.input:
+    expanded_input = expand_list_file(args.input)
+    for input in expanded_input:
         input_path = Path(input).resolve()
         if input_path.exists():
             if input_path.is_file():
-                if "file_list" in input_path.name:
-                    input_paths.extend(_parse_file_list_file(input_path))
-                else:
-                    input_paths.append(input_path)
+                input_paths.append(input_path)
             elif input_path.is_dir():
                 input_files = input_path.glob("*")
                 input_files = [
