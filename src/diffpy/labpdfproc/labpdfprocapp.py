@@ -89,6 +89,15 @@ def get_args(override_cli_inputs=None):
         "For example, facility='NSLS II', 'facility=NSLS II', beamline=28ID-2, "
         "'beamline'='28ID-2', 'favorite color'=blue, are all valid key=value items. ",
     )
+    p.add_argument(
+        "-d"
+        "--datetime_of_analysis",
+        metavar="YYYY-MM-DD HH:MI:SS",
+        help=f"The date and time of the analysis. Required."
+             "The format should be in YYYY-MM-DD HH:MM:SS format.",
+    )
+    args = p.parse_args(override_cli_inputs)
+    return args
     args = p.parse_args(override_cli_inputs)
     return args
 
