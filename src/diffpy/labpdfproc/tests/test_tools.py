@@ -1,7 +1,7 @@
 import os
 import re
 from pathlib import Path
-
+from datetime import datetime
 import pytest
 
 from diffpy.labpdfproc.labpdfprocapp import get_args
@@ -11,7 +11,7 @@ from diffpy.labpdfproc.tools import (
     load_user_metadata,
     set_input_lists,
     set_output_directory,
-    set_wavelength,
+    set_wavelength, load_datetime,
 )
 
 # Use cases can be found here: https://github.com/diffpy/diffpy.labpdfproc/issues/48
