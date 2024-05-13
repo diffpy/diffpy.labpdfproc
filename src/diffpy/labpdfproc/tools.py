@@ -165,3 +165,31 @@ def load_user_metadata(args):
             setattr(args, key, value)
     delattr(args, "user_metadata")
     return args
+
+
+def load_datetime(args):
+    """
+    Load the datetime of analysis into Metadata.
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+
+    Returns
+    -------
+    the updated argparse Namespace with datetime object.
+
+    """
+    try:
+        input_date = datetime.strptime(args.datetime, '%Y-%m-%d %H:%M:%S').date()
+        current_date = datetime.now().date()
+        if input_date > current_date:
+            raise ValueError("Future date entered. Please enter a valid date.")
+        datetime_obj = datetime.strptime(args.datetime, "%Y-%m-%d %H:%M:%S")
+        user_metadata = load_user_metadata(args)
+        user_metadata.update({"datetime": datetime_obj})
+        return user_metadata
+    except ValueError:
+        raise ValueError("Please provide a valid datetime value. For more information, use `labpdfproc --help.`")
