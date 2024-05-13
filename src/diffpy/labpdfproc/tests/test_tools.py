@@ -232,3 +232,35 @@ def test_load_user_metadata_bad(inputs, msg):
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
         actual_args = load_user_metadata(actual_args)
+
+
+params7 = [(["--datetime-of-analysis", "2020-02-02 00:00:00"],
+            ["--user-metadata", f"datetime={datetime.strptime("2020-02-02 00:00:00", "%Y-%m-%d %H:%M:%S")}"]),
+           (["--datetime-of-analysis", "2022-03-28 02:15:34"],
+            ["--user-metadata", f"datetime={datetime.strptime("2022-03-28 02:15:34", "%Y-%m-%d %H:%M:%S")}"]),
+           (["--datetime-of-analysis", "2022-03-30 23:15:44"],
+            ["--user-metadata", f"datetime={datetime.strptime("2022-03-28 02:15:34", "%Y-%m-%d %H:%M:%S")}"])]
+
+
+@pytest.mark.parametrize("inputs, expected", params7)
+def test_load_datetime(inputs, expected):
+    cli_inputs = ["2.5"] + inputs
+    actual_args = get_args(cli_inputs)
+    expected_datetime = expected[0]
+    actual_datetime = load_datetime(actual_args)
+    assert actual_datetime == expected_datetime
+
+
+params8 = [(["--datetime-of-analysis", "2020-13-01 02:15:34"],
+            ["Please provide a valid datetime value. For more information, use `labpdfproc --help.`"]),
+           (["--datetime-of-analysis", "nqpk-nn-01 02:15:34"],
+            ["Please provide a valid datetime value. For more information, use `labpdfproc --help.`"]),
+           (["--datetime-of-analysis", "2025-12-01 02:15:34"], ["Future date entered. Please enter a valid date."])]
+
+
+@pytest.mark.parametrize("inputs, expected", params8)
+def test_load_datetime_bad(inputs, expected):
+    cli_inputs = ["2.5", "data.xy"] + inputs
+    actual_args = get_args(cli_inputs)
+    with pytest.raises(ValueError, match=expected[0]):
+        load_datetime(actual_args)
