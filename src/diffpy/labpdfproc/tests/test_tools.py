@@ -54,6 +54,25 @@ params_input = [
         ["input_dir/file_list_example2.txt"],
         ["input_dir/good_data.chi", "good_data.xy", "input_dir/good_data.txt"],
     ),
+    (  # wildcard pattern, same directory
+        ["./*.chi"],
+        ["good_data.chi"],
+    ),
+    (  # wildcard pattern, input directory
+        ["input_dir/*.chi"],
+        ["input_dir/good_data.chi"],
+    ),
+    (  # mixture of valid wildcard patterns
+        ["good_data*", "./*.pkl", "unreadable*.txt", "input_dir/*.chi"],
+        [
+            "good_data.chi",
+            "good_data.xy",
+            "good_data.txt",
+            "unreadable_file.txt",
+            "binary.pkl",
+            "input_dir/good_data.chi",
+        ],
+    ),
 ]
 
 

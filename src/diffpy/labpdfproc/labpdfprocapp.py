@@ -29,7 +29,10 @@ def get_args(override_cli_inputs=None):
         "'.' (load everything in the current directory), 'data' (load"
         "everything in the folder ./data), 'data/file_list.txt' (load"
         " the list of files contained in the text-file called "
-        "file_list.txt that can be found in the folder ./data).",
+        "file_list.txt that can be found in the folder ./data). "
+        "Wildcard character (*) is accepted. Examples include './*chi'"
+        " (load all files with .chi extension) and 'data/test*' (load "
+        "all files starting with 'test' in the folder ./data). ",
     )
     p.add_argument(
         "-a",
@@ -101,7 +104,7 @@ def main():
     args.wavelength = set_wavelength(args)
     args = load_user_metadata(args)
 
-    for filepath in args.input_directory:
+    for filepath in args.input_paths:
         outfilestem = filepath.stem + "_corrected"
         corrfilestem = filepath.stem + "_cve"
         outfile = args.output_directory / (outfilestem + ".chi")
@@ -125,7 +128,7 @@ def main():
             yarray,
             "tth",
             scat_quantity="x-ray",
-            name=str(args.input_file),
+            name=filepath.stem,
             metadata={"muD": args.mud, "anode_type": args.anode_type},
         )
 

@@ -86,7 +86,16 @@ def set_input_lists(args):
                     f"Cannot find {input_name}. Please specify valid input file(s) or directories."
                 )
         else:
-            raise FileNotFoundError(f"Cannot find {input_name}")
+            if "*" in input_name.split("/")[-1] and input_name.count("*") == 1:
+                input_parent_directory = input_path.parents[0]
+                input_pattern = input_path.relative_to(input_parent_directory)
+                input_files = Path(input_parent_directory).glob(str(input_pattern))
+                input_files = [
+                    file.resolve() for file in input_files if file.is_file() and "file_list" not in file.name
+                ]
+                input_paths.extend(input_files)
+            else:
+                raise FileNotFoundError(f"Cannot find {input_name}")
     setattr(args, "input_paths", list(set(input_paths)))
     return args
 
