@@ -7,6 +7,7 @@ import pytest
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
     expand_list_file,
+    expand_wildcard_file,
     known_sources,
     load_user_metadata,
     set_input_lists,
@@ -54,24 +55,35 @@ params_input = [
         ["input_dir/file_list_example2.txt"],
         ["input_dir/good_data.chi", "good_data.xy", "input_dir/good_data.txt"],
     ),
-    (  # wildcard pattern, same directory
+    (  # wildcard pattern, matching files with .chi extension in the same directory
         ["./*.chi"],
         ["good_data.chi"],
     ),
-    (  # wildcard pattern, input directory
+    (  # wildcard pattern, matching files with .chi extension in the input directory
         ["input_dir/*.chi"],
         ["input_dir/good_data.chi"],
     ),
-    (  # mixture of valid wildcard patterns
-        ["good_data*", "./*.pkl", "unreadable*.txt", "input_dir/*.chi"],
+    (  # wildcard pattern, matching files starting with good_data
+        ["good_data*"],
+        ["good_data.chi", "good_data.xy", "good_data.txt"],
+    ),
+    (  # wildcard pattern, matching files or directories starting with input
+        ["input*"],
         [
-            "good_data.chi",
-            "good_data.xy",
-            "good_data.txt",
-            "unreadable_file.txt",
-            "binary.pkl",
             "input_dir/good_data.chi",
+            "input_dir/good_data.xy",
+            "input_dir/good_data.txt",
+            "input_dir/unreadable_file.txt",
+            "input_dir/binary.pkl",
         ],
+    ),
+    (  # wildcard pattern, matching files or directories starting with unreadable and ending with .txt extension
+        ["unreadable*.txt"],
+        ["unreadable_file.txt"],
+    ),
+    (  # wildcard pattern, matching directories starting with input and all files under with .chi extension
+        ["input*/*.chi"],
+        ["input_dir/good_data.chi"],
     ),
 ]
 
@@ -84,6 +96,7 @@ def test_set_input_lists(inputs, expected, user_filesystem):
 
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
+    actual_args = expand_wildcard_file(actual_args)
     actual_args = expand_list_file(actual_args)
     actual_args = set_input_lists(actual_args)
     assert sorted(actual_args.input_paths) == sorted(expected_paths)
@@ -108,6 +121,16 @@ params_input_bad = [
         ["input_dir/file_list.txt"],
         "Cannot find missing_file.txt. Please specify valid input file(s) or directories.",
     ),
+    (  # valid wildcard pattern, but does not match any files or directories
+        ["non_existing_dir*"],
+        "Invalid wildcard input non_existing_dir*. "
+        "Please ensure the wildcard pattern matches at least one file or directory.",
+    ),
+    (  # invalid wildcard pattern
+        ["invalid_dir**"],
+        "Invalid wildcard input invalid_dir**. "
+        "Please ensure the wildcard pattern matches at least one file or directory.",
+    ),
 ]
 
 
@@ -117,8 +140,9 @@ def test_set_input_files_bad(inputs, msg, user_filesystem):
     os.chdir(base_dir)
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
-    actual_args = expand_list_file(actual_args)
     with pytest.raises(FileNotFoundError, match=msg[0]):
+        actual_args = expand_wildcard_file(actual_args)
+        actual_args = expand_list_file(actual_args)
         actual_args = set_input_lists(actual_args)
 
 

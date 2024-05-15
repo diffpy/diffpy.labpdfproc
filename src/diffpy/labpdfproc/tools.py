@@ -1,3 +1,4 @@
+import glob
 from pathlib import Path
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
@@ -26,6 +27,41 @@ def set_output_directory(args):
     output_dir = Path(args.output_directory).resolve() if args.output_directory else Path.cwd().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir
+
+
+def expand_wildcard_file(args):
+    """
+    Expands wildcard inputs by adding all files or directories within directories matching the pattern.
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    the arguments with the wildcard inputs expanded
+
+    """
+    wildcard_inputs = [input_name for input_name in args.input if "*" in input_name]
+    for wildcard_input in wildcard_inputs:
+        if not glob.glob(wildcard_input):
+            raise FileNotFoundError(
+                f"Invalid wildcard input {wildcard_input}. "
+                f"Please ensure the wildcard pattern matches at least one file or directory."
+            )
+        input_files = Path(".").glob(wildcard_input)
+        for input_file in input_files:
+            if input_file.is_file():
+                args.input.append(str(input_file))
+            elif input_file.is_dir():
+                files = input_file.glob("*")
+                inputs = [str(file) for file in files if file.is_file() and "file_list" not in file.name]
+                args.input.extend(inputs)
+            else:
+                raise FileNotFoundError(f"Invalid wildcard input {wildcard_input}.")
+        args.input.remove(wildcard_input)
+    return args
 
 
 def expand_list_file(args):
@@ -86,16 +122,7 @@ def set_input_lists(args):
                     f"Cannot find {input_name}. Please specify valid input file(s) or directories."
                 )
         else:
-            if "*" in input_name:
-                input_parent_directory = input_path.parents[0]
-                input_pattern = input_path.relative_to(input_parent_directory)
-                input_files = Path(input_parent_directory).glob(str(input_pattern))
-                input_files = [
-                    file.resolve() for file in input_files if file.is_file() and "file_list" not in file.name
-                ]
-                input_paths.extend(input_files)
-            else:
-                raise FileNotFoundError(f"Cannot find {input_name}")
+            raise FileNotFoundError(f"Cannot find {input_name}.")
     setattr(args, "input_paths", list(set(input_paths)))
     return args
 

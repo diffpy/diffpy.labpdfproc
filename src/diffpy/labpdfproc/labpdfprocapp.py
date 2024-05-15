@@ -30,9 +30,13 @@ def get_args(override_cli_inputs=None):
         "everything in the folder ./data), 'data/file_list.txt' (load"
         " the list of files contained in the text-file called "
         "file_list.txt that can be found in the folder ./data). "
-        "Wildcard character (*) is accepted. Examples include './*chi'"
-        " (load all files with .chi extension) and 'data/test*' (load "
-        "all files starting with 'test' in the folder ./data). ",
+        "\nWildcard character (*) is accepted. Examples include './*.chi'"
+        " (load all files with .chi extension), 'data/*.chi' (load all "
+        "files in 'data' file with .chi extension), 'file*.chi' (load all "
+        "files starting with 'file' and ending with .chi extension), 'test*' "
+        "(load all files and directories starting with 'test'), 'test*/*.chi' "
+        "(load all directories starting with 'test' and all files under "
+        "with .chi extension). ",
     )
     p.add_argument(
         "-a",
