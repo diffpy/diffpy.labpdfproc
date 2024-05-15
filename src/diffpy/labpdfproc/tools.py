@@ -1,4 +1,3 @@
-import glob
 from pathlib import Path
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
@@ -29,44 +28,9 @@ def set_output_directory(args):
     return output_dir
 
 
-def expand_wildcard_file(args):
+def _expand_user_input(args):
     """
-    Expands wildcard inputs by adding all files or directories within directories matching the pattern.
-
-    Parameters
-    ----------
-    args argparse.Namespace
-        the arguments from the parser
-
-    Returns
-    -------
-    the arguments with the wildcard inputs expanded
-
-    """
-    wildcard_inputs = [input_name for input_name in args.input if "*" in input_name]
-    for wildcard_input in wildcard_inputs:
-        if not glob.glob(wildcard_input):
-            raise FileNotFoundError(
-                f"Invalid wildcard input {wildcard_input}. "
-                f"Please ensure the wildcard pattern matches at least one file or directory."
-            )
-        input_files = Path(".").glob(wildcard_input)
-        for input_file in input_files:
-            if input_file.is_file():
-                args.input.append(str(input_file))
-            elif input_file.is_dir():
-                files = input_file.glob("*")
-                inputs = [str(file) for file in files if file.is_file() and "file_list" not in file.name]
-                args.input.extend(inputs)
-            else:
-                raise FileNotFoundError(f"Invalid wildcard input {wildcard_input}.")
-        args.input.remove(wildcard_input)
-    return args
-
-
-def expand_list_file(args):
-    """
-    Expands the list of inputs by adding files from file lists and removing the file list.
+    Expands the list of inputs by adding files from file lists and wildcards.
 
     Parameters
     ----------
@@ -78,7 +42,14 @@ def expand_list_file(args):
     the arguments with the modified input list
 
     """
+    wildcard_inputs = [input_name for input_name in args.input if "*" in input_name]
     file_list_inputs = [input_name for input_name in args.input if "file_list" in input_name]
+
+    for wildcard_input in wildcard_inputs:
+        input_files = [str(file) for file in Path(".").glob(wildcard_input)]
+        args.input.extend(input_files)
+        args.input.remove(wildcard_input)
+
     for file_list_input in file_list_inputs:
         with open(file_list_input, "r") as f:
             file_inputs = [input_name.strip() for input_name in f.readlines()]
@@ -106,6 +77,7 @@ def set_input_lists(args):
     """
 
     input_paths = []
+    args = _expand_user_input(args)
     for input_name in args.input:
         input_path = Path(input_name).resolve()
         if input_path.exists():

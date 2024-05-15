@@ -6,8 +6,6 @@ import pytest
 
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
-    expand_list_file,
-    expand_wildcard_file,
     known_sources,
     load_user_metadata,
     set_input_lists,
@@ -81,10 +79,6 @@ params_input = [
         ["unreadable*.txt"],
         ["unreadable_file.txt"],
     ),
-    (  # wildcard pattern, matching directories starting with input and all files under with .chi extension
-        ["input*/*.chi"],
-        ["input_dir/good_data.chi"],
-    ),
 ]
 
 
@@ -96,8 +90,6 @@ def test_set_input_lists(inputs, expected, user_filesystem):
 
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
-    actual_args = expand_wildcard_file(actual_args)
-    actual_args = expand_list_file(actual_args)
     actual_args = set_input_lists(actual_args)
     assert sorted(actual_args.input_paths) == sorted(expected_paths)
 
@@ -121,16 +113,6 @@ params_input_bad = [
         ["input_dir/file_list.txt"],
         "Cannot find missing_file.txt. Please specify valid input file(s) or directories.",
     ),
-    (  # valid wildcard pattern, but does not match any files or directories
-        ["non_existing_dir*"],
-        "Invalid wildcard input non_existing_dir*. "
-        "Please ensure the wildcard pattern matches at least one file or directory.",
-    ),
-    (  # invalid wildcard pattern
-        ["invalid_dir**"],
-        "Invalid wildcard input invalid_dir**. "
-        "Please ensure the wildcard pattern matches at least one file or directory.",
-    ),
 ]
 
 
@@ -141,8 +123,6 @@ def test_set_input_files_bad(inputs, msg, user_filesystem):
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(FileNotFoundError, match=msg[0]):
-        actual_args = expand_wildcard_file(actual_args)
-        actual_args = expand_list_file(actual_args)
         actual_args = set_input_lists(actual_args)
 
 

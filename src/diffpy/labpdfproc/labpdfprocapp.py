@@ -3,7 +3,6 @@ from argparse import ArgumentParser
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
 from diffpy.labpdfproc.tools import (
-    expand_list_file,
     known_sources,
     load_user_metadata,
     set_input_lists,
@@ -29,14 +28,9 @@ def get_args(override_cli_inputs=None):
         "'.' (load everything in the current directory), 'data' (load"
         "everything in the folder ./data), 'data/file_list.txt' (load"
         " the list of files contained in the text-file called "
-        "file_list.txt that can be found in the folder ./data). "
-        "\nWildcard character (*) is accepted. Examples include './*.chi'"
-        " (load all files with .chi extension), 'data/*.chi' (load all "
-        "files in 'data' file with .chi extension), 'file*.chi' (load all "
-        "files starting with 'file' and ending with .chi extension), 'test*' "
-        "(load all files and directories starting with 'test'), 'test*/*.chi' "
-        "(load all directories starting with 'test' and all files under "
-        "with .chi extension). ",
+        "file_list.txt that can be found in the folder ./data), "
+        "'data/*.chi' (load all files with extension .chi in the "
+        "folder ./data), 'data*' (load all files and directories starting with 'data').",
     )
     p.add_argument(
         "-a",
@@ -102,7 +96,6 @@ def get_args(override_cli_inputs=None):
 
 def main():
     args = get_args()
-    args = expand_list_file(args)
     args = set_input_lists(args)
     args.output_directory = set_output_directory(args)
     args.wavelength = set_wavelength(args)
@@ -126,7 +119,7 @@ def main():
             )
 
         input_pattern = Diffraction_object(wavelength=args.wavelength)
-        xarray, yarray = loadData(args.input_file, unpack=True)
+        xarray, yarray = loadData(filepath, unpack=True)
         input_pattern.insert_scattering_quantity(
             xarray,
             yarray,
