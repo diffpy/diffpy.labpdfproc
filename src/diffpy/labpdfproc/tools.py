@@ -86,7 +86,7 @@ def set_input_lists(args):
                     f"Cannot find {input_name}. Please specify valid input file(s) or directories."
                 )
         else:
-            if "*" in input_name.split("/")[-1] and input_name.count("*") == 1:
+            if "*" in input_name:
                 input_parent_directory = input_path.parents[0]
                 input_pattern = input_path.relative_to(input_parent_directory)
                 input_files = Path(input_parent_directory).glob(str(input_pattern))
