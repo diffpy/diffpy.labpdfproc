@@ -89,6 +89,13 @@ def get_args(override_cli_inputs=None):
         "For example, facility='NSLS II', 'facility=NSLS II', beamline=28ID-2, "
         "'beamline'='28ID-2', 'favorite color'=blue, are all valid key=value items. ",
     )
+    p.add_argument(
+        "-t"
+        "--is-test",
+        action="store_true",
+        help="If this flag is specified, the app would be run in test mode. No need for general users to specify this "
+             "flag",
+        )
     args = p.parse_args(override_cli_inputs)
     return args
 

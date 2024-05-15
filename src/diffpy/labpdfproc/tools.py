@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
@@ -165,3 +166,24 @@ def load_user_metadata(args):
             setattr(args, key, value)
     delattr(args, "user_metadata")
     return args
+
+
+def load_datetime(args):
+    """
+    Load datetime into the provided argparse Namespace.
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    the updated argparse Namespace with datetime inserted as key-value pairs
+    """
+    if args.user_metadata:
+        curr_time = datetime.now()
+        setattr(args, "datetime", curr_time.strftime("%Y-%m-%d %H:%M:%S"))
+    return args
+
+
