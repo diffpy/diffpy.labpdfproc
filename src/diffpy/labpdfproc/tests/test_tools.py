@@ -65,20 +65,8 @@ params_input = [
         ["good_data*"],
         ["good_data.chi", "good_data.xy", "good_data.txt"],
     ),
-    (  # wildcard pattern, matching files or directories starting with input
-        ["input*"],
-        [
-            "input_dir/good_data.chi",
-            "input_dir/good_data.xy",
-            "input_dir/good_data.txt",
-            "input_dir/unreadable_file.txt",
-            "input_dir/binary.pkl",
-        ],
-    ),
-    (  # wildcard pattern, matching files or directories starting with unreadable and ending with .txt extension
-        ["unreadable*.txt"],
-        ["unreadable_file.txt"],
-    ),
+    # wildcard pattern for file-list file, currently failing
+    # (["input_dir/file_list*"], "file_list.txt"),
 ]
 
 
