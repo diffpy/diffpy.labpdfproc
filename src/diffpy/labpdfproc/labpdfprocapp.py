@@ -1,6 +1,6 @@
 import sys
 from argparse import ArgumentParser
-
+from datetime import datetime
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
 from diffpy.labpdfproc.tools import (
     known_sources,
@@ -97,6 +97,11 @@ def get_args(override_cli_inputs=None):
         help="If this flag is specified, the app would be run in test mode. No need for general users to specify this "
              "flag",
         )
+    p.add_argument(
+        "-ct",
+        "--creation_time",
+        default=datetime.now().strftime("%Y%m%d%H%M%S"),
+    )
     args = p.parse_args(override_cli_inputs)
     return args
 
