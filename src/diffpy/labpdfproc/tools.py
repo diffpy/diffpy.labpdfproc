@@ -42,17 +42,17 @@ def _expand_user_input(args):
     the arguments with the modified input list
 
     """
-    wildcard_inputs = [input_name for input_name in args.input if "*" in input_name]
     file_list_inputs = [input_name for input_name in args.input if "file_list" in input_name]
-    for wildcard_input in wildcard_inputs:
-        input_files = [str(file) for file in Path(".").glob(wildcard_input)]
-        args.input.extend(input_files)
-        args.input.remove(wildcard_input)
     for file_list_input in file_list_inputs:
         with open(file_list_input, "r") as f:
             file_inputs = [input_name.strip() for input_name in f.readlines()]
         args.input.extend(file_inputs)
         args.input.remove(file_list_input)
+    wildcard_inputs = [input_name for input_name in args.input if "*" in input_name]
+    for wildcard_input in wildcard_inputs:
+        input_files = [str(file) for file in Path(".").glob(wildcard_input) if "file_list" not in file.name]
+        args.input.extend(input_files)
+        args.input.remove(wildcard_input)
     return args
 
 

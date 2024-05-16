@@ -65,8 +65,8 @@ params_input = [
         ["good_data*"],
         ["good_data.chi", "good_data.xy", "good_data.txt"],
     ),
-    # wildcard pattern for file-list file, currently failing
-    # (["input_dir/file_list*"], "file_list.txt"),
+    # wildcard pattern in a file-list file
+    (["file_list.txt"], ["good_data.txt", "unreadable_file.txt"]),
 ]
 
 
