@@ -1,7 +1,6 @@
 import os
 import re
 from pathlib import Path
-
 import freezegun
 from freezegun import freeze_time
 from datetime import datetime
@@ -247,16 +246,13 @@ def test_load_user_metadata_bad(inputs, msg):
         actual_args = load_user_metadata(actual_args)
 
 
-params7 = [(["--user-metadata", "facility=NSLS II", "beamline=28ID-2", "favorite color=blue"],
-            [["facility", "NSLS II"], ["beamline", "28ID-2"], ["favorite color", "blue"],
-             ["datetime", "2014-02-01 12:34:56"]])]
+params7 = [(["--creation_time", "2014-02-01 12:34:56"],
+           [datetime.strptime("2014-02-01 12:34:56", "%Y-%m-%d %H:%M:%S")])]
 
 
-@freezegun.freeze_time("2014-02-01 12:34:56")
+@freezegun.freeze_time("2024-02-01 12:34:56")
 @pytest.mark.parametrize("inputs, expected", params7)
 def test_load_datetime(inputs, expected):
-    actual_inputs = ["2.5", "data.xy"] + inputs
-    actual_args = get_args(actual_inputs)
-    time_loaded_args = load_datetime(actual_args)
-    actual_args = load_user_metadata(time_loaded_args)
-    assert actual_args == expected
+    actual_args = ["2.5", "data.xy"] + inputs
+    actual_args = load_datetime(actual_args)
+    assert actual_args.creation_time == expected
