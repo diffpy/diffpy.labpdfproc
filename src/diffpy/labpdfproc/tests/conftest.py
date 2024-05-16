@@ -36,11 +36,10 @@ def user_filesystem(tmp_path):
     with open(input_dir / "binary.pkl", "wb") as f:
         f.write(binary_data)
 
-    with open(base_dir / "file_list.txt", "w") as f:
-        f.write("./*.txt")
     with open(input_dir / "file_list.txt", "w") as f:
         f.write("good_data.chi \n good_data.xy \n good_data.txt \n missing_file.txt")
     with open(input_dir / "file_list_example2.txt", "w") as f:
+        f.write("input_dir/*.txt \n")
         f.write("input_dir/good_data.chi \n")
         f.write("good_data.xy \n")
         f.write(f"{str(input_dir.resolve() / 'good_data.txt')}\n")

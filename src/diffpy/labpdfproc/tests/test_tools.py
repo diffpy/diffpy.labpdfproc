@@ -49,9 +49,9 @@ params_input = [
             "input_dir/binary.pkl",
         ],
     ),
-    (  # file_list_example2.txt list of files provided in different directories
+    (  # file_list_example2.txt list of files provided in different directories with wildcard
         ["input_dir/file_list_example2.txt"],
-        ["input_dir/good_data.chi", "good_data.xy", "input_dir/good_data.txt"],
+        ["input_dir/good_data.chi", "good_data.xy", "input_dir/good_data.txt", "input_dir/unreadable_file.txt"],
     ),
     (  # wildcard pattern, matching files with .chi extension in the same directory
         ["./*.chi"],
@@ -65,8 +65,6 @@ params_input = [
         ["good_data*"],
         ["good_data.chi", "good_data.xy", "good_data.txt"],
     ),
-    # wildcard pattern in a file-list file
-    (["file_list.txt"], ["good_data.txt", "unreadable_file.txt"]),
 ]
 
 
