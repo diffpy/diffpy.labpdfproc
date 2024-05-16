@@ -3,7 +3,6 @@ from argparse import ArgumentParser
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
 from diffpy.labpdfproc.tools import (
-    expand_list_file,
     known_sources,
     load_user_metadata,
     set_input_lists,
@@ -29,7 +28,9 @@ def get_args(override_cli_inputs=None):
         "'.' (load everything in the current directory), 'data' (load"
         "everything in the folder ./data), 'data/file_list.txt' (load"
         " the list of files contained in the text-file called "
-        "file_list.txt that can be found in the folder ./data).",
+        "file_list.txt that can be found in the folder ./data), "
+        "'./*.chi', 'data/*.chi' (load all files with extension .chi in the "
+        "folder ./data).",
     )
     p.add_argument(
         "-a",
@@ -102,13 +103,12 @@ def get_args(override_cli_inputs=None):
 
 def main():
     args = get_args()
-    args = expand_list_file(args)
     args = set_input_lists(args)
     args.output_directory = set_output_directory(args)
     args.wavelength = set_wavelength(args)
     args = load_user_metadata(args)
 
-    for filepath in args.input_directory:
+    for filepath in args.input_paths:
         outfilestem = filepath.stem + "_corrected"
         corrfilestem = filepath.stem + "_cve"
         outfile = args.output_directory / (outfilestem + ".chi")
@@ -126,13 +126,13 @@ def main():
             )
 
         input_pattern = Diffraction_object(wavelength=args.wavelength)
-        xarray, yarray = loadData(args.input_file, unpack=True)
+        xarray, yarray = loadData(filepath, unpack=True)
         input_pattern.insert_scattering_quantity(
             xarray,
             yarray,
             "tth",
             scat_quantity="x-ray",
-            name=str(args.input_file),
+            name=filepath.stem,
             metadata={"muD": args.mud, "anode_type": args.anode_type},
         )
 
