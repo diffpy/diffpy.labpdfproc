@@ -28,9 +28,9 @@ def set_output_directory(args):
     return output_dir
 
 
-def expand_list_file(args):
+def _expand_user_input(args):
     """
-    Expands the list of inputs by adding files from file lists and removing the file list.
+    Expands the list of inputs by adding files from file lists and wildcards.
 
     Parameters
     ----------
@@ -48,6 +48,11 @@ def expand_list_file(args):
             file_inputs = [input_name.strip() for input_name in f.readlines()]
         args.input.extend(file_inputs)
         args.input.remove(file_list_input)
+    wildcard_inputs = [input_name for input_name in args.input if "*" in input_name]
+    for wildcard_input in wildcard_inputs:
+        input_files = [str(file) for file in Path(".").glob(wildcard_input) if "file_list" not in file.name]
+        args.input.extend(input_files)
+        args.input.remove(wildcard_input)
     return args
 
 
@@ -70,6 +75,7 @@ def set_input_lists(args):
     """
 
     input_paths = []
+    args = _expand_user_input(args)
     for input_name in args.input:
         input_path = Path(input_name).resolve()
         if input_path.exists():
@@ -86,7 +92,7 @@ def set_input_lists(args):
                     f"Cannot find {input_name}. Please specify valid input file(s) or directories."
                 )
         else:
-            raise FileNotFoundError(f"Cannot find {input_name}")
+            raise FileNotFoundError(f"Cannot find {input_name}.")
     setattr(args, "input_paths", list(set(input_paths)))
     return args
 
