@@ -187,9 +187,6 @@ def load_datetime(args):
     -------
     the updated argparse Namespace with datetime inserted as key-value pairs
     """
-    if args.user_metadata:
-        curr_time = datetime.now()
-        setattr(args, "datetime", curr_time.strftime("%Y-%m-%d %H:%M:%S"))
+    curr_time = datetime.now()
+    setattr(args, "creation_time", curr_time)
     return args
-
-
