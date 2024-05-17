@@ -8,6 +8,7 @@ from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
     known_sources,
     load_user_metadata,
+    load_username_email,
     set_input_lists,
     set_output_directory,
     set_wavelength,
@@ -241,3 +242,47 @@ def test_load_user_metadata_bad(inputs, msg):
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
         actual_args = load_user_metadata(actual_args)
+
+
+# Since in both extracting git config or ask users, we take username and email as args.
+# Probably define --username and
+# --email from get_args()
+params7 = [
+    (
+        ["--username", "stevenhua0320", "--email", "r.hua@mail.utoronto.ca", "--orcid", "0009-0003-1947-1857"],
+        [["username", "stevenhua0320"], ["email", "r.hua@mail.utoronto.ca"], ["orcid", "0009-0003-1947-1857"]],
+    ),
+    (
+        ["--username", "yucongalicechen", "--email", "yucong.c@columbia.edu"],
+        [["username", "yucongalicechen"], ["email", "yucong.c@columbia.edu"]],
+    ),
+    (
+        ["--username", "sbillinge", "--email", "sb2896@columbia.edu"],
+        [["username", "sbillinge"], ["email", "sb2896@columbia.edu"]],
+    ),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params7)
+def test_load_username_email(inputs, expected):
+    actual_args = get_args(inputs)
+    # load username, email, orcid(optional)into config in key-value pairs
+    actual_args = load_username_email(actual_args)
+    assert actual_args == expected
+
+
+params8 = [
+    (
+        ["--username", "stevenhua0320", "--email", "r.hua@mail.utoronto.ca", "--orcid", "ngss-0003-1947-1857"],
+        ["Please provide valid orcid number."],
+    ),
+    (["--username", "yucongalicechen%$#", "--email", "yucong.c@columbia.edu"], ["Please provide valid username."]),
+    (["--username", "sbllinge", "--email", "sb2896"], ["Please provide valid email."]),
+]
+
+
+@pytest.mark.parametrize("inputs, msg", params8)
+def test_load_username_email_bad(inputs, msg):
+    with pytest.raises(ValueError, match=msg[0]):
+        actual_args = get_args(inputs)
+        actual_args = load_username_email(actual_args)

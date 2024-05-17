@@ -171,3 +171,7 @@ def load_user_metadata(args):
             setattr(args, key, value)
     delattr(args, "user_metadata")
     return args
+
+
+def load_username_email(args):
+    pass
