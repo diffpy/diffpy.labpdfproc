@@ -85,3 +85,19 @@ An example input file can be found in the docs/examples directory in the distrib
 4. Run the command (see above)
 
 An example output is also present in the example data and you can compare your output to this file.  The example was processed with a muD of 2.5, though for experimentation you can try processing data with different muD values.
+
+Contributing
+------------
+We welcome contributors from the community.  Please consider posting issues, and taking issues and posting PRs.
+
+To ensure code quality and to prevent accidental commits into the default branch, please set up the use of our pre-commit
+hooks.
+
+1. modify the permissions to executable on the bash script called `prevent_commit_to_main.sh` in this directory: `chmod +x prevent_commit_to_main.sh`
+2. install pre-commit in your working environment `conda install pre-commit`
+3. initialize pre-commit (one time only) `pre-commit install`
+
+Thereafter your code will be linted by black and isort and checked against flake8 before you can commit.
+If it fails by black or isort, just rerun and it should pass (black and isort will modify the files so should
+pass after they are modified).  If the flake8 test fails please see the error messages and fix them manually before
+trying to commit again

@@ -24,3 +24,10 @@ repos:
     rev: 0.6.1
     hooks:
       - id: nbstripout
+  - repo: local
+    hooks:
+      - id: prevent-commit-to-main
+        name: Prevent Commit to Main Branch
+        entry: ./prevent_commit_to_main.sh
+        language: script
+        stages: [commit]
