@@ -45,13 +45,10 @@ jobs:
           conda install --file requirements/requirements.txt
           conda install pytest coverage codecov
           pip install .
-          chmod +x ./prevent_commit_to_main.sh
 
       - name: Validate diffpy.labpdfproc
         shell: bash -l {0}
         run: |
-          pwd
-          ls
           conda activate test
           coverage run -m pytest -s
           coverage report -m
