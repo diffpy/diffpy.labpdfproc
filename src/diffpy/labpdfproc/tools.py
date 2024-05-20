@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
@@ -170,4 +171,23 @@ def load_user_metadata(args):
                 raise ValueError(f"Please do not specify repeated keys: {key}. ")
             setattr(args, key, value)
     delattr(args, "user_metadata")
+    return args
+
+
+def load_datetime(args):
+    """
+    Create time-stamp and load it into args
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    the updated argparse Namespace with time-stamp inserted as creation_time
+
+    """
+    creation_time = datetime.now()
+    setattr(args, "creation_time", creation_time)
     return args

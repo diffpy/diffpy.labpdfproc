@@ -1,12 +1,15 @@
 import os
 import re
+from datetime import datetime
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
     known_sources,
+    load_datetime,
     load_user_metadata,
     set_input_lists,
     set_output_directory,
@@ -241,3 +244,18 @@ def test_load_user_metadata_bad(inputs, msg):
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
         actual_args = load_user_metadata(actual_args)
+
+
+params_time = [
+    (datetime(2024, 5, 20, 10, 30, 0)),
+]
+
+
+@pytest.mark.parametrize("expected", params_time)
+def test_load_datetime(expected):
+    with patch("diffpy.labpdfproc.tools.datetime") as mock_datetime:
+        mock_datetime.now.return_value = expected
+        cli_inputs = ["2.5", "data.xy"]
+        actual_args = get_args(cli_inputs)
+        actual_args = load_datetime(actual_args)
+        assert actual_args.creation_time == expected

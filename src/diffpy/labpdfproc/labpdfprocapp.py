@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
 from diffpy.labpdfproc.tools import (
     known_sources,
+    load_datetime,
     load_user_metadata,
     set_input_lists,
     set_output_directory,
@@ -100,6 +101,7 @@ def main():
     args.output_directory = set_output_directory(args)
     args.wavelength = set_wavelength(args)
     args = load_user_metadata(args)
+    args = load_datetime(args)
 
     for filepath in args.input_paths:
         outfilestem = filepath.stem + "_corrected"
