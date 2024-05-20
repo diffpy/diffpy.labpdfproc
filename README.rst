@@ -96,20 +96,24 @@ hooks.
 1. modify the permissions to executable on the bash script called
 
 .. code-block:: python
+
    prevent_commit_to_main.sh
 
 in this directory:
 
 .. code-block:: python
+
    chmod +x prevent_commit_to_main.sh
 
 2. install pre-commit in your working environment with
 
 .. code-block:: python
+
    conda install pre-commit
 
 3. initialize pre-commit (one time only)
 .. code-block:: python
+
    pre-commit install
 
 Thereafter your code will be linted by black and isort and checked against flake8 before you can commit.
