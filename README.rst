@@ -97,7 +97,10 @@ hooks.
 
 2. install pre-commit in your working environment with `conda install pre-commit`
 
-3. initialize pre-commit (one time only) `pre-commit install`
+3. initialize pre-commit (one time only)
+```
+pre-commit install
+```
 
 Thereafter your code will be linted by black and isort and checked against flake8 before you can commit.
 If it fails by black or isort, just rerun and it should pass (black and isort will modify the files so should
