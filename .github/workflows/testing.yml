@@ -49,8 +49,6 @@ jobs:
       - name: Validate diffpy.labpdfproc
         shell: bash -l {0}
         run: |
-          pwd
-          ls
           conda activate test
           coverage run -m pytest -s
           coverage report -m
