@@ -94,9 +94,7 @@ To ensure code quality and to prevent accidental commits into the default branch
 hooks.
 
 1. modify the permissions to executable on the bash script called `prevent_commit_to_main.sh` in this directory: `chmod +x prevent_commit_to_main.sh`
-
 2. install pre-commit in your working environment with `conda install pre-commit`
-
 3. initialize pre-commit (one time only) `pre-commit install`
 
 Thereafter your code will be linted by black and isort and checked against flake8 before you can commit.
