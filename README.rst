@@ -93,28 +93,11 @@ We welcome contributors from the community.  Please consider posting issues, and
 To ensure code quality and to prevent accidental commits into the default branch, please set up the use of our pre-commit
 hooks.
 
-1. modify the permissions to executable on the bash script called
+1. modify the permissions to executable on the bash script called `prevent_commit_to_main.sh` in this directory: `chmod +x prevent_commit_to_main.sh`
 
-.. code-block:: python
+2. install pre-commit in your working environment with `conda install pre-commit`
 
-   prevent_commit_to_main.sh
-
-in this directory:
-
-.. code-block:: python
-
-   chmod +x prevent_commit_to_main.sh
-
-2. install pre-commit in your working environment with
-
-.. code-block:: python
-
-   conda install pre-commit
-
-3. initialize pre-commit (one time only)
-.. code-block:: python
-
-   pre-commit install
+3. initialize pre-commit (one time only) `pre-commit install`
 
 Thereafter your code will be linted by black and isort and checked against flake8 before you can commit.
 If it fails by black or isort, just rerun and it should pass (black and isort will modify the files so should
