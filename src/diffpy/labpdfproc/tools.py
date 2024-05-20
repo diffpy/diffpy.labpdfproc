@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from diffpy.labpdfproc.user_config import find_conf_file, read_conf_file, user_info_conf
+
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 known_sources = [key for key in WAVELENGTHS.keys()]
 
@@ -171,3 +173,17 @@ def load_user_metadata(args):
             setattr(args, key, value)
     delattr(args, "user_metadata")
     return args
+
+
+def load_user_info(args):
+    conf_file_path = find_conf_file()
+    if conf_file_path is not None:
+        conf_file = read_conf_file(conf_file_path)
+        if "username" in conf_file and "useremail" in conf_file:
+            setattr(args, "username", conf_file["username"])
+            setattr(args, "useremail", conf_file["useremail"])
+            return args
+        else:
+            return user_info_conf(args)
+    else:
+        return user_info_conf(args)
