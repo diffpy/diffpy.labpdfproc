@@ -245,74 +245,118 @@ def test_load_user_metadata_bad(inputs, msg):
         actual_args = load_user_metadata(actual_args)
 
 
-params_user_info = [
-    # No config file, check username and email are properly loaded and config file in ~ is created and written
+params_user_info_without_conf_file = [
     (
         ["new_username", "new@email.com"],
-        ["input_dir", "input_dir/diffpyconfig.json", "diffpyconfig.json", "diffpyconfig.json"],
         ["new_username", "new@email.com", "new_username", "new@email.com"],
     ),
-    # Config file in cwd, check username and email are properly loaded and config file is unchanged
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params_user_info_without_conf_file)
+def test_load_user_info_without_conf_file(monkeypatch, inputs, expected, user_filesystem):
+    os.chdir(user_filesystem)
+    expected_args_username, expected_args_email, expected_conf_username, expected_conf_email = expected
+    mock_prompt_user_info = iter(inputs)
+    monkeypatch.setattr("builtins.input", lambda _: next(mock_prompt_user_info))
+    monkeypatch.setattr("diffpy.labpdfproc.user_config.CWD_CONFIG_PATH", Path.cwd() / "diffpyconfig.json")
+    monkeypatch.setattr("diffpy.labpdfproc.user_config.HOME_CONFIG_PATH", user_filesystem / "diffpyconfig.json")
+
+    cli_inputs = ["2.5", "data.xy"]
+    actual_args = get_args(cli_inputs)
+    actual_args = load_user_info(actual_args)
+    assert actual_args.username == expected_args_username
+    assert actual_args.email == expected_args_email
+    with open(user_filesystem / "diffpyconfig.json", "r") as f:
+        config_data = json.load(f)
+        assert config_data == {"username": expected_conf_username, "email": expected_conf_email}
+
+
+params_user_info_with_conf_file_in_cwd = [
     (
         ["", ""],
-        ["conf_dir", "conf_dir/diffpyconfig.json", "diffpyconfig.json", "conf_dir/diffpyconfig.json"],
         ["good_username", "good@email.com", "good_username", "good@email.com"],
     ),
     (
         ["new_username", ""],
-        ["conf_dir", "conf_dir/diffpyconfig.json", "diffpyconfig.json", "conf_dir/diffpyconfig.json"],
         ["new_username", "good@email.com", "good_username", "good@email.com"],
     ),
     (
         ["", "new@email.com"],
-        ["conf_dir", "conf_dir/diffpyconfig.json", "diffpyconfig.json", "conf_dir/diffpyconfig.json"],
         ["good_username", "new@email.com", "good_username", "good@email.com"],
     ),
     (
         ["new_username", "new@email.com"],
-        ["conf_dir", "conf_dir/diffpyconfig.json", "diffpyconfig.json", "conf_dir/diffpyconfig.json"],
-        ["new_username", "new@email.com", "good_username", "good@email.com"],
-    ),
-    # Config file in home dir not in cwd, check username and email are properly loaded and config file is unchanged
-    (
-        ["", ""],
-        ["input_dir", "input_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json"],
-        ["good_username", "good@email.com", "good_username", "good@email.com"],
-    ),
-    (
-        ["new_username", ""],
-        ["input_dir", "input_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json"],
-        ["new_username", "good@email.com", "good_username", "good@email.com"],
-    ),
-    (
-        ["", "new@email.com"],
-        ["input_dir", "input_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json"],
-        ["good_username", "new@email.com", "good_username", "good@email.com"],
-    ),
-    (
-        ["new_username", "new@email.com"],
-        ["input_dir", "input_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json"],
         ["new_username", "new@email.com", "good_username", "good@email.com"],
     ),
 ]
 
 
-@pytest.mark.parametrize("inputs, paths, expected", params_user_info)
-def test_load_user_info(monkeypatch, inputs, paths, expected, user_filesystem):
-    os.chdir(user_filesystem / paths[0])
+@pytest.mark.parametrize("inputs, expected", params_user_info_with_conf_file_in_cwd)
+def test_load_user_info_with_conf_file_cwd(monkeypatch, inputs, expected, user_filesystem):
+    # test it works when config file is in current directory
+    # check username and email are correctly loaded and config file is not modified
     expected_args_username, expected_args_email, expected_conf_username, expected_conf_email = expected
+
+    os.chdir(user_filesystem / "conf_dir")
     mock_prompt_user_info = iter(inputs)
     monkeypatch.setattr("builtins.input", lambda _: next(mock_prompt_user_info))
-    monkeypatch.setattr("diffpy.labpdfproc.user_config.CWD_CONFIG_PATH", user_filesystem / paths[1])
-    monkeypatch.setattr("diffpy.labpdfproc.user_config.HOME_CONFIG_PATH", user_filesystem / paths[2])
+    monkeypatch.setattr("diffpy.labpdfproc.user_config.CWD_CONFIG_PATH", Path.cwd() / "diffpyconfig.json")
+    monkeypatch.setattr("diffpy.labpdfproc.user_config.HOME_CONFIG_PATH", user_filesystem / "diffpyconfig.json")
 
     cli_inputs = ["2.5", "data.xy"]
     actual_args = get_args(cli_inputs)
     actual_args = load_user_info(actual_args)
-
     assert actual_args.username == expected_args_username
     assert actual_args.email == expected_args_email
-    with open(user_filesystem / paths[3], "r") as f:
+    with open(Path.cwd() / "diffpyconfig.json", "r") as f:
+        config_data = json.load(f)
+        assert config_data == {"username": expected_conf_username, "email": expected_conf_email}
+
+
+test_load_user_info_with_conf_file_not_cwd = [
+    (
+        ["", ""],
+        ["good_username", "good@email.com", "good_username", "good@email.com"],
+    ),
+    (
+        ["new_username", ""],
+        ["new_username", "good@email.com", "good_username", "good@email.com"],
+    ),
+    (
+        ["", "new@email.com"],
+        ["good_username", "new@email.com", "good_username", "good@email.com"],
+    ),
+    (
+        ["new_username", "new@email.com"],
+        ["new_username", "new@email.com", "good_username", "good@email.com"],
+    ),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", test_load_user_info_with_conf_file_not_cwd)
+def test_load_user_info_with_conf_file_not_cwd(monkeypatch, inputs, expected, user_filesystem):
+    # test it works when config file is in home directory and not in current directory
+    # check username and email are correctly loaded and config file is not modified
+    user_config_data = {"username": "good_username", "email": "good@email.com"}
+    with open(user_filesystem / "diffpyconfig.json", "w") as f:
+        json.dump(user_config_data, f)
+    expected_args_username, expected_args_email, expected_conf_username, expected_conf_email = expected
+
+    new_dir = user_filesystem / "new_dir"
+    new_dir.mkdir(parents=True, exist_ok=True)
+    os.chdir(new_dir)
+    mock_prompt_user_info = iter(inputs)
+    monkeypatch.setattr("builtins.input", lambda _: next(mock_prompt_user_info))
+    monkeypatch.setattr("diffpy.labpdfproc.user_config.CWD_CONFIG_PATH", Path.cwd() / "diffpyconfig.json")
+    monkeypatch.setattr("diffpy.labpdfproc.user_config.HOME_CONFIG_PATH", user_filesystem / "diffpyconfig.json")
+
+    cli_inputs = ["2.5", "data.xy"]
+    actual_args = get_args(cli_inputs)
+    actual_args = load_user_info(actual_args)
+    assert actual_args.username == expected_args_username
+    assert actual_args.email == expected_args_email
+    with open(user_filesystem / "diffpyconfig.json", "r") as f:
         config_data = json.load(f)
         assert config_data == {"username": expected_conf_username, "email": expected_conf_email}
 
@@ -334,7 +378,6 @@ def test_load_user_info_bad(monkeypatch, inputs, msg, user_filesystem):
     input_username, input_email = inputs
     mock_prompt_user_info = iter([input_username, input_email])
     monkeypatch.setattr("builtins.input", lambda _: next(mock_prompt_user_info))
-    monkeypatch.setattr("diffpy.labpdfproc.user_config.CWD_CONFIG_PATH", Path.cwd() / "diffpyconfig.json")
     monkeypatch.setattr("diffpy.labpdfproc.user_config.HOME_CONFIG_PATH", user_filesystem / "diffpyconfig.json")
 
     cli_inputs = ["2.5", "data.xy"]
