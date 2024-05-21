@@ -1,4 +1,7 @@
+from datetime import datetime
 from pathlib import Path
+
+from pip._internal.metadata import importlib
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 known_sources = [key for key in WAVELENGTHS.keys()]
@@ -170,4 +173,40 @@ def load_user_metadata(args):
                 raise ValueError(f"Please do not specify repeated keys: {key}. ")
             setattr(args, key, value)
     delattr(args, "user_metadata")
+    return args
+
+
+def load_package_version(args):
+    """
+    Load package version into the provided argparse Namespace.
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    the updated argparse Namespace with package version inserted as key-value pairs
+    """
+    package_version = importlib.metadata.version("diffpy.labpdfproc")
+    setattr(args, "package_version", package_version)
+    return args
+
+
+def load_datetime(args):
+    """
+    Load datetime into the provided argparse Namespace.
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    the updated argparse Namespace with datetime inserted as key-value pairs
+    """
+    curr_time = datetime.now()
+    setattr(args, "creation_time", curr_time)
     return args

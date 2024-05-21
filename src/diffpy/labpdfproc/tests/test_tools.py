@@ -2,11 +2,14 @@ import os
 import re
 from pathlib import Path
 
+import freezegun
 import pytest
 
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
     known_sources,
+    load_datetime,
+    load_package_version,
     load_user_metadata,
     set_input_lists,
     set_output_directory,
@@ -241,3 +244,25 @@ def test_load_user_metadata_bad(inputs, msg):
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
         actual_args = load_user_metadata(actual_args)
+
+
+params7 = [(["2.5", "data.xy"], {"package_version": "0.1.0"})]
+
+
+@pytest.mark.parametrize("inputs, expected", params7)
+def test_load_package_version(inputs, expected, monkeypatch):
+    monkeypatch.setattr("importlib.metadata.version", lambda _: expected["package_version"])
+    actual_inputs = get_args(inputs)
+    actual_args = load_package_version(actual_inputs)
+    assert actual_args.package_version == expected["package_version"]
+
+
+params8 = [(["2.5", "data.xy"], ["2024-05-21 17:18:19"])]
+
+
+@pytest.mark.parametrize("inputs, expected_time", params8)
+def test_load_datetime(inputs, expected_time):
+    with freezegun.freeze_time("2024-05-21 17:18:19"):
+        actual_inputs = get_args(inputs)
+        actual_args = load_datetime(actual_inputs)
+        assert actual_args.creation_time == expected_time
