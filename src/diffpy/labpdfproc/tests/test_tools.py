@@ -296,7 +296,7 @@ params_user_info_bad = [
 
 @pytest.mark.parametrize("inputs, msg", params_user_info_bad)
 def test_load_user_info_bad(monkeypatch, inputs, msg, user_filesystem):
-    os.chdir(user_filesystem)
+    os.chdir(user_filesystem / "conf_dir")
     input_username, input_email, input_config_file = inputs
     mock_prompt_user_info = iter([input_username, input_email])
     monkeypatch.setattr("builtins.input", lambda _: next(mock_prompt_user_info))
