@@ -245,63 +245,99 @@ def test_load_user_metadata_bad(inputs, msg):
         actual_args = load_user_metadata(actual_args)
 
 
-# For each test case, check username and email are properly loaded and written into config file
 params_user_info = [
-    # No existing config file, user enters valid username and email
-    (["good_username", "good@email.com", "non_existing_file.json"], ["good_username", "good@email.com"]),
-    # There exists a config file, so we read it and fetch info, no user input is fine
-    (["", "", "test.json"], ["good_username", "good@email.com"]),
-    # There exists a config file, user input username/email overwrites the username/email in the file
-    (["new_username", "", "test.json"], ["new_username", "good@email.com"]),
-    (["", "new@email.com", "test.json"], ["good_username", "new@email.com"]),
-    (["new_username", "new@email.com", "test.json"], ["new_username", "new@email.com"]),
-    # There exists a config file that does not contain username/email, then we write user inputs into config file
-    (["good_username", "good@email.com", "test2.json"], ["good_username", "good@email.com"]),
+    # No config file, check username and email are properly loaded and config file in ~ is created and written
+    (
+        ["new_username", "new@email.com"],
+        ["input_dir", "input_dir/diffpyconfig.json", "diffpyconfig.json", "diffpyconfig.json"],
+        ["new_username", "new@email.com", "new_username", "new@email.com"],
+    ),
+    # Config file in cwd, check username and email are properly loaded and config file is unchanged
+    (
+        ["", ""],
+        ["conf_dir", "conf_dir/diffpyconfig.json", "diffpyconfig.json", "conf_dir/diffpyconfig.json"],
+        ["good_username", "good@email.com", "good_username", "good@email.com"],
+    ),
+    (
+        ["new_username", ""],
+        ["conf_dir", "conf_dir/diffpyconfig.json", "diffpyconfig.json", "conf_dir/diffpyconfig.json"],
+        ["new_username", "good@email.com", "good_username", "good@email.com"],
+    ),
+    (
+        ["", "new@email.com"],
+        ["conf_dir", "conf_dir/diffpyconfig.json", "diffpyconfig.json", "conf_dir/diffpyconfig.json"],
+        ["good_username", "new@email.com", "good_username", "good@email.com"],
+    ),
+    (
+        ["new_username", "new@email.com"],
+        ["conf_dir", "conf_dir/diffpyconfig.json", "diffpyconfig.json", "conf_dir/diffpyconfig.json"],
+        ["new_username", "new@email.com", "good_username", "good@email.com"],
+    ),
+    # Config file in home dir not in cwd, check username and email are properly loaded and config file is unchanged
+    (
+        ["", ""],
+        ["input_dir", "input_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json"],
+        ["good_username", "good@email.com", "good_username", "good@email.com"],
+    ),
+    (
+        ["new_username", ""],
+        ["input_dir", "input_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json"],
+        ["new_username", "good@email.com", "good_username", "good@email.com"],
+    ),
+    (
+        ["", "new@email.com"],
+        ["input_dir", "input_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json"],
+        ["good_username", "new@email.com", "good_username", "good@email.com"],
+    ),
+    (
+        ["new_username", "new@email.com"],
+        ["input_dir", "input_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json", "conf_dir/diffpyconfig.json"],
+        ["new_username", "new@email.com", "good_username", "good@email.com"],
+    ),
 ]
 
 
-@pytest.mark.parametrize("inputs, expected", params_user_info)
-def test_load_user_info(monkeypatch, inputs, expected, user_filesystem):
-    os.chdir(user_filesystem / "conf_dir")
-    expected_username, expected_email = expected
-    input_username, input_email, input_config_file = inputs
-    mock_prompt_user_info = iter([input_username, input_email])
+@pytest.mark.parametrize("inputs, paths, expected", params_user_info)
+def test_load_user_info(monkeypatch, inputs, paths, expected, user_filesystem):
+    os.chdir(user_filesystem / paths[0])
+    expected_args_username, expected_args_email, expected_conf_username, expected_conf_email = expected
+    mock_prompt_user_info = iter(inputs)
     monkeypatch.setattr("builtins.input", lambda _: next(mock_prompt_user_info))
+    monkeypatch.setattr("diffpy.labpdfproc.user_config.CWD_CONFIG_PATH", user_filesystem / paths[1])
+    monkeypatch.setattr("diffpy.labpdfproc.user_config.HOME_CONFIG_PATH", user_filesystem / paths[2])
 
     cli_inputs = ["2.5", "data.xy"]
     actual_args = get_args(cli_inputs)
-    actual_args = load_user_info(actual_args, input_config_file)
+    actual_args = load_user_info(actual_args)
 
-    assert actual_args.username == expected_username
-    assert actual_args.email == expected_email
-    with open(input_config_file, "r") as f:
+    assert actual_args.username == expected_args_username
+    assert actual_args.email == expected_args_email
+    with open(user_filesystem / paths[3], "r") as f:
         config_data = json.load(f)
-        assert config_data == {"username": expected_username, "email": expected_email}
+        assert config_data == {"username": expected_conf_username, "email": expected_conf_email}
 
 
 params_user_info_bad = [
     # No valid username/email in config file (or no config file),
     # and user didn't enter username/email the first time they were asked
-    (["", "", "non_existing_file.json"], "Please rerun the program and provide a username and email."),
-    (["", "good@email.com", "non_existing_file.json"], "Please rerun the program and provide a username."),
-    (["good_username", "", "non_existing_file.json"], "Please rerun the program and provide an email."),
+    (["", ""], "Please rerun the program and provide a username and email."),
+    (["", "good@email.com"], "Please rerun the program and provide a username."),
+    (["good_username", ""], "Please rerun the program and provide an email."),
     # User entered an invalid email
-    (
-        ["good_username", "bad_email", "non_existing_file.json"],
-        "Please rerun the program and provide a valid email.",
-    ),
-    (["good_username", "bad_email", "test.json"], "Please rerun the program and provide a valid email."),
+    (["good_username", "bad_email"], "Please rerun the program and provide a valid email."),
 ]
 
 
 @pytest.mark.parametrize("inputs, msg", params_user_info_bad)
 def test_load_user_info_bad(monkeypatch, inputs, msg, user_filesystem):
-    os.chdir(user_filesystem / "conf_dir")
-    input_username, input_email, input_config_file = inputs
+    os.chdir(user_filesystem)
+    input_username, input_email = inputs
     mock_prompt_user_info = iter([input_username, input_email])
     monkeypatch.setattr("builtins.input", lambda _: next(mock_prompt_user_info))
+    monkeypatch.setattr("diffpy.labpdfproc.user_config.CWD_CONFIG_PATH", Path.cwd() / "diffpyconfig.json")
+    monkeypatch.setattr("diffpy.labpdfproc.user_config.HOME_CONFIG_PATH", user_filesystem / "diffpyconfig.json")
 
     cli_inputs = ["2.5", "data.xy"]
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
-        actual_args = load_user_info(actual_args, config_file=input_config_file)
+        actual_args = load_user_info(actual_args)

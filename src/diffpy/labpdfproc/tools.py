@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from diffpy.labpdfproc.user_config import CONFIG_FILE, prompt_user_info, read_conf_file, write_conf_file
+from diffpy.labpdfproc.user_config import prompt_user_info, read_conf_file, write_conf_file
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 known_sources = [key for key in WAVELENGTHS.keys()]
@@ -175,13 +175,14 @@ def load_user_metadata(args):
     return args
 
 
-def load_user_info(args, config_file=CONFIG_FILE):
+def load_user_info(args):
     """
     Load username and email into args.
 
-    Prompt the user to enter username and email. If not provided, read from the config file.
+    Prompt the user to enter username and email.
+    If not provided, read from the config file (first from cwd, and then from home directory).
     If neither are available, raise a ValueError.
-    Save provided values to the config file (overwriting existing values if needed).
+    Save provided values to the config file if a config file doesn't exist.
 
     Parameters
     ----------
@@ -194,7 +195,7 @@ def load_user_info(args, config_file=CONFIG_FILE):
 
     """
     input_username, input_email = prompt_user_info()
-    conf_username, conf_email = read_conf_file(config_file)
+    conf_username, conf_email = read_conf_file()
 
     no_username = not input_username and not conf_username
     no_email = not input_email and not conf_email
@@ -212,5 +213,7 @@ def load_user_info(args, config_file=CONFIG_FILE):
 
     setattr(args, "username", username)
     setattr(args, "email", email)
-    write_conf_file(username, email, config_file)
+
+    if not conf_username and not conf_email:
+        write_conf_file(username, email)
     return args

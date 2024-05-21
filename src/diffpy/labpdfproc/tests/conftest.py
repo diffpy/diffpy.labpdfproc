@@ -48,9 +48,7 @@ def user_filesystem(tmp_path):
         f.write(f"{str(input_dir.resolve() / 'good_data.txt')}\n")
 
     user_config_data = {"username": "good_username", "email": "good@email.com"}
-    with open(conf_dir / "test.json", "w") as f:
+    with open(conf_dir / "diffpyconfig.json", "w") as f:
         json.dump(user_config_data, f)
-    with open(conf_dir / "test2.json", "w") as f:
-        json.dump({}, f)
 
     yield tmp_path
