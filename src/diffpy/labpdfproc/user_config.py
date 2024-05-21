@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-CONFIG_FILE = "labpdfprocconfig.json"
+CONFIG_FILE = "diffpyconfig.json"
 
 
 def prompt_user_info():
