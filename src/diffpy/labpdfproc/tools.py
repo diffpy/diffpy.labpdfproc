@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from diffpy.labpdfproc.user_config import find_conf_file, read_conf_file, user_info_conf
+from diffpy.labpdfproc.user_config import CONFIG_FILE, prompt_user_info, read_conf_file, write_conf_file
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 known_sources = [key for key in WAVELENGTHS.keys()]
@@ -175,15 +175,42 @@ def load_user_metadata(args):
     return args
 
 
-def load_user_info(args):
-    conf_file_path = find_conf_file()
-    if conf_file_path is not None:
-        conf_file = read_conf_file(conf_file_path)
-        if "username" in conf_file and "useremail" in conf_file:
-            setattr(args, "username", conf_file["username"])
-            setattr(args, "useremail", conf_file["useremail"])
-            return args
-        else:
-            return user_info_conf(args)
-    else:
-        return user_info_conf(args)
+def load_user_info(args, config_file=CONFIG_FILE):
+    """
+    Load username and email into args.
+
+    Prompt the user to enter username and email. If not provided, read from the config file.
+    If neither are available, raise a ValueError.
+    Save provided values to the config file (overwriting existing values if needed).
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    the updated argparse Namespace with username and email
+
+    """
+    input_username, input_email = prompt_user_info()
+    conf_username, conf_email = read_conf_file(config_file)
+
+    no_username = not input_username and not conf_username
+    no_email = not input_email and not conf_email
+    if no_username and no_email:
+        raise ValueError("Please rerun the program and provide a username and email.")
+    if no_username:
+        raise ValueError("Please rerun the program and provide a username.")
+    if no_email:
+        raise ValueError("Please rerun the program and provide an email.")
+
+    username = input_username or conf_username
+    email = input_email or conf_email
+    if "@" not in email:
+        raise ValueError("Please rerun the program and provide a valid email.")
+
+    setattr(args, "username", username)
+    setattr(args, "email", email)
+    write_conf_file(username, email, config_file)
+    return args
