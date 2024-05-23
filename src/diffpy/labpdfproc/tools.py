@@ -2,6 +2,7 @@ from pathlib import Path
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 known_sources = [key for key in WAVELENGTHS.keys()]
+EXCLUSION_KEYWORDS = ["file_list", "_corrected", "_cve"]
 
 
 def set_output_directory(args):
@@ -50,7 +51,11 @@ def _expand_user_input(args):
         args.input.remove(file_list_input)
     wildcard_inputs = [input_name for input_name in args.input if "*" in input_name]
     for wildcard_input in wildcard_inputs:
-        input_files = [str(file) for file in Path(".").glob(wildcard_input) if "file_list" not in file.name]
+        input_files = [
+            str(file)
+            for file in Path(".").glob(wildcard_input)
+            if not any(keyword in file.name for keyword in EXCLUSION_KEYWORDS)
+        ]
         args.input.extend(input_files)
         args.input.remove(wildcard_input)
     return args
@@ -84,7 +89,9 @@ def set_input_lists(args):
             elif input_path.is_dir():
                 input_files = input_path.glob("*")
                 input_files = [
-                    file.resolve() for file in input_files if file.is_file() and "file_list" not in file.name
+                    file.resolve()
+                    for file in input_files
+                    if file.is_file() and not any(keyword in file.name for keyword in EXCLUSION_KEYWORDS)
                 ]
                 input_paths.extend(input_files)
             else:

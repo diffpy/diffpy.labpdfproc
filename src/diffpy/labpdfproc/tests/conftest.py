@@ -24,6 +24,10 @@ def user_filesystem(tmp_path):
         f.write(unreadable_data)
     with open(base_dir / "binary.pkl", "wb") as f:
         f.write(binary_data)
+    with open(base_dir / "data_corrected.chi", "w") as f:
+        pass
+    with open(base_dir / "data_cve.chi", "w") as f:
+        pass
 
     with open(input_dir / "good_data.chi", "w") as f:
         f.write(chi_data)
@@ -35,6 +39,10 @@ def user_filesystem(tmp_path):
         f.write(unreadable_data)
     with open(input_dir / "binary.pkl", "wb") as f:
         f.write(binary_data)
+    with open(input_dir / "data_corrected.chi", "w") as f:
+        pass
+    with open(input_dir / "data_cve.chi", "w") as f:
+        pass
 
     with open(input_dir / "file_list.txt", "w") as f:
         f.write("good_data.chi \n good_data.xy \n good_data.txt \n missing_file.txt")
