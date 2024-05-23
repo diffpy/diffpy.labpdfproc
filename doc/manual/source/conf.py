@@ -31,6 +31,11 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+
+import sphinx_rtd_theme
+
+import diffpy.labpdfproc
+
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
@@ -75,7 +80,6 @@ author = "diffpy"
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-import diffpy.labpdfproc
 
 # The short X.Y version.
 version = diffpy.labpdfproc.__version__
@@ -107,7 +111,6 @@ todo_include_todos = False
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
-import sphinx_rtd_theme
 
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
