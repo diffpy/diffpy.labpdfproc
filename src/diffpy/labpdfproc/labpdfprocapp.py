@@ -30,7 +30,8 @@ def get_args(override_cli_inputs=None):
         " the list of files contained in the text-file called "
         "file_list.txt that can be found in the folder ./data), "
         "'./*.chi', 'data/*.chi' (load all files with extension .chi in the "
-        "folder ./data).",
+        "folder ./data). You can also prepend '~' to a file name to "
+        "specify files that should be excluded.",
     )
     p.add_argument(
         "-a",

@@ -80,8 +80,14 @@ def set_input_lists(args):
     """
 
     input_paths = []
+    excluded_paths = []
     args = _expand_user_input(args)
     for input_name in args.input:
+        if input_name.startswith("~"):
+            input_path = Path(input_name[1:]).resolve()
+            if input_path.exists() and input_path.is_file():
+                excluded_paths.append(input_path)
+                continue
         input_path = Path(input_name).resolve()
         if input_path.exists():
             if input_path.is_file():
@@ -100,6 +106,7 @@ def set_input_lists(args):
                 )
         else:
             raise FileNotFoundError(f"Cannot find {input_name}.")
+    input_paths = [input_path for input_path in input_paths if input_path not in excluded_paths]
     setattr(args, "input_paths", list(set(input_paths)))
     return args
 

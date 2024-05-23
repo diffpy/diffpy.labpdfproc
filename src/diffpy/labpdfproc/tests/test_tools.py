@@ -65,6 +65,10 @@ params_input = [
         ["good_data*"],
         ["good_data.chi", "good_data.xy", "good_data.txt"],
     ),
+    (  # specify files do not want to read
+        [".", "~unreadable_file.txt", "~binary.pkl"],
+        ["good_data.chi", "good_data.xy", "good_data.txt"],
+    ),
 ]
 
 
