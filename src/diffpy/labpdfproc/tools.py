@@ -1,3 +1,5 @@
+import importlib
+from datetime import datetime
 from pathlib import Path
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
@@ -171,3 +173,10 @@ def load_user_metadata(args):
             setattr(args, key, value)
     delattr(args, "user_metadata")
     return args
+
+
+def _fetch_time_and_package_info():
+    creation_time = datetime.now()
+    package_name = "diffpy.labpdfproc"
+    package_version = importlib.metadata.version(package_name)
+    return creation_time, package_name, package_version

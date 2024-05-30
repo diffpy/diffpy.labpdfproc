@@ -1,11 +1,16 @@
+import importlib
+import importlib.metadata
 import os
 import re
+from datetime import datetime
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
+    _fetch_time_and_package_info,
     known_sources,
     load_user_metadata,
     set_input_lists,
@@ -241,3 +246,18 @@ def test_load_user_metadata_bad(inputs, msg):
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
         actual_args = load_user_metadata(actual_args)
+
+
+params_time_and_package_info = [(datetime(2024, 5, 20, 10, 30, 0), "diffpy.labpdfproc", "1.2.3")]
+
+
+@pytest.mark.parametrize("expected", params_time_and_package_info)
+def test_fetch_time_and_package_info(monkeypatch, expected):
+    expected_creation_time, expected_package_name, expected_package_version = expected
+    monkeypatch.setattr(importlib.metadata, "version", lambda expected_package_name: expected_package_version)
+    with patch("diffpy.labpdfproc.tools.datetime") as mock_datetime:
+        mock_datetime.now.return_value = expected_creation_time
+        actual_creation_time, actual_package_name, actual_package_version = _fetch_time_and_package_info()
+        assert actual_creation_time == expected_creation_time
+        assert actual_package_name == expected_package_name
+        assert actual_package_version == expected_package_version

@@ -2,6 +2,7 @@ import math
 
 import numpy as np
 
+from diffpy.labpdfproc.tools import _fetch_time_and_package_info
 from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 RADIUS_MM = 1
@@ -242,4 +243,8 @@ def apply_corr(diffraction_pattern, absorption_correction):
     """
 
     corrected_pattern = diffraction_pattern * absorption_correction
+    creation_time, package_name, package_version = _fetch_time_and_package_info()
+    corrected_pattern.metadata["creation_time"] = creation_time
+    corrected_pattern.metadata["package_name"] = package_name
+    corrected_pattern.metadata["package_version"] = package_version
     return corrected_pattern
