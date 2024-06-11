@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from pathlib import Path
@@ -7,6 +8,7 @@ import pytest
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
     known_sources,
+    load_user_info,
     load_user_metadata,
     set_input_lists,
     set_output_directory,
@@ -241,3 +243,119 @@ def test_load_user_metadata_bad(inputs, msg):
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
         actual_args = load_user_metadata(actual_args)
+
+
+def _setup_dirs(monkeypatch, user_filesystem):
+    cwd = Path(user_filesystem)
+    home_dir = cwd / "home_dir"
+    monkeypatch.setattr("pathlib.Path.home", lambda _: home_dir)
+    os.chdir(cwd)
+    return home_dir
+
+
+def _run_tests(inputs, expected):
+    expected_username, expected_email = expected
+    cli_inputs = ["2.5", "data.xy", "--username", inputs[0], "--email", inputs[1]]
+    actual_args = get_args(cli_inputs)
+    actual_args = load_user_info(actual_args)
+    assert actual_args.username == expected_username
+    assert actual_args.email == expected_email
+
+
+params_user_info_with_home_conf_file = [
+    (["", ""], ["home_username", "home@email.com"]),
+    (["cli_username", ""], ["cli_username", "home@email.com"]),
+    (["", "cli@email.com"], ["home_username", "cli@email.com"]),
+    ([None, None], ["home_username", "home@email.com"]),
+    (["cli_username", None], ["cli_username", "home@email.com"]),
+    ([None, "cli@email.com"], ["home_username", "cli@email.com"]),
+    (["cli_username", "cli@email.com"], ["cli_username", "cli@email.com"]),
+]
+params_user_info_with_local_conf_file = [
+    (["", ""], ["cwd_username", "cwd@email.com"]),
+    (["cli_username", ""], ["cli_username", "cwd@email.com"]),
+    (["", "cli@email.com"], ["cwd_username", "cli@email.com"]),
+    ([None, None], ["cwd_username", "cwd@email.com"]),
+    (["cli_username", None], ["cli_username", "cwd@email.com"]),
+    ([None, "cli@email.com"], ["cwd_username", "cli@email.com"]),
+    (["cli_username", "cli@email.com"], ["cli_username", "cli@email.com"]),
+]
+params_user_info_with_no_home_conf_file = [
+    (
+        [None, None],
+        ["input_username", "input@email.com"],
+        ["input_username", "input@email.com"],
+    ),
+    (
+        ["cli_username", None],
+        ["", "input@email.com"],
+        ["cli_username", "input@email.com"],
+    ),
+    (
+        [None, "cli@email.com"],
+        ["input_username", ""],
+        ["input_username", "cli@email.com"],
+    ),
+    (
+        ["", ""],
+        ["input_username", "input@email.com"],
+        ["input_username", "input@email.com"],
+    ),
+    (
+        ["cli_username", ""],
+        ["", "input@email.com"],
+        ["cli_username", "input@email.com"],
+    ),
+    (
+        ["", "cli@email.com"],
+        ["input_username", ""],
+        ["input_username", "cli@email.com"],
+    ),
+    (
+        ["cli_username", "cli@email.com"],
+        ["input_username", "input@email.com"],
+        ["cli_username", "cli@email.com"],
+    ),
+]
+params_user_info_no_conf_file_no_inputs = [
+    ([None, None], ["", ""], ["", ""]),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params_user_info_with_home_conf_file)
+def test_load_user_info_with_home_conf_file(monkeypatch, inputs, expected, user_filesystem):
+    _setup_dirs(monkeypatch, user_filesystem)
+    _run_tests(inputs, expected)
+
+
+@pytest.mark.parametrize("inputs, expected", params_user_info_with_local_conf_file)
+def test_load_user_info_with_local_conf_file(monkeypatch, inputs, expected, user_filesystem):
+    _setup_dirs(monkeypatch, user_filesystem)
+    local_config_data = {"username": "cwd_username", "email": "cwd@email.com"}
+    with open(Path(user_filesystem) / "diffpyconfig.json", "w") as f:
+        json.dump(local_config_data, f)
+    _run_tests(inputs, expected)
+    os.remove(Path().home() / "diffpyconfig.json")
+    _run_tests(inputs, expected)
+
+
+@pytest.mark.parametrize("inputsa, inputsb, expected", params_user_info_with_no_home_conf_file)
+def test_load_user_info_with_no_home_conf_file(monkeypatch, inputsa, inputsb, expected, user_filesystem):
+    _setup_dirs(monkeypatch, user_filesystem)
+    os.remove(Path().home() / "diffpyconfig.json")
+    inp_iter = iter(inputsb)
+    monkeypatch.setattr("builtins.input", lambda _: next(inp_iter))
+    _run_tests(inputsa, expected)
+    confile = Path().home() / "diffpyconfig.json"
+    assert confile.is_file()
+
+
+@pytest.mark.parametrize("inputsa, inputsb, expected", params_user_info_no_conf_file_no_inputs)
+def test_load_user_info_no_conf_file_no_inputs(monkeypatch, inputsa, inputsb, expected, user_filesystem):
+    _setup_dirs(monkeypatch, user_filesystem)
+    os.remove(Path().home() / "diffpyconfig.json")
+    inp_iter = iter(inputsb)
+    monkeypatch.setattr("builtins.input", lambda _: next(inp_iter))
+    _run_tests(inputsa, expected)
+    confile = Path().home() / "diffpyconfig.json"
+    assert confile.exists() is False
