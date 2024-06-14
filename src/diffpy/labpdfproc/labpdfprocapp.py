@@ -94,21 +94,15 @@ def get_args(override_cli_inputs=None):
     p.add_argument(
         "-n",
         "--username",
-        help="Your username. If not provided here, it can be specified in input "
-        "or stored in diffpyconfig.json in the current or home directory. "
-        "Existing config files prevent re-prompting. Values can be overridden here "
-        "but won't be saved to config files unless it's the first time specifying, "
-        "which saves to the config file in the home directory.",
+        help="Username will be loaded from config files. Specify here "
+        "only if you want to override that behavior at runtime. ",
         default=None,
     )
     p.add_argument(
         "-e",
         "--email",
-        help="Your email. If not provided here, it can be specified in input "
-        "or stored in diffpyconfig.json in the current or home directory. "
-        "Existing config files prevent re-prompting. Values can be overridden here "
-        "but won't be saved to config files unless it's the first time specifying, "
-        "which saves to the config file in the home directory.",
+        help="Email will be loaded from config files. Specify here "
+        "only if you want to override that behavior at runtime. ",
         default=None,
     )
     args = p.parse_args(override_cli_inputs)
