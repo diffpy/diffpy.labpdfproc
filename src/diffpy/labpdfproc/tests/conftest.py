@@ -11,8 +11,6 @@ def user_filesystem(tmp_path):
     input_dir.mkdir(parents=True, exist_ok=True)
     home_dir = base_dir / "home_dir"
     home_dir.mkdir(parents=True, exist_ok=True)
-    cwd_dir = base_dir / "cwd_dir"
-    cwd_dir.mkdir(parents=True, exist_ok=True)
 
     chi_data = "dataformat = twotheta\n mode = xray\n # chi_Q chi_I\n 1 2\n 3 4\n 5 6\n 7 8\n"
     xy_data = "1 2\n 3 4\n 5 6\n 7 8"
