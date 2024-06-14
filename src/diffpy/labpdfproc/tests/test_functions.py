@@ -1,6 +1,8 @@
+import numpy as np
 import pytest
 
-from diffpy.labpdfproc.functions import Gridded_circle
+from diffpy.labpdfproc.functions import Gridded_circle, compute_cve
+from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 params1 = [
     ([0.5, 3, 1], {(0.0, -0.5), (0.0, 0.0), (0.5, 0.0), (-0.5, 0.0), (0.0, 0.5)}),
@@ -52,3 +54,29 @@ def test_set_muls_at_angle(inputs, expected):
     actual_muls_sorted = sorted(actual_gs.muls)
     expected_muls_sorted = sorted(expected_muls)
     assert actual_muls_sorted == pytest.approx(expected_muls_sorted, rel=1e-4, abs=1e-6)
+
+
+def test_compute_cve(monkeypatch):
+    monkeypatch.setattr("diffpy.labpdfproc.functions.N_POINTS_ON_DIAMETER", int(4))
+    monkeypatch.setattr("diffpy.labpdfproc.functions.TTH_GRID", np.array([45, 60, 90]))
+    input_pattern = Diffraction_object(wavelength=1.54)
+    input_pattern.insert_scattering_quantity(
+        np.array([45, 60, 90]),
+        np.array([2.2, 3, 4]),
+        "tth",
+        scat_quantity="x-ray",
+        name="test",
+        metadata={"thing1": 1, "thing2": "thing2"},
+    )
+    actual_abdo = compute_cve(input_pattern, mud=1, wavelength=1.54)
+    expected_abdo = Diffraction_object()
+    expected_abdo.insert_scattering_quantity(
+        np.array([45, 60, 90]),
+        np.array([2.54253048, 2.52852515, 2.49717207]),
+        "tth",
+        metadata={"thing1": 1, "thing2": "thing2"},
+        name="absorption correction, cve, for test",
+        wavelength=1.54,
+        scat_quantity="cve",
+    )
+    assert actual_abdo == expected_abdo
