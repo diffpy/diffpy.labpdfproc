@@ -56,9 +56,9 @@ def test_set_muls_at_angle(inputs, expected):
     assert actual_muls_sorted == pytest.approx(expected_muls_sorted, rel=1e-4, abs=1e-6)
 
 
-def test_compute_cve(monkeypatch):
-    monkeypatch.setattr("diffpy.labpdfproc.functions.N_POINTS_ON_DIAMETER", int(4))
-    monkeypatch.setattr("diffpy.labpdfproc.functions.TTH_GRID", np.array([45, 60, 90]))
+def test_compute_cve(mocker):
+    mocker.patch("diffpy.labpdfproc.functions.N_POINTS_ON_DIAMETER", 4)
+    mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", np.array([45, 60, 90]))
     input_pattern = Diffraction_object(wavelength=1.54)
     input_pattern.insert_scattering_quantity(
         np.array([45, 60, 90]),
