@@ -7,6 +7,7 @@ import pytest
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
     known_sources,
+    load_user_info,
     load_user_metadata,
     set_input_lists,
     set_output_directory,
@@ -241,3 +242,26 @@ def test_load_user_metadata_bad(inputs, msg):
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=msg[0]):
         actual_args = load_user_metadata(actual_args)
+
+
+params_user_info = [
+    ([None, None], ["home_username", "home@email.com"]),
+    (["cli_username", None], ["cli_username", "home@email.com"]),
+    ([None, "cli@email.com"], ["home_username", "cli@email.com"]),
+    (["cli_username", "cli@email.com"], ["cli_username", "cli@email.com"]),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params_user_info)
+def test_load_user_info(monkeypatch, inputs, expected, user_filesystem):
+    cwd = Path(user_filesystem)
+    home_dir = cwd / "home_dir"
+    monkeypatch.setattr("pathlib.Path.home", lambda _: home_dir)
+    os.chdir(cwd)
+
+    expected_username, expected_email = expected
+    cli_inputs = ["2.5", "data.xy", "--username", inputs[0], "--email", inputs[1]]
+    actual_args = get_args(cli_inputs)
+    actual_args = load_user_info(actual_args)
+    assert actual_args.username == expected_username
+    assert actual_args.email == expected_email

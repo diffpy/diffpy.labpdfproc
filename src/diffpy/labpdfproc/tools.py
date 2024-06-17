@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from diffpy.utils.tools import get_user_info
+
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 known_sources = [key for key in WAVELENGTHS.keys()]
 
@@ -170,4 +172,25 @@ def load_user_metadata(args):
                 raise ValueError(f"Please do not specify repeated keys: {key}. ")
             setattr(args, key, value)
     delattr(args, "user_metadata")
+    return args
+
+
+def load_user_info(args):
+    """
+    Update username and email using get_user_info function from diffpy.utils
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser, default is None
+
+    Returns
+    -------
+    the updated argparse Namespace with username and email inserted
+
+    """
+    config = {"username": args.username, "email": args.email}
+    config = get_user_info(config)
+    args.username = config["username"]
+    args.email = config["email"]
     return args

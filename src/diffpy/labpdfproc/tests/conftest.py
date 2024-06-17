@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -8,6 +9,8 @@ def user_filesystem(tmp_path):
     base_dir = Path(tmp_path)
     input_dir = base_dir / "input_dir"
     input_dir.mkdir(parents=True, exist_ok=True)
+    home_dir = base_dir / "home_dir"
+    home_dir.mkdir(parents=True, exist_ok=True)
 
     chi_data = "dataformat = twotheta\n mode = xray\n # chi_Q chi_I\n 1 2\n 3 4\n 5 6\n 7 8\n"
     xy_data = "1 2\n 3 4\n 5 6\n 7 8"
@@ -43,5 +46,9 @@ def user_filesystem(tmp_path):
         f.write("input_dir/good_data.chi \n")
         f.write("good_data.xy \n")
         f.write(f"{str(input_dir.resolve() / 'good_data.txt')}\n")
+
+    home_config_data = {"username": "home_username", "email": "home@email.com"}
+    with open(home_dir / "diffpyconfig.json", "w") as f:
+        json.dump(home_config_data, f)
 
     yield tmp_path
