@@ -72,7 +72,7 @@ def test_compute_cve(mocker):
     expected_abdo = Diffraction_object()
     expected_abdo.insert_scattering_quantity(
         np.array([45, 60, 90]),
-        np.array([2.54253048, 2.52852515, 2.49717207]),
+        np.array([2.54253, 2.52852, 2.49717]),
         "tth",
         metadata={"thing1": 1, "thing2": "thing2"},
         name="absorption correction, cve, for test",
