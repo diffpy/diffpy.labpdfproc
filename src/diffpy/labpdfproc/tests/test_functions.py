@@ -56,27 +56,29 @@ def test_set_muls_at_angle(inputs, expected):
     assert actual_muls_sorted == pytest.approx(expected_muls_sorted, rel=1e-4, abs=1e-6)
 
 
-def test_compute_cve(mocker):
+def _instantiate_test_do(mocker, yarray, name="test", scat_quantity="x-ray"):
+    mocker_xarray = np.array([90, 90.1, 90.2])
     mocker.patch("diffpy.labpdfproc.functions.N_POINTS_ON_DIAMETER", 4)
-    mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", np.array([45, 60, 90]))
-    input_pattern = Diffraction_object(wavelength=1.54)
-    input_pattern.insert_scattering_quantity(
-        np.array([45, 60, 90]),
-        np.array([2.2, 3, 4]),
+    mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", mocker_xarray)
+    test_do = Diffraction_object(wavelength=1.54)
+    test_do.insert_scattering_quantity(
+        mocker_xarray,
+        yarray,
         "tth",
-        scat_quantity="x-ray",
-        name="test",
+        scat_quantity=scat_quantity,
+        name=name,
         metadata={"thing1": 1, "thing2": "thing2"},
     )
+    return test_do
+
+
+def test_compute_cve(mocker):
+    input_pattern = _instantiate_test_do(mocker, yarray=np.array([1, 1, 1]))
     actual_abdo = compute_cve(input_pattern, mud=1, wavelength=1.54)
-    expected_abdo = Diffraction_object()
-    expected_abdo.insert_scattering_quantity(
-        np.array([45, 60, 90]),
-        np.array([2.54253, 2.52852, 2.49717]),
-        "tth",
-        metadata={"thing1": 1, "thing2": "thing2"},
+    expected_abdo = _instantiate_test_do(
+        mocker,
+        yarray=np.array([2.49717, 2.49706, 2.49695]),
         name="absorption correction, cve, for test",
-        wavelength=1.54,
         scat_quantity="cve",
     )
     assert actual_abdo == expected_abdo
