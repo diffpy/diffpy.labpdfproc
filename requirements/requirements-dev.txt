@@ -9,6 +9,7 @@ nbstripout
 pre-commit
 pre-commit-hooks
 pytest
+pytest-mock
 sphinx
 twine
 # These are dependencies of various sphinx extensions for documentation.

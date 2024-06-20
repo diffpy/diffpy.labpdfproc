@@ -197,7 +197,7 @@ def compute_cve(diffraction_data, mud, wavelength):
     """
 
     mu_sample_invmm = mud / 2
-    abs_correction = Gridded_circle(mu=mu_sample_invmm)
+    abs_correction = Gridded_circle(n_points_on_diameter=N_POINTS_ON_DIAMETER, mu=mu_sample_invmm)
     distances, muls = [], []
     for angle in TTH_GRID:
         abs_correction.set_distances_at_angle(angle)
