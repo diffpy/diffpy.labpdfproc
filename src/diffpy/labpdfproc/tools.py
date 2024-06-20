@@ -213,3 +213,36 @@ def load_package_info(args):
     metadata = get_package_info("diffpy.labpdfproc")
     setattr(args, "package_info", metadata["package_info"])
     return args
+
+
+def _set_anode_type(args):
+    if args.wavelength in WAVELENGTHS.values():
+        args.anode_type = next(key for key, value in WAVELENGTHS.items() if value == args.wavelength)
+    else:
+        delattr(args, "anode_type")
+    return args
+
+
+def load_metadata(args, filepath):
+    """
+    Load metadata from args,
+    except for anode type if wavelength does not match, and do not load output_correction or force_overwrite
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    A dictionary with all arguments from the parser
+    """
+
+    args = _set_anode_type(args)
+    metadata = vars(args)
+    exclude_keys = ["output_correction", "force_overwrite", "input", "input_paths"]
+    for key in exclude_keys:
+        metadata.pop(key, None)
+    metadata["input_directory"] = str(filepath)
+    metadata["output_directory"] = str(metadata["output_directory"])
+    return metadata

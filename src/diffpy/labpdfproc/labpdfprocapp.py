@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
 from diffpy.labpdfproc.tools import (
     known_sources,
+    load_metadata,
     load_package_info,
     load_user_info,
     load_user_metadata,
@@ -144,7 +145,7 @@ def main():
             "tth",
             scat_quantity="x-ray",
             name=filepath.stem,
-            metadata={"muD": args.mud, "anode_type": args.anode_type},
+            metadata=load_metadata(args, filepath),
         )
 
         absorption_correction = compute_cve(input_pattern, args.mud, args.wavelength)

@@ -7,6 +7,7 @@ import pytest
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
     known_sources,
+    load_metadata,
     load_package_info,
     load_user_info,
     load_user_metadata,
@@ -277,3 +278,57 @@ def test_load_package_info(mocker):
     actual_args = get_args(cli_inputs)
     actual_args = load_package_info(actual_args)
     assert actual_args.package_info == {"diffpy.labpdfproc": "1.2.3", "diffpy.utils": "3.3.0"}
+
+
+def _setup(mocker, user_filesystem):
+    cwd = Path(user_filesystem)
+    home_dir = cwd / "home_dir"
+    mocker.patch("pathlib.Path.home", lambda _: home_dir)
+    os.chdir(cwd)
+    mocker.patch(
+        "importlib.metadata.version",
+        side_effect=lambda package_name: "3.3.0" if package_name == "diffpy.utils" else "1.2.3",
+    )
+
+
+def _preprocess_args(args):
+    args = load_package_info(args)
+    args = load_user_info(args)
+    args = set_input_lists(args)
+    args.output_directory = set_output_directory(args)
+    args.wavelength = set_wavelength(args)
+    args = load_user_metadata(args)
+    return args
+
+
+def test_load_metadata(mocker, user_filesystem):
+    _setup(mocker, user_filesystem)
+    cli_inputs = [
+        "2.5",
+        ".",
+        "--wavelength",
+        "1.54",
+        "--user-metadata",
+        "key=value",
+        "--username",
+        "cli_username",
+        "--email",
+        "cli@email.com",
+    ]
+    actual_args = get_args(cli_inputs)
+    actual_args = _preprocess_args(actual_args)
+    for filepath in actual_args.input_paths:
+        actual_metadata = load_metadata(actual_args, filepath)
+        expected_metadata = {
+            "mud": 2.5,
+            "input_directory": str(filepath),
+            "anode_type": "Cu",
+            "wavelength": 1.54,
+            "output_directory": str(Path.cwd().resolve()),
+            "xtype": "tth",
+            "key": "value",
+            "username": "cli_username",
+            "email": "cli@email.com",
+            "package_info": {"diffpy.labpdfproc": "1.2.3", "diffpy.utils": "3.3.0"},
+        }
+        assert actual_metadata == expected_metadata
