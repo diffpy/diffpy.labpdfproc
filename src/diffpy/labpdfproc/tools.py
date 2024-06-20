@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from diffpy.utils.tools import get_user_info
+from diffpy.utils.tools import get_package_info, get_user_info
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 known_sources = [key for key in WAVELENGTHS.keys()]
@@ -193,4 +193,23 @@ def load_user_info(args):
     config = get_user_info(config)
     args.username = config["username"]
     args.email = config["email"]
+    return args
+
+
+def load_package_info(args):
+    """
+    Load diffpy.labpdfproc package name and version into args using get_package_info function from diffpy.utils
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser, default is None
+
+    Returns
+    -------
+    the updated argparse Namespace with diffpy.labpdfproc name and version inserted
+
+    """
+    metadata = get_package_info("diffpy.labpdfproc")
+    setattr(args, "package_info", metadata["package_info"])
     return args
