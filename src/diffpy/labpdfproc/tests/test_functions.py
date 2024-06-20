@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from diffpy.labpdfproc.functions import Gridded_circle, compute_cve
+from diffpy.labpdfproc.functions import Gridded_circle, apply_corr, compute_cve
 from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 params1 = [
@@ -80,3 +80,39 @@ def test_compute_cve(mocker):
         scat_quantity="cve",
     )
     assert actual_abdo == expected_abdo
+
+
+def test_apply_corr(mocker):
+    mocker.patch("diffpy.labpdfproc.functions.N_POINTS_ON_DIAMETER", 4)
+    mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", np.array([45, 60, 90]))
+    input_pattern = Diffraction_object(wavelength=1.54)
+    input_pattern.insert_scattering_quantity(
+        np.array([45, 60, 90]),
+        np.array([2.2, 3, 4]),
+        "tth",
+        scat_quantity="x-ray",
+        name="test",
+        metadata={"thing1": 1, "thing2": "thing2"},
+    )
+    absorption_correction = Diffraction_object()
+    absorption_correction.insert_scattering_quantity(
+        np.array([45, 60, 90]),
+        np.array([2.54253, 2.52852, 2.49717]),
+        "tth",
+        metadata={"thing1": 1, "thing2": "thing2"},
+        name="absorption correction, cve, for test",
+        wavelength=1.54,
+        scat_quantity="cve",
+    )
+    actual_corr = apply_corr(input_pattern, absorption_correction)
+    expected_corr = Diffraction_object()
+    expected_corr.insert_scattering_quantity(
+        np.array([45, 60, 90]),
+        np.array([5.59357, 7.58556, 9.98868]),
+        "tth",
+        metadata={"thing1": 1, "thing2": "thing2"},
+        name="test",
+        wavelength=1.54,
+        scat_quantity="x-ray",
+    )
+    assert actual_corr == expected_corr
