@@ -7,6 +7,7 @@ import pytest
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
     known_sources,
+    load_package_info,
     load_user_info,
     load_user_metadata,
     set_input_lists,
@@ -265,3 +266,14 @@ def test_load_user_info(monkeypatch, inputs, expected, user_filesystem):
     actual_args = load_user_info(actual_args)
     assert actual_args.username == expected_username
     assert actual_args.email == expected_email
+
+
+def test_load_package_info(mocker):
+    mocker.patch(
+        "importlib.metadata.version",
+        side_effect=lambda package_name: "3.3.0" if package_name == "diffpy.utils" else "1.2.3",
+    )
+    cli_inputs = ["2.5", "data.xy"]
+    actual_args = get_args(cli_inputs)
+    actual_args = load_package_info(actual_args)
+    assert actual_args.package_info == {"diffpy.labpdfproc": "1.2.3", "diffpy.utils": "3.3.0"}
