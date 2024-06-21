@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from diffpy.labpdfproc.functions import Gridded_circle, compute_cve
+from diffpy.labpdfproc.functions import Gridded_circle, apply_corr, compute_cve
 from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 params1 = [
@@ -56,27 +56,47 @@ def test_set_muls_at_angle(inputs, expected):
     assert actual_muls_sorted == pytest.approx(expected_muls_sorted, rel=1e-4, abs=1e-6)
 
 
-def test_compute_cve(mocker):
-    mocker.patch("diffpy.labpdfproc.functions.N_POINTS_ON_DIAMETER", 4)
-    mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", np.array([45, 60, 90]))
-    input_pattern = Diffraction_object(wavelength=1.54)
-    input_pattern.insert_scattering_quantity(
-        np.array([45, 60, 90]),
-        np.array([2.2, 3, 4]),
+def _instantiate_test_do(xarray, yarray, name="test", scat_quantity="x-ray"):
+    test_do = Diffraction_object(wavelength=1.54)
+    test_do.insert_scattering_quantity(
+        xarray,
+        yarray,
         "tth",
-        scat_quantity="x-ray",
-        name="test",
+        scat_quantity=scat_quantity,
+        name=name,
         metadata={"thing1": 1, "thing2": "thing2"},
     )
+    return test_do
+
+
+def test_compute_cve(mocker):
+    xarray, yarray = np.array([90, 90.1, 90.2]), np.array([2, 2, 2])
+    expected_cve = np.array([0.5, 0.5, 0.5])
+    mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", xarray)
+    mocker.patch("numpy.interp", return_value=expected_cve)
+    input_pattern = _instantiate_test_do(xarray, yarray)
     actual_abdo = compute_cve(input_pattern, mud=1, wavelength=1.54)
-    expected_abdo = Diffraction_object()
-    expected_abdo.insert_scattering_quantity(
-        np.array([45, 60, 90]),
-        np.array([2.54253, 2.52852, 2.49717]),
-        "tth",
-        metadata={"thing1": 1, "thing2": "thing2"},
+    expected_abdo = _instantiate_test_do(
+        xarray,
+        expected_cve,
         name="absorption correction, cve, for test",
-        wavelength=1.54,
         scat_quantity="cve",
     )
     assert actual_abdo == expected_abdo
+
+
+def test_apply_corr(mocker):
+    xarray, yarray = np.array([90, 90.1, 90.2]), np.array([2, 2, 2])
+    expected_cve = np.array([0.5, 0.5, 0.5])
+    mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", xarray)
+    mocker.patch("numpy.interp", return_value=expected_cve)
+    input_pattern = _instantiate_test_do(xarray, yarray)
+    absorption_correction = _instantiate_test_do(
+        xarray,
+        expected_cve,
+        name="absorption correction, cve, for test",
+        scat_quantity="cve",
+    )
+    actual_corr = apply_corr(input_pattern, absorption_correction)
+    expected_corr = _instantiate_test_do(xarray, np.array([1, 1, 1]))
+    assert actual_corr == expected_corr
