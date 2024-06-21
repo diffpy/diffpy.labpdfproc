@@ -217,18 +217,9 @@ def load_package_info(args):
     return args
 
 
-def _set_anode_type(args):
-    if args.wavelength in WAVELENGTHS.values():
-        args.anode_type = next(key for key, value in WAVELENGTHS.items() if value == args.wavelength)
-    else:
-        delattr(args, "anode_type")
-    return args
-
-
 def load_metadata(args, filepath):
     """
-    Load metadata from args,
-    except for anode type if wavelength does not match, and do not load output_correction or force_overwrite
+    Load relevant metadata from args
 
     Parameters
     ----------
@@ -237,10 +228,9 @@ def load_metadata(args, filepath):
 
     Returns
     -------
-    A dictionary with all arguments from the parser
+    A dictionary with relevant arguments from the parser
     """
 
-    args = _set_anode_type(args)
     metadata = vars(args)
     for key in METADATA_KEYS_TO_EXCLUDE:
         metadata.pop(key, None)

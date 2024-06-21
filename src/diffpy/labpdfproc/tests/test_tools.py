@@ -297,7 +297,7 @@ def _preprocess_args(args):
     args = load_user_info(args)
     args = set_input_lists(args)
     args.output_directory = set_output_directory(args)
-    args.wavelength = set_wavelength(args)
+    args = set_wavelength(args)
     args = load_user_metadata(args)
     return args
 
@@ -307,8 +307,6 @@ def test_load_metadata(mocker, user_filesystem):
     cli_inputs = [
         "2.5",
         ".",
-        "--wavelength",
-        "1.54",
         "--user-metadata",
         "key=value",
         "--username",
@@ -323,8 +321,8 @@ def test_load_metadata(mocker, user_filesystem):
         expected_metadata = {
             "mud": 2.5,
             "input_directory": str(filepath),
-            "anode_type": "Cu",
-            "wavelength": 1.54,
+            "anode_type": "Mo",
+            "wavelength": 0.71,
             "output_directory": str(Path.cwd().resolve()),
             "xtype": "tth",
             "key": "value",
