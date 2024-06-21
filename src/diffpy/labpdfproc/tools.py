@@ -127,11 +127,12 @@ def set_wavelength(args):
         )
 
     if args.wavelength:
-        return args.wavelength
+        delattr(args, "anode_type")
     elif args.anode_type:
-        return WAVELENGTHS[args.anode_type]
+        args.wavelength = WAVELENGTHS[args.anode_type]
     else:
-        return WAVELENGTHS["Mo"]
+        args.wavelength = WAVELENGTHS["Mo"]
+    return args
 
 
 def _load_key_value_pair(s):

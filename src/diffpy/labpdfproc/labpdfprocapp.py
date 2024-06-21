@@ -117,7 +117,7 @@ def main():
     args = load_user_info(args)
     args = set_input_lists(args)
     args.output_directory = set_output_directory(args)
-    args.wavelength = set_wavelength(args)
+    args = set_wavelength(args)
     args = load_user_metadata(args)
 
     for filepath in args.input_paths:

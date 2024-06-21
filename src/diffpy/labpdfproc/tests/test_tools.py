@@ -146,20 +146,21 @@ def test_set_output_directory_bad(user_filesystem):
 
 
 params2 = [
-    ([], [0.71]),
-    (["--anode-type", "Ag"], [0.59]),
-    (["--wavelength", "0.25"], [0.25]),
-    (["--wavelength", "0.25", "--anode-type", "Ag"], [0.25]),
+    ([], [0.71, "Mo"]),
+    (["--anode-type", "Ag"], [0.59, "Ag"]),
+    (["--wavelength", "0.25"], [0.25, None]),
+    (["--wavelength", "0.25", "--anode-type", "Ag"], [0.25, None]),
 ]
 
 
 @pytest.mark.parametrize("inputs, expected", params2)
 def test_set_wavelength(inputs, expected):
-    expected_wavelength = expected[0]
+    expected_wavelength, expected_anode_type = expected[0], expected[1]
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
-    actual_args.wavelength = set_wavelength(actual_args)
+    actual_args = set_wavelength(actual_args)
     assert actual_args.wavelength == expected_wavelength
+    assert getattr(actual_args, "anode_type", None) == expected_anode_type
 
 
 params3 = [
@@ -183,7 +184,7 @@ def test_set_wavelength_bad(inputs, msg):
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=re.escape(msg[0])):
-        actual_args.wavelength = set_wavelength(actual_args)
+        actual_args = set_wavelength(actual_args)
 
 
 params5 = [
