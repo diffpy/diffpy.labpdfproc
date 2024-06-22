@@ -111,7 +111,7 @@ def set_wavelength(args):
 
     Returns
     -------
-        float: the wavelength value
+    args argparse.Namespace
 
     we raise an ValueError if the input wavelength is non-positive
     or if the input anode_type is not one of the known sources
