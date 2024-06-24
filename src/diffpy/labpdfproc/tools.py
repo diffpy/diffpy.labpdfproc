@@ -1,3 +1,4 @@
+import copy
 from pathlib import Path
 
 from diffpy.utils.tools import get_package_info, get_user_info
@@ -231,7 +232,7 @@ def load_metadata(args, filepath):
     A dictionary with relevant arguments from the parser
     """
 
-    metadata = vars(args)
+    metadata = copy.deepcopy(vars(args))
     for key in METADATA_KEYS_TO_EXCLUDE:
         metadata.pop(key, None)
     metadata["input_directory"] = str(filepath)
