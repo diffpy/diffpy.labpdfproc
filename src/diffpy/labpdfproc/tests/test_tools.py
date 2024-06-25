@@ -7,9 +7,11 @@ import pytest
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
     known_sources,
+    load_metadata,
     load_package_info,
     load_user_info,
     load_user_metadata,
+    preprocessing_args,
     set_input_lists,
     set_output_directory,
     set_wavelength,
@@ -278,3 +280,41 @@ def test_load_package_info(mocker):
     actual_args = get_args(cli_inputs)
     actual_args = load_package_info(actual_args)
     assert actual_args.package_info == {"diffpy.labpdfproc": "1.2.3", "diffpy.utils": "3.3.0"}
+
+
+def test_load_metadata(mocker, user_filesystem):
+    cwd = Path(user_filesystem)
+    home_dir = cwd / "home_dir"
+    mocker.patch("pathlib.Path.home", lambda _: home_dir)
+    os.chdir(cwd)
+    mocker.patch(
+        "importlib.metadata.version",
+        side_effect=lambda package_name: "3.3.0" if package_name == "diffpy.utils" else "1.2.3",
+    )
+    cli_inputs = [
+        "2.5",
+        ".",
+        "--user-metadata",
+        "key=value",
+        "--username",
+        "cli_username",
+        "--email",
+        "cli@email.com",
+    ]
+    actual_args = get_args(cli_inputs)
+    actual_args = preprocessing_args(actual_args)
+    for filepath in actual_args.input_paths:
+        actual_metadata = load_metadata(actual_args, filepath)
+        expected_metadata = {
+            "mud": 2.5,
+            "input_directory": str(filepath),
+            "anode_type": "Mo",
+            "wavelength": 0.71,
+            "output_directory": str(Path.cwd().resolve()),
+            "xtype": "tth",
+            "key": "value",
+            "username": "cli_username",
+            "email": "cli@email.com",
+            "package_info": {"diffpy.labpdfproc": "1.2.3", "diffpy.utils": "3.3.0"},
+        }
+        assert actual_metadata == expected_metadata

@@ -1,9 +1,11 @@
+import copy
 from pathlib import Path
 
 from diffpy.utils.tools import get_package_info, get_user_info
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 known_sources = [key for key in WAVELENGTHS.keys()]
+METADATA_KEYS_TO_EXCLUDE = ["output_correction", "force_overwrite", "input", "input_paths"]
 
 
 def set_output_directory(args):
@@ -110,7 +112,7 @@ def set_wavelength(args):
 
     Returns
     -------
-        float: the wavelength value
+    args argparse.Namespace
 
     we raise an ValueError if the input wavelength is non-positive
     or if the input anode_type is not one of the known sources
@@ -214,3 +216,47 @@ def load_package_info(args):
     metadata = get_package_info("diffpy.labpdfproc")
     setattr(args, "package_info", metadata["package_info"])
     return args
+
+
+def preprocessing_args(args):
+    """
+    Perform preprocessing on the provided argparse Namespace
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser, default is None
+
+    Returns
+    -------
+    the updated argparse Namespace with arguments preprocessed
+    """
+    args = load_package_info(args)
+    args = load_user_info(args)
+    args = set_input_lists(args)
+    args.output_directory = set_output_directory(args)
+    args = set_wavelength(args)
+    args = load_user_metadata(args)
+    return args
+
+
+def load_metadata(args, filepath):
+    """
+    Load relevant metadata from args
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    A dictionary with relevant arguments from the parser
+    """
+
+    metadata = copy.deepcopy(vars(args))
+    for key in METADATA_KEYS_TO_EXCLUDE:
+        metadata.pop(key, None)
+    metadata["input_directory"] = str(filepath)
+    metadata["output_directory"] = str(metadata["output_directory"])
+    return metadata
