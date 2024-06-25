@@ -11,6 +11,7 @@ from diffpy.labpdfproc.tools import (
     load_package_info,
     load_user_info,
     load_user_metadata,
+    preprocessing_args,
     set_input_lists,
     set_output_directory,
     set_wavelength,
@@ -281,7 +282,7 @@ def test_load_package_info(mocker):
     assert actual_args.package_info == {"diffpy.labpdfproc": "1.2.3", "diffpy.utils": "3.3.0"}
 
 
-def _setup(mocker, user_filesystem):
+def test_load_metadata(mocker, user_filesystem):
     cwd = Path(user_filesystem)
     home_dir = cwd / "home_dir"
     mocker.patch("pathlib.Path.home", lambda _: home_dir)
@@ -290,20 +291,6 @@ def _setup(mocker, user_filesystem):
         "importlib.metadata.version",
         side_effect=lambda package_name: "3.3.0" if package_name == "diffpy.utils" else "1.2.3",
     )
-
-
-def _preprocess_args(args):
-    args = load_package_info(args)
-    args = load_user_info(args)
-    args = set_input_lists(args)
-    args.output_directory = set_output_directory(args)
-    args = set_wavelength(args)
-    args = load_user_metadata(args)
-    return args
-
-
-def test_load_metadata(mocker, user_filesystem):
-    _setup(mocker, user_filesystem)
     cli_inputs = [
         "2.5",
         ".",
@@ -315,7 +302,7 @@ def test_load_metadata(mocker, user_filesystem):
         "cli@email.com",
     ]
     actual_args = get_args(cli_inputs)
-    actual_args = _preprocess_args(actual_args)
+    actual_args = preprocessing_args(actual_args)
     for filepath in actual_args.input_paths:
         actual_metadata = load_metadata(actual_args, filepath)
         expected_metadata = {

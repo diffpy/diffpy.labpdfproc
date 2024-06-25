@@ -218,6 +218,28 @@ def load_package_info(args):
     return args
 
 
+def preprocessing_args(args):
+    """
+    Perform preprocessing on the provided argparse Namespace
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser, default is None
+
+    Returns
+    -------
+    the updated argparse Namespace with arguments preprocessed
+    """
+    args = load_package_info(args)
+    args = load_user_info(args)
+    args = set_input_lists(args)
+    args.output_directory = set_output_directory(args)
+    args = set_wavelength(args)
+    args = load_user_metadata(args)
+    return args
+
+
 def load_metadata(args, filepath):
     """
     Load relevant metadata from args

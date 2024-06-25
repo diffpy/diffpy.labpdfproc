@@ -2,16 +2,7 @@ import sys
 from argparse import ArgumentParser
 
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
-from diffpy.labpdfproc.tools import (
-    known_sources,
-    load_metadata,
-    load_package_info,
-    load_user_info,
-    load_user_metadata,
-    set_input_lists,
-    set_output_directory,
-    set_wavelength,
-)
+from diffpy.labpdfproc.tools import known_sources, load_metadata, preprocessing_args
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
@@ -113,12 +104,7 @@ def get_args(override_cli_inputs=None):
 
 def main():
     args = get_args()
-    args = load_package_info(args)
-    args = load_user_info(args)
-    args = set_input_lists(args)
-    args.output_directory = set_output_directory(args)
-    args = set_wavelength(args)
-    args = load_user_metadata(args)
+    args = preprocessing_args(args)
 
     for filepath in args.input_paths:
         outfilestem = filepath.stem + "_corrected"
