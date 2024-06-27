@@ -12,11 +12,11 @@ maintainers = [
   { name="Simon J.L. Billinge group", email="simon.billinge@gmail.com" },
 ]
 description = "Tools for processing x-ray powder diffraction data from laboratory sources"
-keywords = ["powder xrd", "absorption correction"]
+keywords = ['powder xrd', 'absorption correction', 'pdf', 'diffpy']
 readme = "README.rst"
 requires-python = ">=3.10"
 classifiers = [
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
@@ -29,11 +29,12 @@ classifiers = [
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
         'Topic :: Scientific/Engineering :: Physics',
+        'Topic :: Scientific/Engineering :: Chemistry',
 ]
 
 [project.urls]
 Homepage = "https://github.com/diffpy/diffpy.labpdfproc/"
-Issues = "https://github.com/diffpy/diffpy.labpdfproc/issues"
+Issues = "https://github.com/diffpy/diffpy.labpdfproc/issues/"
 
 [tool.setuptools-git-versioning]
 enabled = true
@@ -41,12 +42,9 @@ template = "{tag}"
 dev_template = "{tag}"
 dirty_template = "{tag}"
 
-[project.scripts]
-labpdfproc = "diffpy.labpdfproc.labpdfprocapp:main"
-
 [tool.setuptools.packages.find]
 where = ["src"]  # list of folders that contain the packages (["."] by default)
-include = ["diffpy*"]  # package names should match these glob patterns (["*"] by default)
+include = ["*"]  # package names should match these glob patterns (["*"] by default)
 exclude = ["diffpy.labpdfproc.tests*"]  # exclude packages matching these glob patterns (empty by default)
 namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
@@ -60,6 +58,8 @@ exclude = '''
   | \.mypy_cache
   | \.tox
   | \.venv
+  | \.rst
+  | \.txt
   | _build
   | buck-out
   | build

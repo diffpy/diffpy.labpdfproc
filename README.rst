@@ -1,103 +1,118 @@
-=================
-diffpy.labpdfproc
-=================
+|Icon| `diffpy.labpdfproc <https://diffpy.github.io/diffpy.labpdfproc>`_
+=========================================================
 
-.. image:: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/testing.yml/badge.svg
-   :target: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/testing.yml
+.. |Icon| image:: https://avatars.githubusercontent.com/diffpy
+        :target: https://diffpy.github.io/diffpy.labpdfproc
+        :height: 100px
 
+|PyPi| |Forge| |PythonVersion| |PR|
 
-.. image:: https://img.shields.io/pypi/v/diffpy.labpdfproc.svg
-        :target: https://pypi.python.org/pypi/diffpy.labpdfproc
+|CI| |Codecov| |Black| |Tracking|
 
+.. |Black| image:: https://img.shields.io/badge/code_style-black-black
+        :target: https://github.com/psf/black
 
-An app for preprocessing data from laboratory x-ray diffractometers before using PDFgetX3 to obtain PDFs
+.. |CI| image:: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/main.yml/badge.svg
+        :target: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/main.yml
 
-* Free software: 3-clause BSD license
-* Documentation: (COMING SOON!) https://sbillinge.github.io/diffpy.labpdfproc.
+.. |Codecov| image:: https://codecov.io/gh/diffpy/diffpy.labpdfproc/branch/main/graph/badge.svg
+        :target: https://codecov.io/gh/diffpy/diffpy.labpdfproc
 
-Background
-----------
+.. |Forge| image:: https://img.shields.io/conda/vn/conda-forge/diffpy.labpdfproc
+        :target: https://anaconda.org/conda-forge/diffpy.labpdfproc
 
-PDFgetX3 has revolutionized how PDF methods can be applied to solve nanostructure problems.  However, the program was designed for use with Rapid Acquisition PDF (RAPDF) data from synchrotron sources.  A key approximation inherent in the use of PDFgetX3 for RAPDF data is that absorption effects are negligible.  This is typically not the case for laboratory x-ray diffractometers, where absorption effects can be significant.
+.. |PR| image:: https://img.shields.io/badge/PR-Welcome-29ab47ff
 
-This app is designed to preprocess data from laboratory x-ray diffractometers before using PDFgetX3 to obtain PDFs.  The app currently carries out an absorption correction assuming a parallel beam capillary geometry which is the most common geometry for lab PDF measurements.
+.. |PyPi| image:: https://img.shields.io/pypi/v/diffpy.labpdfproc
+        :target: https://pypi.org/project/diffpy.labpdfproc/
 
-The theory is described in the following paper:
+.. |PythonVersion| image:: https://img.shields.io/pypi/pyversions/diffpy.labpdfproc
+        :target: https://pypi.org/project/diffpy.labpdfproc/
 
-An ad hoc Absorption Correction for Reliable
-Pair-Distribution Functions from Low Energy x-ray Sources
-Yucong Chen, Till Schertenleib, Andrew Yang, Pascal Schouwink,
-Wendy L. Queen and Simon J. L. Billinge, in preparation.
+.. |Tracking| image:: https://img.shields.io/badge/issue_tracking-github-blue
+        :target: https://github.com/diffpy/diffpy.labpdfproc/issues
 
-The related experimental data acquisition protocols are described in the following paper:
+Tools for processing x-ray powder diffraction data from laboratory sources
 
-Protocols for Obtaining Reliable PDFs from Laboratory
-x-ray Sources Using PDFgetX3,
-Till Schertenleib, Daniel Schmuckler, Yucong Chen, Geng Bang Jin,
-Wendy L. Queen and Simon J. L. Billinge, in preparation.
+* LONGER DESCRIPTION HERE
+
+For more information about the diffpy.labpdfproc library, please consult our `online documentation <https://diffpy.github.io/diffpy.labpdfproc>`_.
+
+Citation
+--------
+
+If you use diffpy.labpdfproc in a scientific publication, we would like you to cite this package as
+
+        diffpy.labpdfproc Package, https://github.com/diffpy/diffpy.labpdfproc
 
 Installation
 ------------
 
-The package is available on conda-forge and on pypi.  Assuming you are using conda/mamba (we recommend using miniconda), create a virtual environment and install the package as follows:
+The preferred method is to use `Miniconda Python
+<https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html>`_
+and install from the "conda-forge" channel of Conda packages.
 
-.. code-block:: python
+To add "conda-forge" to the conda channels, run the following in a terminal. ::
 
-   mamba create -n labpdfproc python=3.12
-   mamba activate labpdfproc
-   cd path/to/diffpy.labpdfproc
-   mamba install -c conda-forge diffpy.labpdfproc
+        conda config --add channels conda-forge
 
-The code may also be installed from pipy using pip.  This is not recommended as the package has not been tested on all platforms.
+We want to install our packages in a suitable conda environment.
+The following creates and activates a new environment named ``diffpy.labpdfproc_env`` ::
 
-Usage
------
+        conda create -n diffpy.labpdfproc_env python=3
+        conda activate diffpy.labpdfproc_env
 
-Navigate to the directory that contains 1D diffraction patterns that you would like to process.  Activate the conda environment (`conda activate labpdfproc`) that contains the package and run the following command:
+Then, to fully install ``diffpy.labpdfproc`` in our active environment, run ::
 
-.. code-block:: python
+        conda install diffpy.labpdfproc
 
-   labpdfproc <muD> -i <path/to/inputfile.txt> --anode-type Mo
+Another option is to use ``pip`` to download and install the latest release from
+`Python Package Index <https://pypi.python.org>`_.
+To install using ``pip`` into your ``diffpy.labpdfproc_env`` environment, we will also have to install dependencies ::
 
+        pip install -r https://raw.githubusercontent.com/diffpy/diffpy.labpdfproc/main/requirements/run.txt
 
-Here replace <muD> with the value of muD for your sample and  <path/to/inputfile.txt> with the path and filename of your input file.  For example, if the uncorrected data case isc alled  zro2_mo.xy and is in the current directory and it has a muD of 2.5 then the commands would be
+and then install the package ::
 
-.. code-block:: python
+        pip install diffpy.labpdfproc
 
-   labpdfproc 2.5 -i zro2_mo.xy --anode-type Mo
+If you prefer to install from sources, after installing the dependencies, obtain the source archive from
+`GitHub <https://github.com/diffpy/diffpy.labpdfproc/>`_. Once installed, ``cd`` into your ``diffpy.labpdfproc`` directory
+and run the following ::
 
-Please type
-.. code-block:: python
+        pip install .
 
-   labpdfproc --help
+Support and Contribute
+----------------------
 
-for more information on the available options.
+`Diffpy user group <https://groups.google.com/g/diffpy-users>`_ is the discussion forum for general questions and discussions about the use of diffpy.labpdfproc. Please join the diffpy.labpdfproc users community by joining the Google group. The diffpy.labpdfproc project welcomes your expertise and enthusiasm!
 
+If you see a bug or want to request a feature, please `report it as an issue <https://github.com/diffpy/diffpy.labpdfproc/issues>`_ and/or `submit a fix as a PR <https://github.com/diffpy/diffpy.labpdfproc/pulls>`_. You can also post it to the `Diffpy user group <https://groups.google.com/g/diffpy-users>`_. 
 
-Getting Started
----------------
+Feel free to fork the project and contribute. To install diffpy.labpdfproc
+in a development mode, with its sources being directly used by Python
+rather than copied to a package directory, use the following in the root
+directory ::
 
-An example input file can be found in the docs/examples directory in the distribtuion (you should find it in your miniconda envs locateion).  The file is called zro2_mo.xy.
-
-1. Copy this file to a new scratch directory
-2. Navigate to that directory in a terminal
-3. Activate the conda environment that contains the package
-4. Run the command (see above)
-
-An example output is also present in the example data and you can compare your output to this file.  The example was processed with a muD of 2.5, though for experimentation you can try processing data with different muD values.
-
-Contributing
-------------
-We welcome contributors from the community.  Please consider posting issues, and taking issues and posting PRs.
+        pip install -e .
 
 To ensure code quality and to prevent accidental commits into the default branch, please set up the use of our pre-commit
 hooks.
 
-1. modify the permissions to executable on the bash script called `prevent_commit_to_main.sh` in this directory: `chmod +x prevent_commit_to_main.sh`
-2. install pre-commit in your working environment `conda install pre-commit`
-3. initialize pre-commit (one time only) `pre-commit install`
+1. Install pre-commit in your working environment by running ``conda install pre-commit``.
+
+2. Initialize pre-commit (one time only) ``pre-commit install``.
 
 Thereafter your code will be linted by black and isort and checked against flake8 before you can commit.
 If it fails by black or isort, just rerun and it should pass (black and isort will modify the files so should
-pass after they are modified).  If the flake8 test fails please see the error messages and fix them manually before
-trying to commit again
+pass after they are modified). If the flake8 test fails please see the error messages and fix them manually before
+trying to commit again.
+
+Improvements and fixes are always appreciated.
+
+Before contribuing, please read our `Code of Conduct <https://github.com/diffpy/diffpy.labpdfproc/blob/main/CODE_OF_CONDUCT.rst>`_.
+
+Contact
+-------
+
+For more information on diffpy.labpdfproc please visit the project `web-page <https://diffpy.github.io/>`_ or email Prof. Simon Billinge at sb2896@columbia.edu.
