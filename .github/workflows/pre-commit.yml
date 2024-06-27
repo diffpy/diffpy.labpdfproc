@@ -14,8 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
-      - name: Make prevent_commit_to_main.sh executable
-        run: chmod +x ./prevent_commit_to_main.sh
       - uses: pre-commit/action@v3.0.0
         with:
           extra_args: --all-files
