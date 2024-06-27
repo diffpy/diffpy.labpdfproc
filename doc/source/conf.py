@@ -18,7 +18,7 @@ import time
 from importlib.metadata import version
 from pathlib import Path
 
-autodoc_mock_imports = ['diffpy.utils', 'numpy']
+autodoc_mock_imports = ["diffpy.utils", "numpy"]
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
