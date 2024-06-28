@@ -1,5 +1,8 @@
-|Icon| `diffpy.labpdfproc <https://diffpy.github.io/diffpy.labpdfproc>`_
-=========================================================
+|Icon| |title|_
+===============
+
+.. |title| replace:: diffpy.labpdfproc
+.. _title: https://diffpy.github.io/diffpy.labpdfproc
 
 .. |Icon| image:: https://avatars.githubusercontent.com/diffpy
         :target: https://diffpy.github.io/diffpy.labpdfproc
