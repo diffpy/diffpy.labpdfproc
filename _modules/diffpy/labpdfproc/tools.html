@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>diffpy.labpdfproc.tools &mdash; diffpy.labpdfproc 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=f539c95a"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            diffpy.labpdfproc
+          </a>
+              <div class="version">
+                0.0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/diffpy.labpdfproc.html">Package API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">diffpy.labpdfproc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">diffpy.labpdfproc.tools</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for diffpy.labpdfproc.tools</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">diffpy.utils.tools</span> <span class="kn">import</span> <span class="n">get_package_info</span><span class="p">,</span> <span class="n">get_user_info</span>
+
+<span class="n">WAVELENGTHS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Mo&quot;</span><span class="p">:</span> <span class="mf">0.71</span><span class="p">,</span> <span class="s2">&quot;Ag&quot;</span><span class="p">:</span> <span class="mf">0.59</span><span class="p">,</span> <span class="s2">&quot;Cu&quot;</span><span class="p">:</span> <span class="mf">1.54</span><span class="p">}</span>
+<span class="n">known_sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">WAVELENGTHS</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+<span class="n">METADATA_KEYS_TO_EXCLUDE</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;output_correction&quot;</span><span class="p">,</span> <span class="s2">&quot;force_overwrite&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;input_paths&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="set_output_directory">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.set_output_directory">[docs]</a>
+<span class="k">def</span> <span class="nf">set_output_directory</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    set the output directory based on the given input arguments</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args argparse.Namespace</span>
+<span class="sd">        the arguments from the parser</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pathlib.PosixPath that contains the full path of the output directory</span>
+
+<span class="sd">    it is determined as follows:</span>
+<span class="sd">    If user provides an output directory, use it.</span>
+<span class="sd">    Otherwise, we set it to the current directory if nothing is provided.</span>
+<span class="sd">    We then create the directory if it does not exist.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output_directory</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">output_directory</span> <span class="k">else</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_dir</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_expand_user_input</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Expands the list of inputs by adding files from file lists and wildcards.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args argparse.Namespace</span>
+<span class="sd">        the arguments from the parser</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    the arguments with the modified input list</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_list_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_name</span> <span class="k">for</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">input</span> <span class="k">if</span> <span class="s2">&quot;file_list&quot;</span> <span class="ow">in</span> <span class="n">input_name</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">file_list_input</span> <span class="ow">in</span> <span class="n">file_list_inputs</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_list_input</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">file_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()]</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">file_inputs</span><span class="p">)</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file_list_input</span><span class="p">)</span>
+    <span class="n">wildcard_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_name</span> <span class="k">for</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">input</span> <span class="k">if</span> <span class="s2">&quot;*&quot;</span> <span class="ow">in</span> <span class="n">input_name</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">wildcard_input</span> <span class="ow">in</span> <span class="n">wildcard_inputs</span><span class="p">:</span>
+        <span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">wildcard_input</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;file_list&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">wildcard_input</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span>
+
+
+<div class="viewcode-block" id="set_input_lists">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.set_input_lists">[docs]</a>
+<span class="k">def</span> <span class="nf">set_input_lists</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set input directory and files.</span>
+
+<span class="sd">    It takes cli inputs, checks if they are files or directories and creates</span>
+<span class="sd">    a list of files to be processed which is stored in the args Namespace.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args argparse.Namespace</span>
+<span class="sd">        the arguments from the parser</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args argparse.Namespace</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">_expand_user_input</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">:</span>
+        <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_name</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">input_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">input_path</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="n">input_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">input_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                <span class="n">input_files</span> <span class="o">=</span> <span class="n">input_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+                <span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">input_files</span> <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="s2">&quot;file_list&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span>
+                <span class="p">]</span>
+                <span class="n">input_paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Cannot find </span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">. Please specify valid input file(s) or directories.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot find </span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;input_paths&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">input_paths</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<div class="viewcode-block" id="set_wavelength">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.set_wavelength">[docs]</a>
+<span class="k">def</span> <span class="nf">set_wavelength</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the wavelength based on the given input arguments</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args argparse.Namespace</span>
+<span class="sd">        the arguments from the parser</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args argparse.Namespace</span>
+
+<span class="sd">    we raise an ValueError if the input wavelength is non-positive</span>
+<span class="sd">    or if the input anode_type is not one of the known sources</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">anode_type</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">anode_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">WAVELENGTHS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Anode type not recognized. Please rerun specifying an anode_type from </span><span class="si">{</span><span class="o">*</span><span class="n">known_sources</span><span class="p">,</span><span class="w"> </span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span><span class="p">:</span>
+        <span class="nb">delattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;anode_type&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">anode_type</span><span class="p">:</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">WAVELENGTHS</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">anode_type</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">WAVELENGTHS</span><span class="p">[</span><span class="s2">&quot;Mo&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_load_key_value_pair</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;=&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="load_user_metadata">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.load_user_metadata">[docs]</a>
+<span class="k">def</span> <span class="nf">load_user_metadata</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load user metadata into the provided argparse Namespace, raise ValueError if in incorrect format</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args argparse.Namespace</span>
+<span class="sd">        the arguments from the parser</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    the updated argparse Namespace with user metadata inserted as key-value pairs</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">reserved_keys</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">user_metadata</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">user_metadata</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;=&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Please provide key-value pairs in the format key=value. &quot;</span>
+                    <span class="s2">&quot;For more information, use `labpdfproc --help.`&quot;</span>
+                <span class="p">)</span>
+            <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">_load_key_value_pair</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">reserved_keys</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is a reserved name.  Please rerun using a different key name. &quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Please do not specify repeated keys: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">. &quot;</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="nb">delattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;user_metadata&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<div class="viewcode-block" id="load_user_info">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.load_user_info">[docs]</a>
+<span class="k">def</span> <span class="nf">load_user_info</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update username and email using get_user_info function from diffpy.utils</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args argparse.Namespace</span>
+<span class="sd">        the arguments from the parser, default is None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    the updated argparse Namespace with username and email inserted</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">email</span><span class="p">}</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">get_user_info</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<div class="viewcode-block" id="load_package_info">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.load_package_info">[docs]</a>
+<span class="k">def</span> <span class="nf">load_package_info</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load diffpy.labpdfproc package name and version into args using get_package_info function from diffpy.utils</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args argparse.Namespace</span>
+<span class="sd">        the arguments from the parser, default is None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    the updated argparse Namespace with diffpy.labpdfproc name and version inserted</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">get_package_info</span><span class="p">(</span><span class="s2">&quot;diffpy.labpdfproc&quot;</span><span class="p">)</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;package_info&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;package_info&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<div class="viewcode-block" id="preprocessing_args">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.preprocessing_args">[docs]</a>
+<span class="k">def</span> <span class="nf">preprocessing_args</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform preprocessing on the provided argparse Namespace</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args argparse.Namespace</span>
+<span class="sd">        the arguments from the parser, default is None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    the updated argparse Namespace with arguments preprocessed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">load_package_info</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">load_user_info</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">set_input_lists</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">output_directory</span> <span class="o">=</span> <span class="n">set_output_directory</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">set_wavelength</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">load_user_metadata</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<div class="viewcode-block" id="load_metadata">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.load_metadata">[docs]</a>
+<span class="k">def</span> <span class="nf">load_metadata</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load relevant metadata from args</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args argparse.Namespace</span>
+<span class="sd">        the arguments from the parser</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    A dictionary with relevant arguments from the parser</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">METADATA_KEYS_TO_EXCLUDE</span><span class="p">:</span>
+        <span class="n">metadata</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;input_directory&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;output_directory&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;output_directory&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">metadata</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, The Trustees of Columbia University in the City of New York.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

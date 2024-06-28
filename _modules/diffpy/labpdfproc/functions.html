@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>diffpy.labpdfproc.functions &mdash; diffpy.labpdfproc 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=f539c95a"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            diffpy.labpdfproc
+          </a>
+              <div class="version">
+                0.0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/diffpy.labpdfproc.html">Package API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">diffpy.labpdfproc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">diffpy.labpdfproc.functions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for diffpy.labpdfproc.functions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">diffpy.utils.scattering_objects.diffraction_objects</span> <span class="kn">import</span> <span class="n">Diffraction_object</span>
+
+<span class="n">RADIUS_MM</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">N_POINTS_ON_DIAMETER</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">TTH_GRID</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">141</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Gridded_circle">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.functions.Gridded_circle">[docs]</a>
+<span class="k">class</span> <span class="nc">Gridded_circle</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_points_on_diameter</span><span class="o">=</span><span class="n">N_POINTS_ON_DIAMETER</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span> <span class="o">=</span> <span class="n">n_points_on_diameter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distances</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muls</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_grid_points</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_grid_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        given a radius and a grid size, return a grid of points to uniformly sample that circle</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">)</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="p">{(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ys</span> <span class="k">if</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mi">2</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_points_in_grid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
+
+    <span class="c1"># def get_coordinate_index(self, coordinate):  # I think we probably dont need this function?</span>
+    <span class="c1">#     count = 0</span>
+    <span class="c1">#     for i, target in enumerate(self.grid):</span>
+    <span class="c1">#         if coordinate == target:</span>
+    <span class="c1">#             return i</span>
+    <span class="c1">#         else:</span>
+    <span class="c1">#             count += 1</span>
+    <span class="c1">#     if count &gt;= len(self.grid):</span>
+    <span class="c1">#         raise IndexError(f&quot;WARNING: no coordinate {coordinate} found in coordinates list&quot;)</span>
+
+<div class="viewcode-block" id="Gridded_circle.set_distances_at_angle">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.functions.Gridded_circle.set_distances_at_angle">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_distances_at_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        given an angle, set the distances from the grid points to the entry and exit coordinates</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        angle float</span>
+<span class="sd">          the angle in degrees</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        the list of distances containing total distance, primary distance and secondary distance</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary_distances</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_distances</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distances</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">:</span>
+            <span class="n">distance</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_path_length</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">primary_distances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">primary</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">secondary_distances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">secondary</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Gridded_circle.set_muls_at_angle">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.functions.Gridded_circle.set_muls_at_angle">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_muls_at_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        compute muls = exp(-mu*distance) for a given angle</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        angle float</span>
+<span class="sd">          the angle in degrees</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        an array of floats containing the muls corresponding to each angle</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muls</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distances</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_distances_at_angle</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">distance</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">distances</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">muls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">mu</span> <span class="o">*</span> <span class="n">distance</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_entry_exit_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordinate</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the coordinates where the beam enters and leaves the circle for a given angle and grid point</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        grid_point tuple of floats</span>
+<span class="sd">          the coordinates of the grid point</span>
+
+<span class="sd">        angle float</span>
+<span class="sd">          the angle in degrees</span>
+
+<span class="sd">        radius float</span>
+<span class="sd">          the radius of the circle in units of inverse mu</span>
+
+<span class="sd">        it is calculated in the following way:</span>
+<span class="sd">        For the entry coordinate, the y-component will be the y of the grid point and the x-component will be minus</span>
+<span class="sd">        the value of x on the circle at the height of this y.</span>
+
+<span class="sd">        For the exit coordinate:</span>
+<span class="sd">        Find the line y = ax + b that passes through grid_point at angle angle</span>
+<span class="sd">        The circle is x^2 + y^2 = r^2</span>
+<span class="sd">        The exit point is where these are simultaneous equations</span>
+<span class="sd">        x^2 + y^2 = r^2 &amp; y = ax + b</span>
+<span class="sd">        x^2 + (ax+b)^2 = r^2</span>
+<span class="sd">        =&gt; x^2 + a^2x^2 + 2abx + b^2 - r^2 = 0</span>
+<span class="sd">        =&gt; (1+a^2) x^2 + 2abx + (b^2 - r^2) = 0</span>
+<span class="sd">        to find x_exit we find the roots of these equations and pick the root that is above y-grid</span>
+<span class="sd">        then we get y_exit from y_exit = a*x_exit + b</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        (1) the coordinate of the entry point and (2) of the exit point of a beam entering horizontally</span>
+<span class="sd">        impinging on a coordinate point that lies in the circle and then exiting at some angle, angle.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-7</span>  <span class="c1"># precision close to 90</span>
+        <span class="n">angle</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="n">xgrid</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ygrid</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">entry_point</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">ygrid</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="n">ygrid</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">abs_tol</span><span class="o">=</span><span class="n">epsilon</span><span class="p">):</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">ygrid</span> <span class="o">-</span> <span class="n">xgrid</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+            <span class="n">xexit_root1</span><span class="p">,</span> <span class="n">xexit_root2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roots</span><span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">a</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+            <span class="n">yexit_root1</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">xexit_root1</span> <span class="o">+</span> <span class="n">b</span>
+            <span class="n">yexit_root2</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">xexit_root2</span> <span class="o">+</span> <span class="n">b</span>
+            <span class="k">if</span> <span class="n">yexit_root2</span> <span class="o">&gt;=</span> <span class="n">yexit_root1</span><span class="p">:</span>  <span class="c1"># We pick the point above</span>
+                <span class="n">exit_point</span> <span class="o">=</span> <span class="p">(</span><span class="n">xexit_root2</span><span class="p">,</span> <span class="n">yexit_root2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">exit_point</span> <span class="o">=</span> <span class="p">(</span><span class="n">xexit_root1</span><span class="p">,</span> <span class="n">yexit_root1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">exit_point</span> <span class="o">=</span> <span class="p">(</span><span class="n">xgrid</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">xgrid</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">entry_point</span><span class="p">,</span> <span class="n">exit_point</span>
+
+<div class="viewcode-block" id="Gridded_circle.get_path_length">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.functions.Gridded_circle.get_path_length">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_path_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_point</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return the path length</span>
+
+<span class="sd">        This is the pathlength of a horizontal line entering the circle at the</span>
+<span class="sd">        same height to the grid point then exiting at angle angle</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        grid_point double of floats</span>
+<span class="sd">          the coordinate inside the circle</span>
+
+<span class="sd">        angle float</span>
+<span class="sd">          the angle of the output beam</span>
+
+<span class="sd">        radius</span>
+<span class="sd">          the radius of the circle</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        floats total distance, primary distance and secondary distance</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># move angle a tad above zero if it is zero to avoid it having the wrong sign due to some rounding error</span>
+        <span class="n">angle_delta</span> <span class="o">=</span> <span class="mf">0.000001</span>
+        <span class="k">if</span> <span class="n">angle</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="n">angle</span> <span class="o">+</span> <span class="n">angle_delta</span>
+        <span class="n">entry</span><span class="p">,</span> <span class="n">exit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_entry_exit_coordinates</span><span class="p">(</span><span class="n">grid_point</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+        <span class="n">primary_distance</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">grid_point</span><span class="p">,</span> <span class="n">entry</span><span class="p">)</span>
+        <span class="n">secondary_distance</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">grid_point</span><span class="p">,</span> <span class="n">exit</span><span class="p">)</span>
+        <span class="n">total_distance</span> <span class="o">=</span> <span class="n">primary_distance</span> <span class="o">+</span> <span class="n">secondary_distance</span>
+        <span class="k">return</span> <span class="n">total_distance</span><span class="p">,</span> <span class="n">primary_distance</span><span class="p">,</span> <span class="n">secondary_distance</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="compute_cve">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.functions.compute_cve">[docs]</a>
+<span class="k">def</span> <span class="nf">compute_cve</span><span class="p">(</span><span class="n">diffraction_data</span><span class="p">,</span> <span class="n">mud</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    compute the cve for given diffraction data, mud and wavelength</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    diffraction_data Diffraction_object</span>
+<span class="sd">      the diffraction pattern</span>
+<span class="sd">    mud float</span>
+<span class="sd">      the mu*D of the diffraction object, where D is the diameter of the circle</span>
+<span class="sd">    wavelength float</span>
+<span class="sd">      the wavelength of the diffraction object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    the diffraction object with cve curves</span>
+
+<span class="sd">    it is computed as follows:</span>
+<span class="sd">    We first resample data and absorption correction to a more reasonable grid,</span>
+<span class="sd">    then calculate corresponding cve for the given mud in the resample grid</span>
+<span class="sd">    (since the same mu*D yields the same cve, we can assume that D/2=1, so mu=mud/2),</span>
+<span class="sd">    and finally interpolate cve to the original grid in diffraction_data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">mu_sample_invmm</span> <span class="o">=</span> <span class="n">mud</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">abs_correction</span> <span class="o">=</span> <span class="n">Gridded_circle</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="n">mu_sample_invmm</span><span class="p">)</span>
+    <span class="n">distances</span><span class="p">,</span> <span class="n">muls</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">TTH_GRID</span><span class="p">:</span>
+        <span class="n">abs_correction</span><span class="o">.</span><span class="n">set_distances_at_angle</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="n">abs_correction</span><span class="o">.</span><span class="n">set_muls_at_angle</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="n">distances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">abs_correction</span><span class="o">.</span><span class="n">distances</span><span class="p">))</span>
+        <span class="n">muls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">abs_correction</span><span class="o">.</span><span class="n">muls</span><span class="p">))</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span> <span class="o">/</span> <span class="n">abs_correction</span><span class="o">.</span><span class="n">total_points_in_grid</span>
+    <span class="n">muls</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">muls</span><span class="p">)</span> <span class="o">/</span> <span class="n">abs_correction</span><span class="o">.</span><span class="n">total_points_in_grid</span>
+    <span class="n">cve</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">muls</span>
+
+    <span class="n">orig_grid</span> <span class="o">=</span> <span class="n">diffraction_data</span><span class="o">.</span><span class="n">on_tth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">newcve</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">orig_grid</span><span class="p">,</span> <span class="n">TTH_GRID</span><span class="p">,</span> <span class="n">cve</span><span class="p">)</span>
+    <span class="n">abdo</span> <span class="o">=</span> <span class="n">Diffraction_object</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">)</span>
+    <span class="n">abdo</span><span class="o">.</span><span class="n">insert_scattering_quantity</span><span class="p">(</span>
+        <span class="n">orig_grid</span><span class="p">,</span>
+        <span class="n">newcve</span><span class="p">,</span>
+        <span class="s2">&quot;tth&quot;</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="n">diffraction_data</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;absorption correction, cve, for </span><span class="si">{</span><span class="n">diffraction_data</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">wavelength</span><span class="o">=</span><span class="n">diffraction_data</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
+        <span class="n">scat_quantity</span><span class="o">=</span><span class="s2">&quot;cve&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">abdo</span></div>
+
+
+
+<div class="viewcode-block" id="apply_corr">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.functions.apply_corr">[docs]</a>
+<span class="k">def</span> <span class="nf">apply_corr</span><span class="p">(</span><span class="n">diffraction_pattern</span><span class="p">,</span> <span class="n">absorption_correction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply absorption correction to the given diffraction object modo with the correction diffraction object abdo</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    diffraction_pattern Diffraction_object</span>
+<span class="sd">      the input diffraction object to which the cve will be applied</span>
+<span class="sd">    absorption_correction Diffraction_object</span>
+<span class="sd">      the diffraction object that contains the cve to be applied</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a corrected diffraction object with the correction applied through multiplication</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">corrected_pattern</span> <span class="o">=</span> <span class="n">diffraction_pattern</span> <span class="o">*</span> <span class="n">absorption_correction</span>
+    <span class="k">return</span> <span class="n">corrected_pattern</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, The Trustees of Columbia University in the City of New York.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
