@@ -1,7 +1,6 @@
 [run]
 source =
-    src
-
+    diffpy.labpdfproc
 [report]
 omit =
     */python?.?/*

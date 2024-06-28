@@ -42,14 +42,13 @@ jobs:
           conda config --set always_yes yes --set changeps1 no
           conda config --add channels conda-forge
           conda activate test
-          conda install --file requirements/requirements.txt
-          conda install --file requirements/requirements-dev.txt
+          conda install --file requirements/run.txt
+          conda install --file requirements/test.txt
           pip install .
-
       - name: Validate diffpy.labpdfproc
         shell: bash -l {0}
         run: |
           conda activate test
-          coverage run -m pytest -s
+          coverage run -m pytest -vv -s
           coverage report -m
           codecov

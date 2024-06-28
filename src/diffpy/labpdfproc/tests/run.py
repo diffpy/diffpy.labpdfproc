@@ -12,12 +12,23 @@
 # See LICENSE.rst for license information.
 #
 ##############################################################################
+"""Convenience module for executing all unit tests with
+python -m diffpy.labpdfproc.tests.run
+"""
 
-"""Blank namespace package for module diffpy."""
+import sys
 
+import pytest
 
-from pkgutil import extend_path
-
-__path__ = extend_path(__path__, __name__)
+if __name__ == "__main__":
+    # show output results from every test function
+    args = ["-v"]
+    # show the message output for skipped and expected failure tests
+    if len(sys.argv) > 1:
+        args.extend(sys.argv[1:])
+    print("pytest arguments: {}".format(args))
+    # call pytest and exit with the return code from pytest
+    exit_res = pytest.main(args)
+    sys.exit(exit_res)
 
 # End of file

@@ -1,13 +1,10 @@
-=======
-Credits
+Authors
 =======
 
-Maintainer
-----------
-
-* diffpy <sb2896@columbia.edu>
+Billinge Group and community contibutors.
 
 Contributors
 ------------
 
-None yet. Why not be the first? See: CONTRIBUTING.rst
+For a list of contributors, visit
+https://github.com/diffpy/diffpy.labpdfproc/graphs/contributors

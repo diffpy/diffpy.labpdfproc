@@ -13,11 +13,23 @@
 #
 ##############################################################################
 
-"""Blank namespace package for module diffpy."""
+"""
+Convenience module for debugging the unit tests using
+
+python -m diffpy.labpdfproc.tests.debug
+
+Exceptions raised by failed tests or other errors are not caught.
+"""
 
 
-from pkgutil import extend_path
+if __name__ == "__main__":
+    import sys
 
-__path__ = extend_path(__path__, __name__)
+    from diffpy.labpdfproc.tests import testsuite
+
+    pattern = sys.argv[1] if len(sys.argv) > 1 else ""
+    suite = testsuite(pattern)
+    suite.debug()
+
 
 # End of file
