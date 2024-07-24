@@ -58,3 +58,24 @@ def fast_compute_cve(diffraction_data, mud, wavelength):
     )
 
     return abdo
+
+
+def apply_fast_corr(diffraction_pattern, absorption_correction):
+    """
+    Apply absorption correction to the given diffraction object modo with the correction diffraction object abdo
+
+    Parameters
+    ----------
+    diffraction_pattern Diffraction_object
+      the input diffraction object to which the cve will be applied
+    absorption_correction Diffraction_object
+      the diffraction object that contains the cve to be applied
+
+    Returns
+    -------
+    a corrected diffraction object with the correction applied through multiplication
+
+    """
+
+    corrected_pattern = diffraction_pattern * absorption_correction
+    return corrected_pattern
