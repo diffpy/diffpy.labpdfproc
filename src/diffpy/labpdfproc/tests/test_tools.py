@@ -312,6 +312,7 @@ def test_load_metadata(mocker, user_filesystem):
             "wavelength": 0.71,
             "output_directory": str(Path.cwd().resolve()),
             "xtype": "tth",
+            "brute_force": False,
             "key": "value",
             "username": "cli_username",
             "email": "cli@email.com",
