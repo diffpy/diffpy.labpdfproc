@@ -1,6 +1,7 @@
 import sys
 from argparse import ArgumentParser
 
+from diffpy.labpdfproc.fast_cve import apply_fast_corr, fast_compute_cve
 from diffpy.labpdfproc.functions import apply_corr, compute_cve
 from diffpy.labpdfproc.tools import known_sources, load_metadata, preprocessing_args
 from diffpy.utils.parsers.loaddata import loadData
@@ -73,6 +74,13 @@ def get_args(override_cli_inputs=None):
         help="Outputs will not overwrite existing file unless --force is specified.",
     )
     p.add_argument(
+        "-b",
+        "--brute-force",
+        action="store_true",
+        help="The absorption correction will be computed using brute-force calculation "
+        "if this flag is set. Default is using fast calculation. ",
+    )
+    p.add_argument(
         "-u",
         "--user-metadata",
         metavar="KEY=VALUE",
@@ -134,11 +142,20 @@ def main():
             metadata=load_metadata(args, filepath),
         )
 
-        absorption_correction = compute_cve(input_pattern, args.mud, args.wavelength)
-        corrected_data = apply_corr(input_pattern, absorption_correction)
+        if args.brute_force:
+            absorption_correction = compute_cve(input_pattern, args.mud, args.wavelength)
+            corrected_data = apply_corr(input_pattern, absorption_correction)
+        else:
+            if args.mud > 6 or args.mud < 0.5:
+                sys.exit(
+                    "mu*D is out of the acceptable range (0.5 to 6) for fast calculation. "
+                    "Please rerun with a value within this range or use -b enable brute-force calculation. "
+                )
+            absorption_correction = fast_compute_cve(input_pattern, args.mud, args.wavelength)
+            corrected_data = apply_fast_corr(input_pattern, absorption_correction)
+
         corrected_data.name = f"Absorption corrected input_data: {input_pattern.name}"
         corrected_data.dump(f"{outfile}", xtype="tth")
-
         if args.output_correction:
             absorption_correction.dump(f"{corrfile}", xtype="tth")
 
