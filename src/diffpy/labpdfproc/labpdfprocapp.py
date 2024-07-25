@@ -65,7 +65,6 @@ def get_args(override_cli_inputs=None):
         action="store_true",
         help="The absorption correction will be output to a file if this "
         "flag is set. Default is that it is not output.",
-        default="tth",
     )
     p.add_argument(
         "-f",
