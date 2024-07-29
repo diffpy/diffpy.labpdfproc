@@ -1,13 +1,22 @@
 import math
+import os
 
 import numpy as np
+import pandas as pd
+from scipy.interpolate import interp1d
 
-from diffpy.labpdfproc.fast_cve import fast_compute_cve
 from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 RADIUS_MM = 1
 N_POINTS_ON_DIAMETER = 300
-TTH_GRID = np.arange(1, 141, 1)
+TTH_GRID = np.arange(1, 180.1, 0.1)
+
+# pre-computed datasets for fast calculation
+MUD_LIST = [0.5, 1, 2, 3, 4, 5, 6]
+CWD = os.path.dirname(os.path.abspath(__file__))
+MULS = np.loadtxt(CWD + "/data/inverse_cve.xy")
+COEFFICIENT_LIST = np.array(pd.read_csv(CWD + "/data/coefficient_list.csv", header=None))
+INTERPOLATION_FUNCTIONS = [interp1d(MUD_LIST, coefficients, kind="quadratic") for coefficients in COEFFICIENT_LIST]
 
 
 class Gridded_circle:
@@ -199,7 +208,6 @@ def compute_cve(diffraction_data, mud, wavelength, brute_force=False):
     """
 
     if brute_force:
-        tth_grid = TTH_GRID
         mu_sample_invmm = mud / 2
         abs_correction = Gridded_circle(mu=mu_sample_invmm)
         distances, muls = [], []
@@ -217,10 +225,14 @@ def compute_cve(diffraction_data, mud, wavelength, brute_force=False):
                 "mu*D is out of the acceptable range (0.5 to 6) for fast calculation. "
                 "Please rerun with a value within this range or use -b to enable brute-force calculation. "
             )
-        tth_grid, cve = fast_compute_cve(mud)
+        coeff_a, coeff_b, coeff_c, coeff_d, coeff_e = [
+            interpolation_function(mud) for interpolation_function in INTERPOLATION_FUNCTIONS
+        ]
+        muls = np.array(coeff_a * MULS**4 + coeff_b * MULS**3 + coeff_c * MULS**2 + coeff_d * MULS + coeff_e)
+        cve = 1 / muls
 
     orig_grid = diffraction_data.on_tth[0]
-    newcve = np.interp(orig_grid, tth_grid, cve)
+    newcve = np.interp(orig_grid, TTH_GRID, cve)
     abdo = Diffraction_object(wavelength=wavelength)
     abdo.insert_scattering_quantity(
         orig_grid,
