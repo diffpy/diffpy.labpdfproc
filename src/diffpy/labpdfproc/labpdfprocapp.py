@@ -64,13 +64,19 @@ def get_args(override_cli_inputs=None):
         action="store_true",
         help="The absorption correction will be output to a file if this "
         "flag is set. Default is that it is not output.",
-        default="tth",
     )
     p.add_argument(
         "-f",
         "--force-overwrite",
         action="store_true",
         help="Outputs will not overwrite existing file unless --force is specified.",
+    )
+    p.add_argument(
+        "-b",
+        "--brute-force",
+        action="store_true",
+        help="The absorption correction will be computed using brute-force calculation "
+        "if this flag is set. Default is using fast calculation. ",
     )
     p.add_argument(
         "-u",
@@ -134,7 +140,7 @@ def main():
             metadata=load_metadata(args, filepath),
         )
 
-        absorption_correction = compute_cve(input_pattern, args.mud, args.wavelength)
+        absorption_correction = compute_cve(input_pattern, args.mud, args.wavelength, args.brute_force)
         corrected_data = apply_corr(input_pattern, absorption_correction)
         corrected_data.name = f"Absorption corrected input_data: {input_pattern.name}"
         corrected_data.dump(f"{outfile}", xtype="tth")
