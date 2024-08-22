@@ -37,16 +37,6 @@ class Gridded_circle:
         self.grid = {(x, y) for x in xs for y in ys if x**2 + y**2 <= self.radius**2}
         self.total_points_in_grid = len(self.grid)
 
-    # def get_coordinate_index(self, coordinate):
-    #     count = 0
-    #     for i, target in enumerate(self.grid):
-    #         if coordinate == target:
-    #             return i
-    #         else:
-    #             count += 1
-    #     if count >= len(self.grid):
-    #         raise IndexError(f"WARNING: no coordinate {coordinate} found in coordinates list")
-
     def set_distances_at_angle(self, angle):
         """
         given an angle, set the distances from the grid points to the entry and exit coordinates
@@ -182,9 +172,62 @@ class Gridded_circle:
         return total_distance, primary_distance, secondary_distance
 
 
+def _cve_brute_force(diffraction_data, mud, wavelength):
+    """
+    compute cve using brute-force method
+
+    it is computed as follows:
+    We first resample data and absorption correction to a more reasonable grid,
+    then calculate corresponding cve for the given mud in the resample grid
+    (since the same mu*D yields the same cve, we can assume that D/2=1, so mu=mud/2),
+    and finally interpolate cve to the original grid in diffraction_data.
+    """
+
+    mu_sample_invmm = mud / 2
+    abs_correction = Gridded_circle(mu=mu_sample_invmm)
+    distances, muls = [], []
+    for angle in TTH_GRID:
+        abs_correction.set_distances_at_angle(angle)
+        abs_correction.set_muls_at_angle(angle)
+        distances.append(sum(abs_correction.distances))
+        muls.append(sum(abs_correction.muls))
+    distances = np.array(distances) / abs_correction.total_points_in_grid
+    muls = np.array(muls) / abs_correction.total_points_in_grid
+    cve = 1 / muls
+    return cve
+
+
+def _cve_interp_polynomial(diffraction_data, mud, wavelength):
+    """
+    compute cve using polynomial interpolation method, raise an error if mu*D is out of the range (0.5 to 6)
+    """
+
+    if mud > 6 or mud < 0.5:
+        raise ValueError(
+            "mu*D is out of the acceptable range (0.5 to 6) for fast calculation. "
+            "Please rerun with a value within this range or use -b to enable brute-force calculation. "
+        )
+    coeff_a, coeff_b, coeff_c, coeff_d, coeff_e = [
+        interpolation_function(mud) for interpolation_function in INTERPOLATION_FUNCTIONS
+    ]
+    muls = np.array(coeff_a * MULS**4 + coeff_b * MULS**3 + coeff_c * MULS**2 + coeff_d * MULS + coeff_e)
+    cve = 1 / muls
+    return cve
+
+
+def _cve_method(diffraction_data, mud, wavelength, brute_force=False):
+    """
+    selects the appropriate CVE calculation method
+    """
+    if brute_force:
+        return _cve_brute_force(diffraction_data, mud, wavelength)
+    else:
+        return _cve_interp_polynomial(diffraction_data, mud, wavelength)
+
+
 def compute_cve(diffraction_data, mud, wavelength, brute_force=False):
     """
-    compute the cve for given diffraction data, mud and wavelength, and a boolean to determine the way to compute
+    compute the cve for given diffraction data, mud, and wavelength, using the selected method
 
     Parameters
     ----------
@@ -195,42 +238,13 @@ def compute_cve(diffraction_data, mud, wavelength, brute_force=False):
     wavelength float
       the wavelength of the diffraction object
 
-    the brute-force method is computed as follows:
-    We first resample data and absorption correction to a more reasonable grid,
-    then calculate corresponding cve for the given mud in the resample grid
-    (since the same mu*D yields the same cve, we can assume that D/2=1, so mu=mud/2),
-    and finally interpolate cve to the original grid in diffraction_data.
-
     Returns
     -------
     the diffraction object with cve curves
 
     """
 
-    if brute_force:
-        mu_sample_invmm = mud / 2
-        abs_correction = Gridded_circle(mu=mu_sample_invmm)
-        distances, muls = [], []
-        for angle in TTH_GRID:
-            abs_correction.set_distances_at_angle(angle)
-            abs_correction.set_muls_at_angle(angle)
-            distances.append(sum(abs_correction.distances))
-            muls.append(sum(abs_correction.muls))
-        distances = np.array(distances) / abs_correction.total_points_in_grid
-        muls = np.array(muls) / abs_correction.total_points_in_grid
-        cve = 1 / muls
-    else:
-        if mud > 6 or mud < 0.5:
-            raise ValueError(
-                "mu*D is out of the acceptable range (0.5 to 6) for fast calculation. "
-                "Please rerun with a value within this range or use -b to enable brute-force calculation. "
-            )
-        coeff_a, coeff_b, coeff_c, coeff_d, coeff_e = [
-            interpolation_function(mud) for interpolation_function in INTERPOLATION_FUNCTIONS
-        ]
-        muls = np.array(coeff_a * MULS**4 + coeff_b * MULS**3 + coeff_c * MULS**2 + coeff_d * MULS + coeff_e)
-        cve = 1 / muls
-
+    cve = _cve_method(diffraction_data, mud, wavelength, brute_force)
     orig_grid = diffraction_data.on_tth[0]
     newcve = np.interp(orig_grid, TTH_GRID, cve)
     abdo = Diffraction_object(wavelength=wavelength)
@@ -243,7 +257,6 @@ def compute_cve(diffraction_data, mud, wavelength, brute_force=False):
         wavelength=diffraction_data.wavelength,
         scat_quantity="cve",
     )
-
     return abdo
 
 
