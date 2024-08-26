@@ -10,6 +10,7 @@ from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_obje
 RADIUS_MM = 1
 N_POINTS_ON_DIAMETER = 300
 TTH_GRID = np.arange(1, 180.1, 0.1)
+CVE_METHODS = ["brute_force", "polynomial_interpolation"]
 
 # pre-computed datasets for fast calculation
 MUD_LIST = [0.5, 1, 2, 3, 4, 5, 6]
@@ -172,15 +173,10 @@ class Gridded_circle:
         return total_distance, primary_distance, secondary_distance
 
 
-def _cve_brute_force(diffraction_data, mud, wavelength):
+def _cve_brute_force(mud):
     """
-    compute cve using brute-force method
-
-    it is computed as follows:
-    We first resample data and absorption correction to a more reasonable grid,
-    then calculate corresponding cve for the given mud in the resample grid
-    (since the same mu*D yields the same cve, we can assume that D/2=1, so mu=mud/2),
-    and finally interpolate cve to the original grid in diffraction_data.
+    compute cve for the given mud on a global grid using the brute-force method
+    assume mu=mud/2, given that the same mu*D yields the same cve and D/2=1
     """
 
     mu_sample_invmm = mud / 2
@@ -197,15 +193,15 @@ def _cve_brute_force(diffraction_data, mud, wavelength):
     return cve
 
 
-def _cve_interp_polynomial(diffraction_data, mud, wavelength):
+def _cve_polynomial_interpolation(mud):
     """
     compute cve using polynomial interpolation method, raise an error if mu*D is out of the range (0.5 to 6)
     """
 
     if mud > 6 or mud < 0.5:
         raise ValueError(
-            "mu*D is out of the acceptable range (0.5 to 6) for fast calculation. "
-            "Please rerun with a value within this range or use -b to enable brute-force calculation. "
+            f"mu*D is out of the acceptable range (0.5 to 6) for polynomial interpolation. "
+            f"Please rerun with a value within this range or specifying another method from {* CVE_METHODS, }."
         )
     coeff_a, coeff_b, coeff_c, coeff_d, coeff_e = [
         interpolation_function(mud) for interpolation_function in INTERPOLATION_FUNCTIONS
@@ -215,19 +211,20 @@ def _cve_interp_polynomial(diffraction_data, mud, wavelength):
     return cve
 
 
-def _cve_method(diffraction_data, mud, wavelength, brute_force=False):
+def _compute_cve(method, mud):
     """
-    selects the appropriate CVE calculation method
+    compute cve for the given mud on a global grid using the specified method
     """
-    if brute_force:
-        return _cve_brute_force(diffraction_data, mud, wavelength)
-    else:
-        return _cve_interp_polynomial(diffraction_data, mud, wavelength)
+    methods = {
+        "brute_force": _cve_brute_force,
+        "polynomial_interpolation": _cve_polynomial_interpolation,
+    }
+    return methods[method](mud)
 
 
-def compute_cve(diffraction_data, mud, wavelength, brute_force=False):
+def interpolate_cve(diffraction_data, mud, wavelength, method="polynomial_interpolation"):
     """
-    compute the cve for given diffraction data, mud, and wavelength, using the selected method
+    compute and interpolate the cve for the given diffraction data, mud, and wavelength, using the selected method
 
     Parameters
     ----------
@@ -237,6 +234,8 @@ def compute_cve(diffraction_data, mud, wavelength, brute_force=False):
       the mu*D of the diffraction object, where D is the diameter of the circle
     wavelength float
       the wavelength of the diffraction object
+    method str
+      the method used to calculate cve
 
     Returns
     -------
@@ -244,7 +243,7 @@ def compute_cve(diffraction_data, mud, wavelength, brute_force=False):
 
     """
 
-    cve = _cve_method(diffraction_data, mud, wavelength, brute_force)
+    cve = _compute_cve(method, mud)
     orig_grid = diffraction_data.on_tth[0]
     newcve = np.interp(orig_grid, TTH_GRID, cve)
     abdo = Diffraction_object(wavelength=wavelength)

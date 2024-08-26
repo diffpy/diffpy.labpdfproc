@@ -1,7 +1,7 @@
 import sys
 from argparse import ArgumentParser
 
-from diffpy.labpdfproc.functions import apply_corr, compute_cve
+from diffpy.labpdfproc.functions import CVE_METHODS, apply_corr, interpolate_cve
 from diffpy.labpdfproc.tools import known_sources, load_metadata, preprocessing_args
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
@@ -45,7 +45,7 @@ def get_args(override_cli_inputs=None):
         "-o",
         "--output-directory",
         help="The name of the output directory. If not specified "
-        "then corrected files will be written to the current directory."
+        "then corrected files will be written to the current directory. "
         "If the specified directory doesn't exist it will be created.",
         default=None,
     )
@@ -72,11 +72,11 @@ def get_args(override_cli_inputs=None):
         help="Outputs will not overwrite existing file unless --force is specified.",
     )
     p.add_argument(
-        "-b",
-        "--brute-force",
-        action="store_true",
-        help="The absorption correction will be computed using brute-force calculation "
-        "if this flag is set. Default is using fast calculation. ",
+        "-m",
+        "--method",
+        help=f"The method for computing absorption correction. Allowed methods: {*CVE_METHODS, }. "
+        f"Default method is polynomial interpolation if not specified. ",
+        default="polynomial_interpolation",
     )
     p.add_argument(
         "-u",
@@ -140,7 +140,7 @@ def main():
             metadata=load_metadata(args, filepath),
         )
 
-        absorption_correction = compute_cve(input_pattern, args.mud, args.wavelength, args.brute_force)
+        absorption_correction = interpolate_cve(input_pattern, args.mud, args.wavelength, args.method)
         corrected_data = apply_corr(input_pattern, absorption_correction)
         corrected_data.name = f"Absorption corrected input_data: {input_pattern.name}"
         corrected_data.dump(f"{outfile}", xtype="tth")
