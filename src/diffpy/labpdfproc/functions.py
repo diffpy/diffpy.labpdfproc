@@ -1,5 +1,5 @@
 import math
-import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -12,11 +12,11 @@ N_POINTS_ON_DIAMETER = 300
 TTH_GRID = np.arange(1, 180.1, 0.1)
 CVE_METHODS = ["brute_force", "polynomial_interpolation"]
 
-# pre-computed datasets for fast calculation
+# pre-computed datasets for polynomial interpolation (fast calculation)
 MUD_LIST = [0.5, 1, 2, 3, 4, 5, 6]
-CWD = os.path.dirname(os.path.abspath(__file__))
-MULS = np.loadtxt(CWD + "/data/inverse_cve.xy")
-COEFFICIENT_LIST = np.array(pd.read_csv(CWD + "/data/coefficient_list.csv", header=None))
+CWD = Path(__file__).parent.resolve()
+MULS = np.loadtxt(CWD / "data" / "inverse_cve.xy")
+COEFFICIENT_LIST = np.array(pd.read_csv(CWD / "data" / "coefficient_list.csv", header=None))
 INTERPOLATION_FUNCTIONS = [interp1d(MUD_LIST, coefficients, kind="quadratic") for coefficients in COEFFICIENT_LIST]
 
 
