@@ -75,7 +75,7 @@ def test_compute_cve(mocker):
     mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", xarray)
     mocker.patch("numpy.interp", return_value=expected_cve)
     input_pattern = _instantiate_test_do(xarray, yarray)
-    actual_abdo = compute_cve(input_pattern, mud=1, wavelength=1.54)
+    actual_abdo = compute_cve(input_pattern, mud=1)
     expected_abdo = _instantiate_test_do(
         xarray,
         expected_cve,

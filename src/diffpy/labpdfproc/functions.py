@@ -173,7 +173,7 @@ class Gridded_circle:
         return total_distance, primary_distance, secondary_distance
 
 
-def _cve_brute_force(mud):
+def _cve_brute_force(diffraction_data, mud):
     """
     compute cve for the given mud on a global grid using the brute-force method
     assume mu=mud/2, given that the same mu*D yields the same cve and D/2=1
@@ -190,10 +190,21 @@ def _cve_brute_force(mud):
     distances = np.array(distances) / abs_correction.total_points_in_grid
     muls = np.array(muls) / abs_correction.total_points_in_grid
     cve = 1 / muls
-    return cve
+
+    abdo = Diffraction_object(wavelength=diffraction_data.wavelength)
+    abdo.insert_scattering_quantity(
+        TTH_GRID,
+        cve,
+        "tth",
+        metadata=diffraction_data.metadata,
+        name=f"absorption correction, cve, for {diffraction_data.name}",
+        wavelength=diffraction_data.wavelength,
+        scat_quantity="cve",
+    )
+    return abdo
 
 
-def _cve_polynomial_interpolation(mud):
+def _cve_polynomial_interpolation(diffraction_data, mud):
     """
     compute cve using polynomial interpolation method, raise an error if mu*D is out of the range (0.5 to 6)
     """
@@ -208,7 +219,18 @@ def _cve_polynomial_interpolation(mud):
     ]
     muls = np.array(coeff_a * MULS**4 + coeff_b * MULS**3 + coeff_c * MULS**2 + coeff_d * MULS + coeff_e)
     cve = 1 / muls
-    return cve
+
+    abdo = Diffraction_object(wavelength=diffraction_data.wavelength)
+    abdo.insert_scattering_quantity(
+        TTH_GRID,
+        cve,
+        "tth",
+        metadata=diffraction_data.metadata,
+        name=f"absorption correction, cve, for {diffraction_data.name}",
+        wavelength=diffraction_data.wavelength,
+        scat_quantity="cve",
+    )
+    return abdo
 
 
 def _cve_method(method):
@@ -224,9 +246,9 @@ def _cve_method(method):
     return methods[method]
 
 
-def compute_cve(diffraction_data, mud, wavelength, method="polynomial_interpolation"):
+def compute_cve(diffraction_data, mud, method="polynomial_interpolation"):
     """
-    compute and interpolate the cve for the given diffraction data, mud, and wavelength, using the selected method
+    compute and interpolate the cve for the given diffraction data and mud using the selected method
 
     Parameters
     ----------
@@ -234,8 +256,6 @@ def compute_cve(diffraction_data, mud, wavelength, method="polynomial_interpolat
       the diffraction pattern
     mud float
       the mu*D of the diffraction object, where D is the diameter of the circle
-    wavelength float
-      the wavelength of the diffraction object
     method str
       the method used to calculate cve
 
@@ -246,10 +266,12 @@ def compute_cve(diffraction_data, mud, wavelength, method="polynomial_interpolat
     """
 
     cve_function = _cve_method(method)
-    cve = cve_function(mud)
+    abdo_on_global_tth = cve_function(diffraction_data, mud)
+    global_tth = abdo_on_global_tth.on_tth[0]
+    cve_on_global_tth = abdo_on_global_tth.on_tth[1]
     orig_grid = diffraction_data.on_tth[0]
-    newcve = np.interp(orig_grid, TTH_GRID, cve)
-    abdo = Diffraction_object(wavelength=wavelength)
+    newcve = np.interp(orig_grid, global_tth, cve_on_global_tth)
+    abdo = Diffraction_object(wavelength=diffraction_data.wavelength)
     abdo.insert_scattering_quantity(
         orig_grid,
         newcve,

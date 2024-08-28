@@ -140,7 +140,7 @@ def main():
             metadata=load_metadata(args, filepath),
         )
 
-        absorption_correction = compute_cve(input_pattern, args.mud, args.wavelength, args.method)
+        absorption_correction = compute_cve(input_pattern, args.mud, args.method)
         corrected_data = apply_corr(input_pattern, absorption_correction)
         corrected_data.name = f"Absorption corrected input_data: {input_pattern.name}"
         corrected_data.dump(f"{outfile}", xtype="tth")
