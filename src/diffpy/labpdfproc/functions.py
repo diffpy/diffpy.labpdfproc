@@ -211,18 +211,20 @@ def _cve_polynomial_interpolation(mud):
     return cve
 
 
-def _compute_cve(method, mud):
+def _cve_method(method):
     """
-    compute cve for the given mud on a global grid using the specified method
+    retrieve the cve computation function for the given method
     """
     methods = {
         "brute_force": _cve_brute_force,
         "polynomial_interpolation": _cve_polynomial_interpolation,
     }
-    return methods[method](mud)
+    if method not in CVE_METHODS:
+        raise ValueError(f"Unknown method: {method}. Allowed methods are {*CVE_METHODS, }.")
+    return methods[method]
 
 
-def interpolate_cve(diffraction_data, mud, wavelength, method="polynomial_interpolation"):
+def compute_cve(diffraction_data, mud, wavelength, method="polynomial_interpolation"):
     """
     compute and interpolate the cve for the given diffraction data, mud, and wavelength, using the selected method
 
@@ -243,7 +245,8 @@ def interpolate_cve(diffraction_data, mud, wavelength, method="polynomial_interp
 
     """
 
-    cve = _compute_cve(method, mud)
+    cve_function = _cve_method(method)
+    cve = cve_function(mud)
     orig_grid = diffraction_data.on_tth[0]
     newcve = np.interp(orig_grid, TTH_GRID, cve)
     abdo = Diffraction_object(wavelength=wavelength)

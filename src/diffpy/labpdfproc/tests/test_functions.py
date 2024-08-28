@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from diffpy.labpdfproc.functions import Gridded_circle, apply_corr, interpolate_cve
+from diffpy.labpdfproc.functions import Gridded_circle, apply_corr, compute_cve
 from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 params1 = [
@@ -69,13 +69,13 @@ def _instantiate_test_do(xarray, yarray, name="test", scat_quantity="x-ray"):
     return test_do
 
 
-def test_interpolate_cve(mocker):
+def test_compute_cve(mocker):
     xarray, yarray = np.array([90, 90.1, 90.2]), np.array([2, 2, 2])
     expected_cve = np.array([0.5, 0.5, 0.5])
     mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", xarray)
     mocker.patch("numpy.interp", return_value=expected_cve)
     input_pattern = _instantiate_test_do(xarray, yarray)
-    actual_abdo = interpolate_cve(input_pattern, mud=1, wavelength=1.54)
+    actual_abdo = compute_cve(input_pattern, mud=1, wavelength=1.54)
     expected_abdo = _instantiate_test_do(
         xarray,
         expected_cve,
