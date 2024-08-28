@@ -115,8 +115,8 @@ def main():
     for filepath in args.input_paths:
         outfilestem = filepath.stem + "_corrected"
         corrfilestem = filepath.stem + "_cve"
-        outfile = args.output_directory / (outfilestem + ".chi")
-        corrfile = args.output_directory / (corrfilestem + ".chi")
+        outfile = args.output_directory / (outfilestem + ".xy")
+        corrfile = args.output_directory / (corrfilestem + ".xy")
 
         if outfile.exists() and not args.force_overwrite:
             sys.exit(
