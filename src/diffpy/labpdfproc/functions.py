@@ -257,7 +257,7 @@ def _cve_method(method):
 
 
 def compute_cve(diffraction_data, mud, method="polynomial_interpolation"):
-    """
+    f"""
     compute and interpolate the cve for the given diffraction data and mud using the selected method
     Parameters
     ----------
@@ -266,7 +266,7 @@ def compute_cve(diffraction_data, mud, method="polynomial_interpolation"):
     mud float
       the mu*D of the diffraction object, where D is the diameter of the circle
     method str
-      the method used to calculate cve
+      the method used to calculate cve, must be one of {* CVE_METHODS, }
 
     Returns
     -------
