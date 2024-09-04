@@ -27,16 +27,6 @@ class Gridded_circle:
         self.grid = {(x, y) for x in xs for y in ys if x**2 + y**2 <= self.radius**2}
         self.total_points_in_grid = len(self.grid)
 
-    # def get_coordinate_index(self, coordinate):  # I think we probably dont need this function?
-    #     count = 0
-    #     for i, target in enumerate(self.grid):
-    #         if coordinate == target:
-    #             return i
-    #         else:
-    #             count += 1
-    #     if count >= len(self.grid):
-    #         raise IndexError(f"WARNING: no coordinate {coordinate} found in coordinates list")
-
     def set_distances_at_angle(self, angle):
         """
         given an angle, set the distances from the grid points to the entry and exit coordinates
