@@ -201,8 +201,8 @@ def _cve_brute_force(diffraction_data, mud):
     muls = np.array(muls) / abs_correction.total_points_in_grid
     cve = 1 / muls
 
-    abdo = Diffraction_object(wavelength=diffraction_data.wavelength)
-    abdo.insert_scattering_quantity(
+    cve_do = Diffraction_object(wavelength=diffraction_data.wavelength)
+    cve_do.insert_scattering_quantity(
         TTH_GRID,
         cve,
         "tth",
@@ -211,7 +211,7 @@ def _cve_brute_force(diffraction_data, mud):
         wavelength=diffraction_data.wavelength,
         scat_quantity="cve",
     )
-    return abdo
+    return cve_do
 
 
 def _cve_polynomial_interpolation(diffraction_data, mud):
@@ -230,8 +230,8 @@ def _cve_polynomial_interpolation(diffraction_data, mud):
     muls = np.array(coeff_a * MULS**4 + coeff_b * MULS**3 + coeff_c * MULS**2 + coeff_d * MULS + coeff_e)
     cve = 1 / muls
 
-    abdo = Diffraction_object(wavelength=diffraction_data.wavelength)
-    abdo.insert_scattering_quantity(
+    cve_do = Diffraction_object(wavelength=diffraction_data.wavelength)
+    cve_do.insert_scattering_quantity(
         TTH_GRID,
         cve,
         "tth",
@@ -240,7 +240,7 @@ def _cve_polynomial_interpolation(diffraction_data, mud):
         wavelength=diffraction_data.wavelength,
         scat_quantity="cve",
     )
-    return abdo
+    return cve_do
 
 
 def _cve_method(method):
@@ -279,8 +279,8 @@ def compute_cve(diffraction_data, mud, method="polynomial_interpolation"):
     cve_on_global_tth = abdo_on_global_tth.on_tth[1]
     orig_grid = diffraction_data.on_tth[0]
     newcve = np.interp(orig_grid, global_tth, cve_on_global_tth)
-    abdo = Diffraction_object(wavelength=diffraction_data.wavelength)
-    abdo.insert_scattering_quantity(
+    cve_do = Diffraction_object(wavelength=diffraction_data.wavelength)
+    cve_do.insert_scattering_quantity(
         orig_grid,
         newcve,
         "tth",
@@ -290,7 +290,7 @@ def compute_cve(diffraction_data, mud, method="polynomial_interpolation"):
         scat_quantity="cve",
     )
 
-    return abdo
+    return cve_do
 
 
 def apply_corr(diffraction_pattern, absorption_correction):
