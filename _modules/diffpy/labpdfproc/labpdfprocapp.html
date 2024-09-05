@@ -93,14 +93,14 @@
         <span class="s2">&quot;input&quot;</span><span class="p">,</span>
         <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The filename(s) or folder(s) of the datafile(s) to load.  &quot;</span>
-        <span class="s2">&quot;Required.</span><span class="se">\n</span><span class="s2">Supply a space-separated list of files or directories.&quot;</span>
+        <span class="s2">&quot;Required.</span><span class="se">\n</span><span class="s2">Supply a space-separated list of files or directories. &quot;</span>
         <span class="s2">&quot;Long lists can be supplied, one per line, in a file with name &quot;</span>
         <span class="s2">&quot;file_list.txt. If one or more directory is provided, all valid &quot;</span>
         <span class="s2">&quot;data-files in that directory will be processed. Examples of valid &quot;</span>
         <span class="s2">&quot;inputs are &#39;file.xy&#39;, &#39;data/file.xy&#39;, &#39;file.xy, data/file.xy&#39;, &quot;</span>
-        <span class="s2">&quot;&#39;.&#39; (load everything in the current directory), &#39;data&#39; (load&quot;</span>
-        <span class="s2">&quot;everything in the folder ./data), &#39;data/file_list.txt&#39; (load&quot;</span>
-        <span class="s2">&quot; the list of files contained in the text-file called &quot;</span>
+        <span class="s2">&quot;&#39;.&#39; (load everything in the current directory), &#39;data&#39; (load &quot;</span>
+        <span class="s2">&quot;everything in the folder ./data), &#39;data/file_list.txt&#39; (load &quot;</span>
+        <span class="s2">&quot;the list of files contained in the text-file called &quot;</span>
         <span class="s2">&quot;file_list.txt that can be found in the folder ./data), &quot;</span>
         <span class="s2">&quot;&#39;./*.chi&#39;, &#39;data/*.chi&#39; (load all files with extension .chi in the &quot;</span>
         <span class="s2">&quot;folder ./data).&quot;</span><span class="p">,</span>
@@ -124,7 +124,7 @@
         <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--output-directory&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The name of the output directory. If not specified &quot;</span>
-        <span class="s2">&quot;then corrected files will be written to the current directory.&quot;</span>
+        <span class="s2">&quot;then corrected files will be written to the current directory. &quot;</span>
         <span class="s2">&quot;If the specified directory doesn&#39;t exist it will be created.&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
@@ -143,7 +143,6 @@
         <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The absorption correction will be output to a file if this &quot;</span>
         <span class="s2">&quot;flag is set. Default is that it is not output.&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;tth&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-f&quot;</span><span class="p">,</span>

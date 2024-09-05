@@ -195,13 +195,12 @@
 <span class="sd">    args argparse.Namespace</span>
 <span class="sd">        the arguments from the parser</span>
 
+<span class="sd">    we raise a ValueError if the input wavelength is non-positive</span>
+<span class="sd">    or if the input anode_type is not one of the known sources</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    args argparse.Namespace</span>
-
-<span class="sd">    we raise an ValueError if the input wavelength is non-positive</span>
-<span class="sd">    or if the input anode_type is not one of the known sources</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>

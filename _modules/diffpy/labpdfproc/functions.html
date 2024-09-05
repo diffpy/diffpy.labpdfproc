@@ -106,16 +106,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="p">{(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ys</span> <span class="k">if</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mi">2</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_points_in_grid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
 
-    <span class="c1"># def get_coordinate_index(self, coordinate):  # I think we probably dont need this function?</span>
-    <span class="c1">#     count = 0</span>
-    <span class="c1">#     for i, target in enumerate(self.grid):</span>
-    <span class="c1">#         if coordinate == target:</span>
-    <span class="c1">#             return i</span>
-    <span class="c1">#         else:</span>
-    <span class="c1">#             count += 1</span>
-    <span class="c1">#     if count &gt;= len(self.grid):</span>
-    <span class="c1">#         raise IndexError(f&quot;WARNING: no coordinate {coordinate} found in coordinates list&quot;)</span>
-
 <div class="viewcode-block" id="Gridded_circle.set_distances_at_angle">
 <a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.functions.Gridded_circle.set_distances_at_angle">[docs]</a>
     <span class="k">def</span> <span class="nf">set_distances_at_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
