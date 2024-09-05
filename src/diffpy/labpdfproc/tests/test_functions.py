@@ -1,7 +1,9 @@
+import re
+
 import numpy as np
 import pytest
 
-from diffpy.labpdfproc.functions import Gridded_circle, apply_corr, compute_cve
+from diffpy.labpdfproc.functions import CVE_METHODS, Gridded_circle, apply_corr, compute_cve
 from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 params1 = [
@@ -83,6 +85,30 @@ def test_compute_cve(mocker):
         scat_quantity="cve",
     )
     assert actual_cve_do == expected_cve_do
+
+
+params_cve_bad = [
+    (
+        [7, "polynomial_interpolation"],
+        [
+            f"mu*D is out of the acceptable range (0.5 to 6) for polynomial interpolation. "
+            f"Please rerun with a value within this range or specifying another method from {* CVE_METHODS, }."
+        ],
+    ),
+    ([1, "invalid_method"], [f"Unknown method: invalid_method. Allowed methods are {*CVE_METHODS, }."]),
+    ([7, "invalid_method"], [f"Unknown method: invalid_method. Allowed methods are {*CVE_METHODS, }."]),
+]
+
+
+@pytest.mark.parametrize("inputs, msg", params_cve_bad)
+def test_compute_cve_bad(mocker, inputs, msg):
+    xarray, yarray = np.array([90, 90.1, 90.2]), np.array([2, 2, 2])
+    expected_cve = np.array([0.5, 0.5, 0.5])
+    mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", xarray)
+    mocker.patch("numpy.interp", return_value=expected_cve)
+    input_pattern = _instantiate_test_do(xarray, yarray)
+    with pytest.raises(ValueError, match=re.escape(msg[0])):
+        compute_cve(input_pattern, mud=inputs[0], method=inputs[1])
 
 
 def test_apply_corr(mocker):
