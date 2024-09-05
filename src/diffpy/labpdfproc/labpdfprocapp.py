@@ -14,14 +14,14 @@ def get_args(override_cli_inputs=None):
         "input",
         nargs="+",
         help="The filename(s) or folder(s) of the datafile(s) to load.  "
-        "Required.\nSupply a space-separated list of files or directories."
+        "Required.\nSupply a space-separated list of files or directories. "
         "Long lists can be supplied, one per line, in a file with name "
         "file_list.txt. If one or more directory is provided, all valid "
         "data-files in that directory will be processed. Examples of valid "
         "inputs are 'file.xy', 'data/file.xy', 'file.xy, data/file.xy', "
-        "'.' (load everything in the current directory), 'data' (load"
-        "everything in the folder ./data), 'data/file_list.txt' (load"
-        " the list of files contained in the text-file called "
+        "'.' (load everything in the current directory), 'data' (load "
+        "everything in the folder ./data), 'data/file_list.txt' (load "
+        "the list of files contained in the text-file called "
         "file_list.txt that can be found in the folder ./data), "
         "'./*.chi', 'data/*.chi' (load all files with extension .chi in the "
         "folder ./data).",
@@ -45,7 +45,7 @@ def get_args(override_cli_inputs=None):
         "-o",
         "--output-directory",
         help="The name of the output directory. If not specified "
-        "then corrected files will be written to the current directory."
+        "then corrected files will be written to the current directory. "
         "If the specified directory doesn't exist it will be created.",
         default=None,
     )
@@ -64,7 +64,6 @@ def get_args(override_cli_inputs=None):
         action="store_true",
         help="The absorption correction will be output to a file if this "
         "flag is set. Default is that it is not output.",
-        default="tth",
     )
     p.add_argument(
         "-f",

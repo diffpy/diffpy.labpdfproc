@@ -110,13 +110,12 @@ def set_wavelength(args):
     args argparse.Namespace
         the arguments from the parser
 
+    we raise a ValueError if the input wavelength is non-positive
+    or if the input anode_type is not one of the known sources
+
     Returns
     -------
     args argparse.Namespace
-
-    we raise an ValueError if the input wavelength is non-positive
-    or if the input anode_type is not one of the known sources
-
     """
     if args.wavelength is not None and args.wavelength <= 0:
         raise ValueError(
