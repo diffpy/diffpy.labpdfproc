@@ -13,58 +13,69 @@ def get_args(override_cli_inputs=None):
     p.add_argument(
         "input",
         nargs="+",
-        help="The filename(s) or folder(s) of the datafile(s) to load.  "
-        "Required.\nSupply a space-separated list of files or directories."
-        "Long lists can be supplied, one per line, in a file with name "
-        "file_list.txt. If one or more directory is provided, all valid "
-        "data-files in that directory will be processed. Examples of valid "
-        "inputs are 'file.xy', 'data/file.xy', 'file.xy, data/file.xy', "
-        "'.' (load everything in the current directory), 'data' (load"
-        "everything in the folder ./data), 'data/file_list.txt' (load"
-        " the list of files contained in the text-file called "
-        "file_list.txt that can be found in the folder ./data), "
-        "'./*.chi', 'data/*.chi' (load all files with extension .chi in the "
-        "folder ./data).",
+        help=(
+            "The filename(s) or folder(s) of the datafile(s) to load. "
+            "Required.\nSupply a space-separated list of files or directories. "
+            "Long lists can be supplied, one per line, in a file with name "
+            "file_list.txt. If one or more directory is provided, all valid "
+            "data-files in that directory will be processed. Examples of valid "
+            "inputs are 'file.xy', 'data/file.xy', 'file.xy, data/file.xy', "
+            "'.' (load everything in the current directory), 'data' (load "
+            "everything in the folder ./data), 'data/file_list.txt' (load "
+            "the list of files contained in the text-file called "
+            "file_list.txt that can be found in the folder ./data), "
+            "'./*.chi', 'data/*.chi' (load all files with extension .chi in the "
+            "folder ./data)."
+        ),
     )
     p.add_argument(
         "-a",
         "--anode-type",
-        help=f"The type of the x-ray source. Allowed values are "
-        f"{*[known_sources], }. Either specify a known x-ray source or specify wavelength.",
+        help=(
+            f"The type of the x-ray source. Allowed values are "
+            f"{*[known_sources], }. Either specify a known x-ray source or specify wavelength."
+        ),
         default="Mo",
     )
     p.add_argument(
         "-w",
         "--wavelength",
-        help="X-ray source wavelength in angstroms. Not needed if the anode-type "
-        "is specified. This wavelength will override the anode wavelength if both are specified.",
+        help=(
+            "X-ray source wavelength in angstroms. Not needed if the anode-type "
+            "is specified. This wavelength will override the anode wavelength if both are specified."
+        ),
         default=None,
         type=float,
     )
     p.add_argument(
         "-o",
         "--output-directory",
-        help="The name of the output directory. If not specified "
-        "then corrected files will be written to the current directory."
-        "If the specified directory doesn't exist it will be created.",
+        help=(
+            "The name of the output directory. If not specified "
+            "then corrected files will be written to the current directory. "
+            "If the specified directory doesn't exist it will be created."
+        ),
         default=None,
     )
     p.add_argument(
         "-x",
         "--xtype",
-        help=f"The quantity on the independent variable axis. Allowed "
-        f"values: {*XQUANTITIES, }. If not specified then two-theta "
-        f"is assumed for the independent variable. Only implemented for "
-        f"tth currently.",
+        help=(
+            f"The quantity on the independent variable axis. Allowed "
+            f"values: {*XQUANTITIES, }. If not specified then two-theta "
+            f"is assumed for the independent variable. Only implemented for "
+            f"tth currently."
+        ),
         default="tth",
     )
     p.add_argument(
         "-c",
         "--output-correction",
         action="store_true",
-        help="The absorption correction will be output to a file if this "
-        "flag is set. Default is that it is not output.",
-        default="tth",
+        help=(
+            "The absorption correction will be output to a file if this "
+            "flag is set. Default is that it is not output."
+        ),
     )
     p.add_argument(
         "-f",
@@ -75,8 +86,10 @@ def get_args(override_cli_inputs=None):
     p.add_argument(
         "-m",
         "--method",
-        help=f"The method for computing absorption correction. Allowed methods: {*CVE_METHODS, }. "
-        f"Default method is polynomial interpolation if not specified. ",
+        help=(
+            f"The method for computing absorption correction. Allowed methods: {*CVE_METHODS, }. "
+            f"Default method is polynomial interpolation if not specified. "
+        ),
         default="polynomial_interpolation",
     )
     p.add_argument(
@@ -84,25 +97,31 @@ def get_args(override_cli_inputs=None):
         "--user-metadata",
         metavar="KEY=VALUE",
         nargs="+",
-        help="Specify key-value pairs to be loaded into metadata using the format key=value. "
-        "Separate pairs with whitespace, and ensure no whitespaces before or after the = sign. "
-        "Avoid using = in keys. If multiple = signs are present, only the first separates the key and value. "
-        "If a key or value contains whitespace, enclose it in quotes. "
-        "For example, facility='NSLS II', 'facility=NSLS II', beamline=28ID-2, "
-        "'beamline'='28ID-2', 'favorite color'=blue, are all valid key=value items. ",
+        help=(
+            "Specify key-value pairs to be loaded into metadata using the format key=value. "
+            "Separate pairs with whitespace, and ensure no whitespaces before or after the = sign. "
+            "Avoid using = in keys. If multiple = signs are present, only the first separates the key and value. "
+            "If a key or value contains whitespace, enclose it in quotes. "
+            "For example, facility='NSLS II', 'facility=NSLS II', beamline=28ID-2, "
+            "'beamline'='28ID-2', 'favorite color'=blue, are all valid key=value items. "
+        ),
     )
     p.add_argument(
         "-n",
         "--username",
-        help="Username will be loaded from config files. Specify here "
-        "only if you want to override that behavior at runtime. ",
+        help=(
+            "Username will be loaded from config files. Specify here "
+            "only if you want to override that behavior at runtime. "
+        ),
         default=None,
     )
     p.add_argument(
         "-e",
         "--email",
-        help="Email will be loaded from config files. Specify here "
-        "only if you want to override that behavior at runtime. ",
+        help=(
+            "Email will be loaded from config files. Specify here "
+            "only if you want to override that behavior at runtime. "
+        ),
         default=None,
     )
     args = p.parse_args(override_cli_inputs)
