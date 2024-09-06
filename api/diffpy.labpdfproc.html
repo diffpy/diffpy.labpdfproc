@@ -275,17 +275,18 @@ a list of files to be processed which is stored in the args Namespace.</p>
 <dd><p>set the output directory based on the given input arguments</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>argparse.Namespace</strong> (<em>args</em>) – the arguments from the parser</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>pathlib.PosixPath that contains the full path of the output directory</em></p></li>
-<li><p><em>it is determined as follows</em></p></li>
-<li><p><em>If user provides an output directory, use it.</em></p></li>
-<li><p><em>Otherwise, we set it to the current directory if nothing is provided.</em></p></li>
-<li><p><em>We then create the directory if it does not exist.</em></p></li>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>argparse.Namespace</strong> (<em>args</em>) – the arguments from the parser</p></li>
+<li><p><strong>follows</strong> (<em>it is determined as</em>)</p></li>
+<li><p><strong>directory</strong> (<em>If user provides an output</em>)</p></li>
+<li><p><strong>it.</strong> (<em>use</em>)</p></li>
+<li><p><strong>Otherwise</strong></p></li>
+<li><p><strong>provided.</strong> (<em>we set it to the current directory if nothing is</em>)</p></li>
+<li><p><strong>exist.</strong> (<em>We then create the directory if it does not</em>)</p></li>
 </ul>
-</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>a Path object that contains the full path of the output directory</p>
 </dd>
 </dl>
 </dd></dl>

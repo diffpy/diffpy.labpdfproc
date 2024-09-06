@@ -96,15 +96,14 @@
 <span class="sd">    args argparse.Namespace</span>
 <span class="sd">        the arguments from the parser</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    pathlib.PosixPath that contains the full path of the output directory</span>
-
 <span class="sd">    it is determined as follows:</span>
 <span class="sd">    If user provides an output directory, use it.</span>
 <span class="sd">    Otherwise, we set it to the current directory if nothing is provided.</span>
 <span class="sd">    We then create the directory if it does not exist.</span>
 
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a Path object that contains the full path of the output directory</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output_directory</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">output_directory</span> <span class="k">else</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
     <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
