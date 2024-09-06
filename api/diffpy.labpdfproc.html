@@ -81,105 +81,8 @@
 <p>Tools for processing x-ray powder diffraction data from laboratory sources</p>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
-<section id="module-diffpy.labpdfproc.functions">
-<span id="diffpy-labpdfproc-functions-module"></span><h3>diffpy.labpdfproc.functions module<a class="headerlink" href="#module-diffpy.labpdfproc.functions" title="Link to this heading"></a></h3>
-<dl class="py class">
-<dt class="sig sig-object py" id="diffpy.labpdfproc.functions.Gridded_circle">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.functions.</span></span><span class="sig-name descname"><span class="pre">Gridded_circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points_on_diameter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/functions.html#Gridded_circle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.functions.Gridded_circle" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="diffpy.labpdfproc.functions.Gridded_circle.get_path_length">
-<span class="sig-name descname"><span class="pre">get_path_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/functions.html#Gridded_circle.get_path_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.functions.Gridded_circle.get_path_length" title="Link to this definition"></a></dt>
-<dd><p>return the path length</p>
-<p>This is the pathlength of a horizontal line entering the circle at the
-same height to the grid point then exiting at angle angle</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>floats</strong> (<em>grid_point double of</em>) – the coordinate inside the circle</p></li>
-<li><p><strong>float</strong> (<em>angle</em>) – the angle of the output beam</p></li>
-<li><p><strong>radius</strong> – the radius of the circle</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>floats total distance, primary distance and secondary distance</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="diffpy.labpdfproc.functions.Gridded_circle.set_distances_at_angle">
-<span class="sig-name descname"><span class="pre">set_distances_at_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/functions.html#Gridded_circle.set_distances_at_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.functions.Gridded_circle.set_distances_at_angle" title="Link to this definition"></a></dt>
-<dd><p>given an angle, set the distances from the grid points to the entry and exit coordinates</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>float</strong> (<em>angle</em>) – the angle in degrees</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>the list of distances containing total distance, primary distance and secondary distance</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="diffpy.labpdfproc.functions.Gridded_circle.set_muls_at_angle">
-<span class="sig-name descname"><span class="pre">set_muls_at_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/functions.html#Gridded_circle.set_muls_at_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.functions.Gridded_circle.set_muls_at_angle" title="Link to this definition"></a></dt>
-<dd><p>compute muls = exp(-mu*distance) for a given angle</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>float</strong> (<em>angle</em>) – the angle in degrees</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>an array of floats containing the muls corresponding to each angle</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="diffpy.labpdfproc.functions.apply_corr">
-<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.functions.</span></span><span class="sig-name descname"><span class="pre">apply_corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diffraction_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absorption_correction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/functions.html#apply_corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.functions.apply_corr" title="Link to this definition"></a></dt>
-<dd><p>Apply absorption correction to the given diffraction object modo with the correction diffraction object abdo</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>Diffraction_object</strong> (<em>absorption_correction</em>) – the input diffraction object to which the cve will be applied</p></li>
-<li><p><strong>Diffraction_object</strong> – the diffraction object that contains the cve to be applied</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>a corrected diffraction object with the correction applied through multiplication</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="diffpy.labpdfproc.functions.compute_cve">
-<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.functions.</span></span><span class="sig-name descname"><span class="pre">compute_cve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diffraction_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mud</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/functions.html#compute_cve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.functions.compute_cve" title="Link to this definition"></a></dt>
-<dd><p>compute the cve for given diffraction data, mud and wavelength</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>Diffraction_object</strong> (<em>diffraction_data</em>) – the diffraction pattern</p></li>
-<li><p><strong>float</strong> (<em>wavelength</em>) – the mu*D of the diffraction object, where D is the diameter of the circle</p></li>
-<li><p><strong>float</strong> – the wavelength of the diffraction object</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>the diffraction object with cve curves</em></p></li>
-<li><p><em>it is computed as follows</em></p></li>
-<li><p><em>We first resample data and absorption correction to a more reasonable grid,</em></p></li>
-<li><p><em>then calculate corresponding cve for the given mud in the resample grid</em></p></li>
-<li><p><em>(since the same mu*D yields the same cve, we can assume that D/2=1, so mu=mud/2),</em></p></li>
-<li><p><em>and finally interpolate cve to the original grid in diffraction_data.</em></p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="diffpy-labpdfproc-functions-module">
+<h3>diffpy.labpdfproc.functions module<a class="headerlink" href="#diffpy-labpdfproc-functions-module" title="Link to this heading"></a></h3>
 </section>
 <section id="module-diffpy.labpdfproc.tools">
 <span id="diffpy-labpdfproc-tools-module"></span><h3>diffpy.labpdfproc.tools module<a class="headerlink" href="#module-diffpy.labpdfproc.tools" title="Link to this heading"></a></h3>
@@ -310,18 +213,8 @@ a list of files to be processed which is stored in the args Namespace.</p>
 </dd></dl>
 
 </section>
-<section id="module-diffpy.labpdfproc.labpdfprocapp">
-<span id="diffpy-labpdfproc-labpdfprocapp-module"></span><h3>diffpy.labpdfproc.labpdfprocapp module<a class="headerlink" href="#module-diffpy.labpdfproc.labpdfprocapp" title="Link to this heading"></a></h3>
-<dl class="py function">
-<dt class="sig sig-object py" id="diffpy.labpdfproc.labpdfprocapp.get_args">
-<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.labpdfprocapp.</span></span><span class="sig-name descname"><span class="pre">get_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">override_cli_inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/labpdfprocapp.html#get_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.labpdfprocapp.get_args" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="diffpy.labpdfproc.labpdfprocapp.main">
-<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.labpdfprocapp.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/labpdfprocapp.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.labpdfprocapp.main" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
+<section id="diffpy-labpdfproc-labpdfprocapp-module">
+<h3>diffpy.labpdfproc.labpdfprocapp module<a class="headerlink" href="#diffpy-labpdfproc-labpdfprocapp-module" title="Link to this heading"></a></h3>
 </section>
 </section>
 </section>
