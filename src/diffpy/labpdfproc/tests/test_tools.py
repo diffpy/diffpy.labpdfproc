@@ -13,6 +13,7 @@ from diffpy.labpdfproc.tools import (
     load_user_metadata,
     preprocessing_args,
     set_input_lists,
+    set_mud,
     set_output_directory,
     set_wavelength,
 )
@@ -188,6 +189,32 @@ def test_set_wavelength_bad(inputs, msg):
         actual_args = set_wavelength(actual_args)
 
 
+def test_set_mud(user_filesystem):
+    cli_inputs = ["2.5", "data.xy"]
+    actual_args = get_args(cli_inputs)
+    actual_args = set_mud(actual_args)
+    assert actual_args.mud == pytest.approx(2.5, rel=0.1, abs=0.1)
+    assert actual_args.z_scan_file is None
+
+    cwd = Path(user_filesystem)
+    test_dir = cwd / "test_dir"
+    os.chdir(cwd)
+    inputs = ["--z-scan-file", "test_dir/testfile.xy"]
+    expected = [3, str(test_dir / "testfile.xy")]
+    cli_inputs = ["2.5", "data.xy"] + inputs
+    actual_args = get_args(cli_inputs)
+    actual_args = set_mud(actual_args)
+    assert actual_args.mud == pytest.approx(expected[0], rel=0.1, abs=0.1)
+    assert actual_args.z_scan_file == expected[1]
+
+
+def test_set_mud_bad():
+    cli_inputs = ["2.5", "data.xy", "--z-scan-file", "invalid file"]
+    actual_args = get_args(cli_inputs)
+    with pytest.raises(FileNotFoundError, match="Cannot find invalid file. Please specify a valid file path."):
+        actual_args = set_mud(actual_args)
+
+
 params5 = [
     ([], []),
     (
@@ -317,5 +344,6 @@ def test_load_metadata(mocker, user_filesystem):
             "username": "cli_username",
             "email": "cli@email.com",
             "package_info": {"diffpy.labpdfproc": "1.2.3", "diffpy.utils": "3.3.0"},
+            "z_scan_file": None,
         }
         assert actual_metadata == expected_metadata

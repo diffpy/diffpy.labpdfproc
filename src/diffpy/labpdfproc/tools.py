@@ -152,7 +152,7 @@ def set_mud(args):
         filepath = Path(args.z_scan_file).resolve()
         if not filepath.is_file():
             raise FileNotFoundError(f"Cannot find {args.z_scan_file}. Please specify a valid file path.")
-        args.z_scan_file = filepath
+        args.z_scan_file = str(filepath)
         args.mud = compute_mud(filepath)
     return args
 
