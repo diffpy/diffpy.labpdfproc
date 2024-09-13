@@ -127,7 +127,7 @@ def get_args(override_cli_inputs=None):
     p.add_argument(
         "-z",
         "--z-scan-file",
-        help="Path to the z-scan file to be loaded to overload the mu*D value.",
+        help="Path to the z-scan file to be loaded to determine the mu*D value",
         default=None,
     )
     args = p.parse_args(override_cli_inputs)
