@@ -19,4 +19,4 @@ def test_compute_mud(tmp_path):
 
     expected_mud = 3
     actual_mud = compute_mud(file)
-    assert actual_mud == pytest.approx(expected_mud, rel=0.1, abs=0.1)
+    assert actual_mud == pytest.approx(expected_mud, rel=1e-4, abs=0.1)

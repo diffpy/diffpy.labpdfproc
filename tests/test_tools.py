@@ -193,7 +193,7 @@ def test_set_mud(user_filesystem):
     cli_inputs = ["2.5", "data.xy"]
     actual_args = get_args(cli_inputs)
     actual_args = set_mud(actual_args)
-    assert actual_args.mud == pytest.approx(2.5, rel=0.1, abs=0.1)
+    assert actual_args.mud == pytest.approx(2.5, rel=1e-4, abs=0.1)
     assert actual_args.z_scan_file is None
 
     cwd = Path(user_filesystem)
@@ -204,7 +204,7 @@ def test_set_mud(user_filesystem):
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_mud(actual_args)
-    assert actual_args.mud == pytest.approx(expected[0], rel=0.1, abs=0.1)
+    assert actual_args.mud == pytest.approx(expected[0], rel=1e-4, abs=0.1)
     assert actual_args.z_scan_file == expected[1]
 
 
