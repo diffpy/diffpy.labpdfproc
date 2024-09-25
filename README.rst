@@ -15,8 +15,8 @@
 .. |Black| image:: https://img.shields.io/badge/code_style-black-black
         :target: https://github.com/psf/black
 
-.. |CI| image:: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/main.yml/badge.svg
-        :target: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/main.yml
+.. |CI| image:: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/matrix-and-codecov-on-merge-to-main.yml/badge.svg
+        :target: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/matrix-and-codecov-on-merge-to-main.yml
 
 .. |Codecov| image:: https://codecov.io/gh/diffpy/diffpy.labpdfproc/branch/main/graph/badge.svg
         :target: https://codecov.io/gh/diffpy/diffpy.labpdfproc
@@ -37,28 +37,7 @@
 
 Tools for processing x-ray powder diffraction data from laboratory sources.
 
-PDFgetX3 has revolutionized how PDF methods can be applied to solve nanostructure problems.
-However, the program was designed for use with Rapid Acquisition PDF (RAPDF) data from synchrotron sources.
-A key approximation inherent in the use of PDFgetX3 for RAPDF data is that absorption effects are negligible.
-This is typically not the case for laboratory x-ray diffractometers, where absorption effects can be significant.
-
-This app is designed to preprocess data from laboratory x-ray diffractometers before using PDFgetX3 to obtain PDFs.
-The app currently carries out an absorption correction assuming a parallel beam capillary geometry
-which is the most common geometry for lab PDF measurements.
-
-The theory is described in the following paper:
-
-An ad hoc Absorption Correction for Reliable
-Pair-Distribution Functions from Low Energy x-ray Sources
-Yucong Chen, Till Schertenleib, Andrew Yang, Pascal Schouwink,
-Wendy L. Queen and Simon J. L. Billinge, in preparation.
-
-The related experimental data acquisition protocols are described in the following paper:
-
-Protocols for Obtaining Reliable PDFs from Laboratory
-x-ray Sources Using PDFgetX3,
-Till Schertenleib, Daniel Schmuckler, Yucong Chen, Geng Bang Jin,
-Wendy L. Queen and Simon J. L. Billinge, in preparation.
+* LONGER DESCRIPTION HERE
 
 For more information about the diffpy.labpdfproc library, please consult our `online documentation <https://diffpy.github.io/diffpy.labpdfproc>`_.
 
@@ -92,11 +71,7 @@ Then, to fully install ``diffpy.labpdfproc`` in our active environment, run ::
 
 Another option is to use ``pip`` to download and install the latest release from
 `Python Package Index <https://pypi.python.org>`_.
-To install using ``pip`` into your ``diffpy.labpdfproc_env`` environment, we will also have to install dependencies ::
-
-        pip install -r https://raw.githubusercontent.com/diffpy/diffpy.labpdfproc/main/requirements/run.txt
-
-and then install the package ::
+To install using ``pip`` into your ``diffpy.labpdfproc_env`` environment, type ::
 
         pip install diffpy.labpdfproc
 
@@ -105,27 +80,6 @@ If you prefer to install from sources, after installing the dependencies, obtain
 and run the following ::
 
         pip install .
-
-Example
--------
-
-Navigate to the directory that contains 1D diffraction patterns that you would like to process.
-Activate the conda environment (`conda activate diffpy.labpdfproc_env`) that contains the package and run the following command ::
-
-        labpdfproc <muD> <path/to/inputfile.txt>
-
-Here replace <muD> with the value of muD for your sample
-and <path/to/inputfile.txt> with the path and filename of your input file.
-For example, if the uncorrected data case is called zro2_mo.xy and is in the current directory
-and it has a muD of 2.5 then the command would be ::
-
-        labpdfproc 2.5 zro2_mo.xy
-
-Please type ::
-
-        labpdfproc --help
-
-for more information on the available options.
 
 Support and Contribute
 ----------------------
@@ -155,7 +109,7 @@ trying to commit again.
 
 Improvements and fixes are always appreciated.
 
-Before contributing, please read our `Code of Conduct <https://github.com/diffpy/diffpy.labpdfproc/blob/main/CODE_OF_CONDUCT.rst>`_.
+Before contribuing, please read our `Code of Conduct <https://github.com/diffpy/diffpy.labpdfproc/blob/main/CODE_OF_CONDUCT.rst>`_.
 
 Contact
 -------

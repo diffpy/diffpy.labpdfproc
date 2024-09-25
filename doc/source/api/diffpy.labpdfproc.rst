@@ -1,36 +1,30 @@
 :tocdepth: -1
 
-diffpy.labpdfproc package
-=========================
+|title|
+=======
+
+.. |title| replace:: diffpy.labpdfproc package
 
 .. automodule:: diffpy.labpdfproc
     :members:
     :undoc-members:
     :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+   diffpy.labpdfproc.example_package
+
 Submodules
 ----------
 
-diffpy.labpdfproc.functions module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+|module|
+--------
 
-.. automodule:: diffpy.labpdfproc.functions
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. |module| replace:: diffpy.labpdfproc.example_submodule module
 
-diffpy.labpdfproc.tools module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: diffpy.labpdfproc.tools
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-diffpy.labpdfproc.labpdfprocapp module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: diffpy.labpdfproc.labpdfprocapp
+.. automodule:: diffpy.labpdfproc.example_submodule
     :members:
     :undoc-members:
     :show-inheritance:

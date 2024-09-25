@@ -13,7 +13,7 @@
 #
 ##############################################################################
 
-"""Tools for processing x-ray powder diffraction data from laboratory sources"""
+"""Tools for processing x-ray powder diffraction data from laboratory sources."""
 
 # package version
 from diffpy.labpdfproc.version import __version__
