@@ -4,7 +4,7 @@
 
 .. |title| replace:: diffpy.labpdfproc documentation
 
-diffpy.labpdfproc - Tools for processing x-ray powder diffraction data from laboratory sources..
+diffpy.labpdfproc - Tools for processing x-ray powder diffraction data from laboratory sources.
 
 | Software version |release|.
 | Last updated |today|.
