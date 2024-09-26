@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=62.0", "setuptools-git-versioning<2"]
+requires = ["setuptools>=62.0", "setuptools-git-versioning>=2.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -11,7 +11,7 @@ authors = [
 maintainers = [
   { name="Simon J.L. Billinge group", email="simon.billinge@gmail.com" },
 ]
-description = "Tools for processing x-ray powder diffraction data from laboratory sources"
+description = "Tools for processing x-ray powder diffraction data from laboratory sources."
 keywords = ['powder xrd', 'absorption correction', 'pdf', 'diffpy']
 readme = "README.rst"
 requires-python = ">=3.10"

@@ -15,8 +15,8 @@
 .. |Black| image:: https://img.shields.io/badge/code_style-black-black
         :target: https://github.com/psf/black
 
-.. |CI| image:: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/main.yml/badge.svg
-        :target: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/main.yml
+.. |CI| image:: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/matrix-and-codecov-on-merge-to-main.yml/badge.svg
+        :target: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/matrix-and-codecov-on-merge-to-main.yml
 
 .. |Codecov| image:: https://codecov.io/gh/diffpy/diffpy.labpdfproc/branch/main/graph/badge.svg
         :target: https://codecov.io/gh/diffpy/diffpy.labpdfproc
@@ -49,7 +49,7 @@ which is the most common geometry for lab PDF measurements.
 The theory is described in the following paper:
 
 An ad hoc Absorption Correction for Reliable
-Pair-Distribution Functions from Low Energy x-ray Sources
+Pair-Distribution Functions from Low Energy x-ray Sources,
 Yucong Chen, Till Schertenleib, Andrew Yang, Pascal Schouwink,
 Wendy L. Queen and Simon J. L. Billinge, in preparation.
 
@@ -92,11 +92,7 @@ Then, to fully install ``diffpy.labpdfproc`` in our active environment, run ::
 
 Another option is to use ``pip`` to download and install the latest release from
 `Python Package Index <https://pypi.python.org>`_.
-To install using ``pip`` into your ``diffpy.labpdfproc_env`` environment, we will also have to install dependencies ::
-
-        pip install -r https://raw.githubusercontent.com/diffpy/diffpy.labpdfproc/main/requirements/run.txt
-
-and then install the package ::
+To install using ``pip`` into your ``diffpy.labpdfproc_env`` environment, type ::
 
         pip install diffpy.labpdfproc
 
@@ -132,7 +128,7 @@ Support and Contribute
 
 `Diffpy user group <https://groups.google.com/g/diffpy-users>`_ is the discussion forum for general questions and discussions about the use of diffpy.labpdfproc. Please join the diffpy.labpdfproc users community by joining the Google group. The diffpy.labpdfproc project welcomes your expertise and enthusiasm!
 
-If you see a bug or want to request a feature, please `report it as an issue <https://github.com/diffpy/diffpy.labpdfproc/issues>`_ and/or `submit a fix as a PR <https://github.com/diffpy/diffpy.labpdfproc/pulls>`_. You can also post it to the `Diffpy user group <https://groups.google.com/g/diffpy-users>`_. 
+If you see a bug or want to request a feature, please `report it as an issue <https://github.com/diffpy/diffpy.labpdfproc/issues>`_ and/or `submit a fix as a PR <https://github.com/diffpy/diffpy.labpdfproc/pulls>`_. You can also post it to the `Diffpy user group <https://groups.google.com/g/diffpy-users>`_.
 
 Feel free to fork the project and contribute. To install diffpy.labpdfproc
 in a development mode, with its sources being directly used by Python
