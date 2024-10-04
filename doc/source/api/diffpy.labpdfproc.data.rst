@@ -7,4 +7,3 @@ diffpy.labpdfproc.data package
     :members:
     :undoc-members:
     :show-inheritance:
-
