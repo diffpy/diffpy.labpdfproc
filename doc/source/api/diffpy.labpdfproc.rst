@@ -8,6 +8,14 @@ diffpy.labpdfproc package
     :undoc-members:
     :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+    :titlesonly:
+
+    diffpy.labpdfproc.data
+
 Submodules
 ----------
 
@@ -23,6 +31,14 @@ diffpy.labpdfproc.tools module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: diffpy.labpdfproc.tools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+diffpy.labpdfproc.mud_calculator module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: diffpy.labpdfproc.mud_calculator
     :members:
     :undoc-members:
     :show-inheritance:
