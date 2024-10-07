@@ -37,8 +37,6 @@
 
 Tools for processing x-ray powder diffraction data from laboratory sources.
 
-test
-
 PDFgetX3 has revolutionized how PDF methods can be applied to solve nanostructure problems.
 However, the program was designed for use with Rapid Acquisition PDF (RAPDF) data from synchrotron sources.
 A key approximation inherent in the use of PDFgetX3 for RAPDF data is that absorption effects are negligible.
