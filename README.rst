@@ -48,6 +48,8 @@ which is the most common geometry for lab PDF measurements.
 
 The theory is described in the following paper:
 
+maybe the doi will be useful when citing an article
+
 An ad hoc Absorption Correction for Reliable
 Pair-Distribution Functions from Low Energy x-ray Sources,
 Yucong Chen, Till Schertenleib, Andrew Yang, Pascal Schouwink,
