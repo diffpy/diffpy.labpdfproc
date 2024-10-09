@@ -50,3 +50,4 @@ diffpy.labpdfproc.labpdfprocapp module
     :members:
     :undoc-members:
     :show-inheritance:
+
