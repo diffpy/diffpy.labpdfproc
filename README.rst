@@ -83,14 +83,16 @@ To add "conda-forge" to the conda channels, run the following in a terminal. ::
 We want to install our packages in a suitable conda environment.
 The following creates and activates a new environment named ``diffpy.labpdfproc_env`` ::
 
-        conda create -n diffpy.labpdfproc_env python=3
+        conda create -n diffpy.labpdfproc_env diffpy.labpdfproc
         conda activate diffpy.labpdfproc_env
 
-Then, to fully install ``diffpy.labpdfproc`` in our active environment, run ::
+To confirm that the installation was successful, type ::
 
-        conda install diffpy.labpdfproc
+        python -c "import diffpy.labpdfproc; print(diffpy.labpdfproc.__version__)"
 
-Another option is to use ``pip`` to download and install the latest release from
+The output should print the latest version displayed on the badges above.
+
+If the above does not work, you can use ``pip`` to download and install the latest release from
 `Python Package Index <https://pypi.python.org>`_.
 To install using ``pip`` into your ``diffpy.labpdfproc_env`` environment, type ::
 
@@ -122,6 +124,11 @@ Please type ::
         labpdfproc --help
 
 for more information on the available options.
+
+Getting Started
+---------------
+
+You may consult our `online documentation <https://diffpy.github.io/diffpy.labpdfproc>`_ for tutorials and API references.
 
 Support and Contribute
 ----------------------
