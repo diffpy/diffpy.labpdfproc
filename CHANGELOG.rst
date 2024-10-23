@@ -4,6 +4,15 @@ Release Notes
 
 .. current developments
 
+0.1.3
+=====
+
+**Added:**
+
+* generate package API doc
+* redo cookiecutter to add issue templates and update readme
+
+
 0.1.2
 =====
 
