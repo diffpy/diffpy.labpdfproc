@@ -264,9 +264,9 @@ def compute_cve(diffraction_data, mud, method="polynomial_interpolation"):
     """
 
     cve_function = _cve_method(method)
-    abdo_on_global_tth = cve_function(diffraction_data, mud)
-    global_tth = abdo_on_global_tth.on_tth[0]
-    cve_on_global_tth = abdo_on_global_tth.on_tth[1]
+    cve_do_on_global_tth = cve_function(diffraction_data, mud)
+    global_tth = cve_do_on_global_tth.on_tth[0]
+    cve_on_global_tth = cve_do_on_global_tth.on_tth[1]
     orig_grid = diffraction_data.on_tth[0]
     newcve = np.interp(orig_grid, global_tth, cve_on_global_tth)
     cve_do = Diffraction_object(wavelength=diffraction_data.wavelength)
