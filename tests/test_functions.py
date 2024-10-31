@@ -3,8 +3,14 @@ import re
 import numpy as np
 import pytest
 
-from diffpy.labpdfproc.functions import CVE_METHODS, Gridded_circle, apply_corr, compute_cve
-from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
+from diffpy.labpdfproc.functions import (
+    CVE_METHODS,
+    Gridded_circle,
+    apply_corr,
+    compute_cve,
+    interpolate_to_xtype_grid,
+)
+from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
 params1 = [
     ([0.5, 3, 1], {(0.0, -0.5), (0.0, 0.0), (0.5, 0.0), (-0.5, 0.0), (0.0, 0.5)}),
@@ -58,17 +64,60 @@ def test_set_muls_at_angle(inputs, expected):
     assert actual_muls_sorted == pytest.approx(expected_muls_sorted, rel=1e-4, abs=1e-6)
 
 
-def _instantiate_test_do(xarray, yarray, name="test", scat_quantity="x-ray"):
+def _instantiate_test_do(xarray, yarray, xtype="tth", name="test", scat_quantity="x-ray"):
     test_do = Diffraction_object(wavelength=1.54)
     test_do.insert_scattering_quantity(
         xarray,
         yarray,
-        "tth",
+        xtype,
         scat_quantity=scat_quantity,
         name=name,
         metadata={"thing1": 1, "thing2": "thing2"},
     )
     return test_do
+
+
+params4 = [
+    ([np.array([30, 60, 90]), np.array([1, 2, 3]), "tth"], [np.array([30, 60, 90]), np.array([1, 2, 3]), "tth"]),
+    (
+        [np.array([30, 60, 90]), np.array([1, 2, 3]), "q"],
+        [np.array([2.11195, 4.07999, 5.76998]), np.array([1, 1, 1]), "q"],
+    ),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params4)
+def test_interpolate_xtype(inputs, expected, mocker):
+    expected_cve_do = _instantiate_test_do(
+        expected[0],
+        expected[1],
+        xtype=expected[2],
+        name="absorption correction, cve, for test",
+        scat_quantity="cve",
+    )
+    input_cve_do = _instantiate_test_do(
+        inputs[0],
+        inputs[1],
+        xtype="tth",
+        name="absorption correction, cve, for test",
+        scat_quantity="cve",
+    )
+    actual_cve_do = interpolate_to_xtype_grid(input_cve_do, xtype=inputs[2])
+    assert actual_cve_do == expected_cve_do
+
+
+def test_interpolate_xtype_bad():
+    input_cve_do = _instantiate_test_do(
+        np.array([30, 60, 90]),
+        np.array([1, 2, 3]),
+        xtype="tth",
+        name="absorption correction, cve, for test",
+        scat_quantity="cve",
+    )
+    with pytest.raises(
+        ValueError, match=re.escape(f"Unknown xtype: invalid. Allowed xtypes are {*XQUANTITIES, }.")
+    ):
+        interpolate_to_xtype_grid(input_cve_do, xtype="invalid")
 
 
 def test_compute_cve(mocker):
@@ -92,7 +141,7 @@ params_cve_bad = [
         [7, "polynomial_interpolation"],
         [
             f"mu*D is out of the acceptable range (0.5 to 6) for polynomial interpolation. "
-            f"Please rerun with a value within this range or specifying another method from {* CVE_METHODS, }."
+            f"Please rerun with a value within this range or specifying another method from {*CVE_METHODS, }."
         ],
     ),
     ([1, "invalid_method"], [f"Unknown method: invalid_method. Allowed methods are {*CVE_METHODS, }."]),

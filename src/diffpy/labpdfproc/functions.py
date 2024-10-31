@@ -5,7 +5,12 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import interp1d
 
-from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
+from diffpy.utils.scattering_objects.diffraction_objects import (
+    ANGLEQUANTITIES,
+    DQUANTITIES,
+    XQUANTITIES,
+    Diffraction_object,
+)
 
 RADIUS_MM = 1
 N_POINTS_ON_DIAMETER = 300
@@ -198,7 +203,6 @@ def _cve_brute_force(diffraction_data, mud):
         "tth",
         metadata=diffraction_data.metadata,
         name=f"absorption correction, cve, for {diffraction_data.name}",
-        wavelength=diffraction_data.wavelength,
         scat_quantity="cve",
     )
     return cve_do
@@ -227,7 +231,6 @@ def _cve_polynomial_interpolation(diffraction_data, mud):
         "tth",
         metadata=diffraction_data.metadata,
         name=f"absorption correction, cve, for {diffraction_data.name}",
-        wavelength=diffraction_data.wavelength,
         scat_quantity="cve",
     )
     return cve_do
@@ -246,15 +249,54 @@ def _cve_method(method):
     return methods[method]
 
 
-def compute_cve(diffraction_data, mud, method="polynomial_interpolation"):
+def interpolate_to_xtype_grid(cve_do, xtype):
+    f"""
+    interpolates the cve grid to the xtype user specifies, raise an error if xtype is invalid
+
+    Parameters
+    ----------
+    cve_do Diffraction_object
+      the diffraction object that contains the cve to be applied
+    xtype str
+      the quantity on the independent variable axis, allowed values are {*XQUANTITIES, }
+
+    Returns
+    -------
+    the new diffraction object with interpolated cve curves
+    """
+
+    if xtype.lower() not in XQUANTITIES:
+        raise ValueError(f"Unknown xtype: {xtype}. Allowed xtypes are {*XQUANTITIES, }.")
+    if xtype.lower() in ANGLEQUANTITIES or xtype.lower() in DQUANTITIES:
+        return cve_do
+
+    orig_grid, orig_cve = cve_do.on_tth[0], cve_do.on_tth[1]
+    new_grid = cve_do.tth_to_q()
+    new_cve = np.interp(new_grid, orig_grid, orig_cve)
+    new_cve_do = Diffraction_object(wavelength=cve_do.wavelength)
+    new_cve_do.insert_scattering_quantity(
+        new_grid,
+        new_cve,
+        xtype,
+        metadata=cve_do.metadata,
+        name=cve_do.name,
+        scat_quantity="cve",
+    )
+    return new_cve_do
+
+
+def compute_cve(diffraction_data, mud, method="polynomial_interpolation", xtype="tth"):
     f"""
     compute and interpolate the cve for the given diffraction data and mud using the selected method
+
     Parameters
     ----------
     diffraction_data Diffraction_object
       the diffraction pattern
     mud float
       the mu*D of the diffraction object, where D is the diameter of the circle
+    xtype str
+      the quantity on the independent variable axis, allowed values are {*XQUANTITIES, }
     method str
       the method used to calculate cve, must be one of {* CVE_METHODS, }
 
@@ -265,21 +307,20 @@ def compute_cve(diffraction_data, mud, method="polynomial_interpolation"):
 
     cve_function = _cve_method(method)
     cve_do_on_global_tth = cve_function(diffraction_data, mud)
-    global_tth = cve_do_on_global_tth.on_tth[0]
-    cve_on_global_tth = cve_do_on_global_tth.on_tth[1]
-    orig_grid = diffraction_data.on_tth[0]
-    newcve = np.interp(orig_grid, global_tth, cve_on_global_tth)
+    cve_do_on_global_xtype = interpolate_to_xtype_grid(cve_do_on_global_tth, xtype)
+    orig_grid = diffraction_data.on_xtype(xtype)[0]
+    global_xtype = cve_do_on_global_xtype.on_xtype(xtype)[0]
+    cve_on_global_xtype = cve_do_on_global_xtype.on_xtype(xtype)[1]
+    newcve = np.interp(orig_grid, global_xtype, cve_on_global_xtype)
     cve_do = Diffraction_object(wavelength=diffraction_data.wavelength)
     cve_do.insert_scattering_quantity(
         orig_grid,
         newcve,
-        "tth",
+        xtype,
         metadata=diffraction_data.metadata,
         name=f"absorption correction, cve, for {diffraction_data.name}",
-        wavelength=diffraction_data.wavelength,
         scat_quantity="cve",
     )
-
     return cve_do
 
 
