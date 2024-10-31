@@ -5,12 +5,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import interp1d
 
-from diffpy.utils.scattering_objects.diffraction_objects import (
-    ANGLEQUANTITIES,
-    DQUANTITIES,
-    XQUANTITIES,
-    Diffraction_object,
-)
+from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
 RADIUS_MM = 1
 N_POINTS_ON_DIAMETER = 300
@@ -251,7 +246,7 @@ def _cve_method(method):
 
 def interpolate_to_xtype_grid(cve_do, xtype):
     f"""
-    interpolates the cve grid to the xtype user specifies, raise an error if xtype is invalid
+    interpolates the cve grid to the xtype user specified
 
     Parameters
     ----------
@@ -264,10 +259,7 @@ def interpolate_to_xtype_grid(cve_do, xtype):
     -------
     the new diffraction object with interpolated cve curves
     """
-
-    if xtype.lower() not in XQUANTITIES:
-        raise ValueError(f"Unknown xtype: {xtype}. Allowed xtypes are {*XQUANTITIES, }.")
-    if xtype.lower() in ANGLEQUANTITIES or xtype.lower() in DQUANTITIES:
+    if xtype == "tth":
         return cve_do
 
     orig_grid, orig_cve = cve_do.on_tth[0], cve_do.on_tth[1]

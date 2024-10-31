@@ -10,7 +10,7 @@ from diffpy.labpdfproc.functions import (
     compute_cve,
     interpolate_to_xtype_grid,
 )
-from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
+from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 params1 = [
     ([0.5, 3, 1], {(0.0, -0.5), (0.0, 0.0), (0.5, 0.0), (-0.5, 0.0), (0.0, 0.5)}),
@@ -104,20 +104,6 @@ def test_interpolate_xtype(inputs, expected, mocker):
     )
     actual_cve_do = interpolate_to_xtype_grid(input_cve_do, xtype=inputs[2])
     assert actual_cve_do == expected_cve_do
-
-
-def test_interpolate_xtype_bad():
-    input_cve_do = _instantiate_test_do(
-        np.array([30, 60, 90]),
-        np.array([1, 2, 3]),
-        xtype="tth",
-        name="absorption correction, cve, for test",
-        scat_quantity="cve",
-    )
-    with pytest.raises(
-        ValueError, match=re.escape(f"Unknown xtype: invalid. Allowed xtypes are {*XQUANTITIES, }.")
-    ):
-        interpolate_to_xtype_grid(input_cve_do, xtype="invalid")
 
 
 def test_compute_cve(mocker):

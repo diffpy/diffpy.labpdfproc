@@ -2,6 +2,7 @@ import copy
 from pathlib import Path
 
 from diffpy.labpdfproc.mud_calculator import compute_mud
+from diffpy.utils.scattering_objects.diffraction_objects import QQUANTITIES, XQUANTITIES
 from diffpy.utils.tools import get_package_info, get_user_info
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
@@ -135,6 +136,25 @@ def set_wavelength(args):
     return args
 
 
+def set_xtype(args):
+    f"""
+    Set the xtype based on the given input arguments, raise an error if xtype is not one of {*XQUANTITIES, }
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+
+    Returns
+    -------
+    args argparse.Namespace
+    """
+    if args.xtype.lower() not in XQUANTITIES:
+        raise ValueError(f"Unknown xtype: {args.xtype}. Allowed xtypes are {*XQUANTITIES, }.")
+    args.xtype = "q" if args.xtype.lower() in QQUANTITIES else "tth"
+    return args
+
+
 def set_mud(args):
     """
     Set the mud based on the given input arguments
@@ -257,6 +277,7 @@ def preprocessing_args(args):
     args = set_input_lists(args)
     args.output_directory = set_output_directory(args)
     args = set_wavelength(args)
+    args = set_xtype(args)
     args = set_mud(args)
     args = load_user_metadata(args)
     return args
