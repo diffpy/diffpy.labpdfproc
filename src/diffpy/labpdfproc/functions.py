@@ -244,39 +244,6 @@ def _cve_method(method):
     return methods[method]
 
 
-def interpolate_to_xtype_grid(cve_do, xtype):
-    f"""
-    interpolates the cve grid to the xtype user specified
-
-    Parameters
-    ----------
-    cve_do Diffraction_object
-      the diffraction object that contains the cve to be applied
-    xtype str
-      the quantity on the independent variable axis, allowed values are {*XQUANTITIES, }
-
-    Returns
-    -------
-    the new diffraction object with interpolated cve curves
-    """
-    if xtype == "tth":
-        return cve_do
-
-    orig_grid, orig_cve = cve_do.on_tth[0], cve_do.on_tth[1]
-    new_grid = cve_do.tth_to_q()
-    new_cve = np.interp(new_grid, orig_grid, orig_cve)
-    new_cve_do = Diffraction_object(wavelength=cve_do.wavelength)
-    new_cve_do.insert_scattering_quantity(
-        new_grid,
-        new_cve,
-        xtype,
-        metadata=cve_do.metadata,
-        name=cve_do.name,
-        scat_quantity="cve",
-    )
-    return new_cve_do
-
-
 def compute_cve(diffraction_data, mud, method="polynomial_interpolation", xtype="tth"):
     f"""
     compute and interpolate the cve for the given diffraction data and mud using the selected method
@@ -298,11 +265,10 @@ def compute_cve(diffraction_data, mud, method="polynomial_interpolation", xtype=
     """
 
     cve_function = _cve_method(method)
-    cve_do_on_global_tth = cve_function(diffraction_data, mud)
-    cve_do_on_global_xtype = interpolate_to_xtype_grid(cve_do_on_global_tth, xtype)
+    cve_do_on_global_grid = cve_function(diffraction_data, mud)
     orig_grid = diffraction_data.on_xtype(xtype)[0]
-    global_xtype = cve_do_on_global_xtype.on_xtype(xtype)[0]
-    cve_on_global_xtype = cve_do_on_global_xtype.on_xtype(xtype)[1]
+    global_xtype = cve_do_on_global_grid.on_xtype(xtype)[0]
+    cve_on_global_xtype = cve_do_on_global_grid.on_xtype(xtype)[1]
     newcve = np.interp(orig_grid, global_xtype, cve_on_global_xtype)
     cve_do = Diffraction_object(wavelength=diffraction_data.wavelength)
     cve_do.insert_scattering_quantity(

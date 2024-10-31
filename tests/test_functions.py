@@ -3,13 +3,7 @@ import re
 import numpy as np
 import pytest
 
-from diffpy.labpdfproc.functions import (
-    CVE_METHODS,
-    Gridded_circle,
-    apply_corr,
-    compute_cve,
-    interpolate_to_xtype_grid,
-)
+from diffpy.labpdfproc.functions import CVE_METHODS, Gridded_circle, apply_corr, compute_cve
 from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
 
 params1 = [
@@ -78,44 +72,23 @@ def _instantiate_test_do(xarray, yarray, xtype="tth", name="test", scat_quantity
 
 
 params4 = [
-    ([np.array([30, 60, 90]), np.array([1, 2, 3]), "tth"], [np.array([30, 60, 90]), np.array([1, 2, 3]), "tth"]),
-    (
-        [np.array([30, 60, 90]), np.array([1, 2, 3]), "q"],
-        [np.array([2.11195, 4.07999, 5.76998]), np.array([1, 1, 1]), "q"],
-    ),
+    (["tth"], [np.array([90, 90.1, 90.2]), np.array([0.5, 0.5, 0.5]), "tth"]),
+    (["q"], [np.array([5.76998, 5.77501, 5.78004]), np.array([0.5, 0.5, 0.5]), "q"]),
 ]
 
 
 @pytest.mark.parametrize("inputs, expected", params4)
-def test_interpolate_xtype(inputs, expected, mocker):
-    expected_cve_do = _instantiate_test_do(
-        expected[0],
-        expected[1],
-        xtype=expected[2],
-        name="absorption correction, cve, for test",
-        scat_quantity="cve",
-    )
-    input_cve_do = _instantiate_test_do(
-        inputs[0],
-        inputs[1],
-        xtype="tth",
-        name="absorption correction, cve, for test",
-        scat_quantity="cve",
-    )
-    actual_cve_do = interpolate_to_xtype_grid(input_cve_do, xtype=inputs[2])
-    assert actual_cve_do == expected_cve_do
-
-
-def test_compute_cve(mocker):
+def test_compute_cve(inputs, expected, mocker):
     xarray, yarray = np.array([90, 90.1, 90.2]), np.array([2, 2, 2])
     expected_cve = np.array([0.5, 0.5, 0.5])
     mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", xarray)
     mocker.patch("numpy.interp", return_value=expected_cve)
     input_pattern = _instantiate_test_do(xarray, yarray)
-    actual_cve_do = compute_cve(input_pattern, mud=1)
+    actual_cve_do = compute_cve(input_pattern, mud=1, method="polynomial_interpolation", xtype=inputs[0])
     expected_cve_do = _instantiate_test_do(
-        xarray,
-        expected_cve,
+        expected[0],
+        expected[1],
+        expected[2],
         name="absorption correction, cve, for test",
         scat_quantity="cve",
     )
