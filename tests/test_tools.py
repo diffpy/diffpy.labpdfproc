@@ -336,7 +336,6 @@ def test_load_metadata(mocker, user_filesystem):
             "mud": 2.5,
             "input_directory": str(filepath),
             "anode_type": "Mo",
-            "wavelength": 0.71,
             "output_directory": str(Path.cwd().resolve()),
             "xtype": "tth",
             "method": "polynomial_interpolation",
