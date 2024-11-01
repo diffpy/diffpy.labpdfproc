@@ -6,6 +6,9 @@ from diffpy.utils.tools import get_package_info, get_user_info
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 known_sources = [key for key in WAVELENGTHS.keys()]
+
+# Exclude wavelength from metadata to prevent duplication,
+# as the dump function in diffpy.utils writes it explicitly.
 METADATA_KEYS_TO_EXCLUDE = ["output_correction", "force_overwrite", "input", "input_paths", "wavelength"]
 
 
