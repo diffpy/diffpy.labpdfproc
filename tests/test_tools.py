@@ -16,7 +16,9 @@ from diffpy.labpdfproc.tools import (
     set_mud,
     set_output_directory,
     set_wavelength,
+    set_xtype,
 )
+from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES
 
 # Use cases can be found here: https://github.com/diffpy/diffpy.labpdfproc/issues/48
 
@@ -187,6 +189,31 @@ def test_set_wavelength_bad(inputs, msg):
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=re.escape(msg[0])):
         actual_args = set_wavelength(actual_args)
+
+
+params4 = [
+    ([], ["tth"]),
+    (["--xtype", "2theta"], ["tth"]),
+    (["--xtype", "d"], ["tth"]),
+    (["--xtype", "q"], ["q"]),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params4)
+def test_set_xtype(inputs, expected):
+    cli_inputs = ["2.5", "data.xy"] + inputs
+    actual_args = get_args(cli_inputs)
+    actual_args = set_xtype(actual_args)
+    assert actual_args.xtype == expected[0]
+
+
+def test_set_xtype_bad():
+    cli_inputs = ["2.5", "data.xy", "--xtype", "invalid"]
+    actual_args = get_args(cli_inputs)
+    with pytest.raises(
+        ValueError, match=re.escape(f"Unknown xtype: invalid. Allowed xtypes are {*XQUANTITIES, }.")
+    ):
+        actual_args = set_xtype(actual_args)
 
 
 def test_set_mud(user_filesystem):

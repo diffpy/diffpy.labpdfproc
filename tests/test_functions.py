@@ -58,12 +58,12 @@ def test_set_muls_at_angle(inputs, expected):
     assert actual_muls_sorted == pytest.approx(expected_muls_sorted, rel=1e-4, abs=1e-6)
 
 
-def _instantiate_test_do(xarray, yarray, name="test", scat_quantity="x-ray"):
+def _instantiate_test_do(xarray, yarray, xtype="tth", name="test", scat_quantity="x-ray"):
     test_do = Diffraction_object(wavelength=1.54)
     test_do.insert_scattering_quantity(
         xarray,
         yarray,
-        "tth",
+        xtype,
         scat_quantity=scat_quantity,
         name=name,
         metadata={"thing1": 1, "thing2": "thing2"},
@@ -71,16 +71,24 @@ def _instantiate_test_do(xarray, yarray, name="test", scat_quantity="x-ray"):
     return test_do
 
 
-def test_compute_cve(mocker):
+params4 = [
+    (["tth"], [np.array([90, 90.1, 90.2]), np.array([0.5, 0.5, 0.5]), "tth"]),
+    (["q"], [np.array([5.76998, 5.77501, 5.78004]), np.array([0.5, 0.5, 0.5]), "q"]),
+]
+
+
+@pytest.mark.parametrize("inputs, expected", params4)
+def test_compute_cve(inputs, expected, mocker):
     xarray, yarray = np.array([90, 90.1, 90.2]), np.array([2, 2, 2])
     expected_cve = np.array([0.5, 0.5, 0.5])
     mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", xarray)
     mocker.patch("numpy.interp", return_value=expected_cve)
     input_pattern = _instantiate_test_do(xarray, yarray)
-    actual_cve_do = compute_cve(input_pattern, mud=1)
+    actual_cve_do = compute_cve(input_pattern, mud=1, method="polynomial_interpolation", xtype=inputs[0])
     expected_cve_do = _instantiate_test_do(
-        xarray,
-        expected_cve,
+        expected[0],
+        expected[1],
+        expected[2],
         name="absorption correction, cve, for test",
         scat_quantity="cve",
     )
@@ -92,7 +100,7 @@ params_cve_bad = [
         [7, "polynomial_interpolation"],
         [
             f"mu*D is out of the acceptable range (0.5 to 6) for polynomial interpolation. "
-            f"Please rerun with a value within this range or specifying another method from {* CVE_METHODS, }."
+            f"Please rerun with a value within this range or specifying another method from {*CVE_METHODS, }."
         ],
     ),
     ([1, "invalid_method"], [f"Unknown method: invalid_method. Allowed methods are {*CVE_METHODS, }."]),

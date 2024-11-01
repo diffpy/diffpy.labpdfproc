@@ -63,8 +63,7 @@ def get_args(override_cli_inputs=None):
         help=(
             f"The quantity on the independent variable axis. Allowed "
             f"values: {*XQUANTITIES, }. If not specified then two-theta "
-            f"is assumed for the independent variable. Only implemented for "
-            f"tth currently."
+            f"is assumed for the independent variable."
         ),
         default="tth",
     )
@@ -160,19 +159,19 @@ def main():
         input_pattern.insert_scattering_quantity(
             xarray,
             yarray,
-            "tth",
+            args.xtype,
             scat_quantity="x-ray",
             name=filepath.stem,
             metadata=load_metadata(args, filepath),
         )
 
-        absorption_correction = compute_cve(input_pattern, args.mud, args.method)
+        absorption_correction = compute_cve(input_pattern, args.mud, args.method, args.xtype)
         corrected_data = apply_corr(input_pattern, absorption_correction)
         corrected_data.name = f"Absorption corrected input_data: {input_pattern.name}"
-        corrected_data.dump(f"{outfile}", xtype="tth")
+        corrected_data.dump(f"{outfile}", xtype=args.xtype)
 
         if args.output_correction:
-            absorption_correction.dump(f"{corrfile}", xtype="tth")
+            absorption_correction.dump(f"{corrfile}", xtype=args.xtype)
 
 
 if __name__ == "__main__":
