@@ -129,6 +129,7 @@ def get_args(override_cli_inputs=None):
         help="Path to the z-scan file to be loaded to determine the mu*D value.",
         default=None,
     )
+    p.add_argument("--mu", help="The sample linear absorption coefficient.", default=None, type=float)
     p.add_argument("--sample", help="The chemical formula or name of your material.", default=None)
     p.add_argument("--energy", help="The energy in eV", default=None, type=float)
     p.add_argument("--density", help="The material density in gr/cm^3.", default=None, type=float)
