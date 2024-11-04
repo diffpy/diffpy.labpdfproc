@@ -9,7 +9,7 @@ from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Dif
 
 def get_args(override_cli_inputs=None):
     p = ArgumentParser()
-    p.add_argument("mud", help="Value of mu*D for your " "sample. Required.", type=float)
+    p.add_argument("mud", nargs="?", help="Value of mu*D for your sample.", default=None, type=float)
     p.add_argument(
         "input",
         nargs="+",
@@ -126,9 +126,13 @@ def get_args(override_cli_inputs=None):
     p.add_argument(
         "-z",
         "--z-scan-file",
-        help="Path to the z-scan file to be loaded to determine the mu*D value",
+        help="Path to the z-scan file to be loaded to determine the mu*D value.",
         default=None,
     )
+    p.add_argument("--sample", help="The chemical formula or name of your material.", default=None)
+    p.add_argument("--energy", help="The energy in eV", default=None, type=float)
+    p.add_argument("--density", help="The material density in gr/cm^3.", default=None, type=float)
+    p.add_argument("--diameter", help="The capillary diameter in mm.", default=None, type=float)
     args = p.parse_args(override_cli_inputs)
     return args
 
