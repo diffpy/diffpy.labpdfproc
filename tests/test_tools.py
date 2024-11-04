@@ -13,7 +13,8 @@ from diffpy.labpdfproc.tools import (
     load_user_metadata,
     preprocessing_args,
     set_input_lists,
-    set_mud,
+    set_mud_from_zscan_file,
+    set_mud_using_xraydb,
     set_output_directory,
     set_wavelength,
     set_xtype,
@@ -216,10 +217,10 @@ def test_set_xtype_bad():
         actual_args = set_xtype(actual_args)
 
 
-def test_set_mud(user_filesystem):
+def test_set_mud_from_zscan_file(user_filesystem):
     cli_inputs = ["2.5", "data.xy"]
     actual_args = get_args(cli_inputs)
-    actual_args = set_mud(actual_args)
+    actual_args = set_mud_from_zscan_file(actual_args)
     assert actual_args.mud == pytest.approx(2.5, rel=1e-4, abs=0.1)
     assert actual_args.z_scan_file is None
 
@@ -230,16 +231,41 @@ def test_set_mud(user_filesystem):
     expected = [3, str(test_dir / "testfile.xy")]
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
-    actual_args = set_mud(actual_args)
+    actual_args = set_mud_from_zscan_file(actual_args)
     assert actual_args.mud == pytest.approx(expected[0], rel=1e-4, abs=0.1)
     assert actual_args.z_scan_file == expected[1]
 
 
-def test_set_mud_bad():
+def test_set_mud_from_zscan_file_bad():
     cli_inputs = ["2.5", "data.xy", "--z-scan-file", "invalid file"]
     actual_args = get_args(cli_inputs)
     with pytest.raises(FileNotFoundError, match="Cannot find invalid file. Please specify a valid file path."):
-        actual_args = set_mud(actual_args)
+        actual_args = set_mud_from_zscan_file(actual_args)
+
+
+params_mud = [
+    # user specified mud
+    (["0.7952", "data.xy"], [""]),
+    # user specified mu but not mud
+    (["data.xy", "--mu", "1.2522", "--diameter", "0.635"], [""]),
+    (["data.xy", "--mu", "1.2522"], ["0.635"]),
+    # user did not specify mud or mu
+    (["data.xy"], ["ZrO2", "17445", "1.009", "0.635"]),
+    (["data.xy", "--energy", "17445", "--density", "1.009", "--diameter", "0.635"], ["ZrO2"]),
+    (["data.xy", "--sample", "ZrO2", "--density", "1.009", "--diameter", "0.635"], ["17445.362740959618"]),
+    (["data.xy", "--sample", "ZrO2", "--energy", "17445", "--diameter", "0.635"], ["1.009"]),
+    (["data.xy", "--sample", "ZrO2", "--energy", "17445", "--density", "1.009"], ["0.635"]),
+    (["data.xy", "--sample", "ZrO2", "--energy", "17445", "--density", "1.009", "--diameter", "0.635"], [""]),
+]
+
+
+@pytest.mark.parametrize("cli_inputs, user_inputs", params_mud)
+def test_set_mud_using_xraydb(cli_inputs, user_inputs, monkeypatch):
+    inp_iter = iter(user_inputs)
+    monkeypatch.setattr("builtins.input", lambda _: next(inp_iter))
+    actual_args = get_args(cli_inputs)
+    actual_args = set_mud_using_xraydb(actual_args)
+    assert actual_args.mud == pytest.approx(0.7952, rel=1e-4, abs=0.1)
 
 
 params5 = [

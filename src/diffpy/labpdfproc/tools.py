@@ -1,6 +1,8 @@
 import copy
 from pathlib import Path
 
+from xraydb import material_mu
+
 from diffpy.labpdfproc.mud_calculator import compute_mud
 from diffpy.utils.scattering_objects.diffraction_objects import QQUANTITIES, XQUANTITIES
 from diffpy.utils.tools import get_package_info, get_user_info
@@ -158,9 +160,9 @@ def set_xtype(args):
     return args
 
 
-def set_mud(args):
+def set_mud_from_zscan_file(args):
     """
-    Set the mud based on the given input arguments
+    Set the mud based on the given z-scan file
 
     Parameters
     ----------
@@ -177,6 +179,49 @@ def set_mud(args):
             raise FileNotFoundError(f"Cannot find {args.z_scan_file}. Please specify a valid file path.")
         args.z_scan_file = str(filepath)
         args.mud = compute_mud(filepath)
+    return args
+
+
+def set_mud_using_xraydb(args):
+    """
+    Set the mud using xraydb, prompting for parameters if not provided by the user
+
+    The function works in this way:
+    (1) if mu*D is provided, no further input is required, and any additional inputs are written to metadata.
+    (2) if mu*D is missing but mu is provided, prompt for diameter if missing and compute muD = mu * d.
+    (3) if neither is provided, prompt for sample name, energy, density, and diameter as needed, then compute muD.
+    Reference for the xraydb database: https://xraypy.github.io/XrayDB/python.html#xraydb.material_mu.
+
+    Parameters
+    ----------
+    args argparse.Namespace
+        the arguments from the parser
+    sample str
+        the chemical formula or name of material
+    energy float
+        the energy in eV
+    density float or None
+        material density in gr/cm^3
+    diameter float
+        the capillary diameter in mm
+
+    Returns
+    -------
+    the updated args argparse.Namespace with mu*D
+    """
+
+    if args.mud:
+        return args
+    if args.mu:
+        args.diameter = args.diameter or float(input("Please enter the capillary diameter (mm): ").strip())
+        args.mud = args.mu * args.diameter
+        return args
+    args.sample = args.sample or input("Please enter the chemical formula or name of material: ").strip()
+    args.energy = args.energy or float(input("Please enter the energy (eV): ").strip())
+    args.density = args.density or float(input("Please enter material density (gr/cm^3): ").strip())
+    args.diameter = args.diameter or float(input("Please enter the capillary diameter (mm): ").strip())
+    args.mu = material_mu(args.sample, args.energy, density=args.density, kind="total") / 10
+    args.mud = args.mu * args.diameter
     return args
 
 
@@ -281,7 +326,8 @@ def preprocessing_args(args):
     args.output_directory = set_output_directory(args)
     args = set_wavelength(args)
     args = set_xtype(args)
-    args = set_mud(args)
+    args = set_mud_from_zscan_file(args)
+    args = set_mud_using_xraydb(args)
     args = load_user_metadata(args)
     return args
 
