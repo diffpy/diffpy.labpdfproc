@@ -38,7 +38,7 @@ jobs:
           pip install -r requirements/pip.txt
           python -m pip install . --no-deps
 
-    
+
       - name: Validate diffpy.labpdfproc
         run: |
           pytest --cov
