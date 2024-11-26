@@ -1,140 +1,156 @@
 import sys
 from argparse import ArgumentParser
 
+from gooey import Gooey, GooeyParser
+
 from diffpy.labpdfproc.functions import CVE_METHODS, apply_corr, compute_cve
 from diffpy.labpdfproc.tools import known_sources, load_metadata, preprocessing_args
 from diffpy.utils.parsers.loaddata import loadData
 from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
 
+def define_arguments():
+    args = [
+        {
+            "name": ["mud"],
+            "help": "Value of mu*D for your sample. Required.",
+            "type": float,
+        },
+        {
+            "name": ["input"],
+            "help": (
+                "The filename(s) or folder(s) of the datafile(s) to load. "
+                "Required.\nSupply a space-separated list of files or directories. "
+                "Long lists can be supplied, one per line, in a file with name "
+                "file_list.txt. If one or more directory is provided, all valid "
+                "data-files in that directory will be processed. Examples of valid "
+                "inputs are 'file.xy', 'data/file.xy', 'file.xy, data/file.xy', "
+                "'.' (load everything in the current directory), 'data' (load "
+                "everything in the folder ./data), 'data/file_list.txt' (load "
+                "the list of files contained in the text-file called "
+                "file_list.txt that can be found in the folder ./data), "
+                "'./*.chi', 'data/*.chi' (load all files with extension .chi in the "
+                "folder ./data)."
+            ),
+            "nargs": "+",
+            "widget": "MultiFileChooser",
+        },
+        {
+            "name": ["-a", "--anode-type"],
+            "help": (
+                f"The type of the x-ray source. Allowed values are "
+                f"{*[known_sources], }. Either specify a known x-ray source or specify wavelength."
+            ),
+            "default": "Mo",
+        },
+        {
+            "name": ["-w", "--wavelength"],
+            "help": (
+                "X-ray source wavelength in angstroms. Not needed if the anode-type "
+                "is specified. This wavelength will override the anode wavelength if both are specified."
+            ),
+            "type": float,
+        },
+        {
+            "name": ["-o", "--output-directory"],
+            "help": (
+                "The name of the output directory. If not specified "
+                "then corrected files will be written to the current directory. "
+                "If the specified directory doesn't exist it will be created."
+            ),
+            "default": None,
+        },
+        {
+            "name": ["-x", "--xtype"],
+            "help": (
+                f"The quantity on the independent variable axis. Allowed "
+                f"values: {*XQUANTITIES, }. If not specified then two-theta "
+                f"is assumed for the independent variable."
+            ),
+            "default": "tth",
+        },
+        {
+            "name": ["-c", "--output-correction"],
+            "help": (
+                "The absorption correction will be output to a file if this "
+                "flag is set. Default is that it is not output."
+            ),
+            "action": "store_true",
+        },
+        {
+            "name": ["-f", "--force-overwrite"],
+            "help": "Outputs will not overwrite existing file unless --force is specified.",
+            "action": "store_true",
+        },
+        {
+            "name": ["-m", "--method"],
+            "help": (
+                f"The method for computing absorption correction. Allowed methods: {*CVE_METHODS, }. "
+                f"Default method is polynomial interpolation if not specified. "
+            ),
+            "default": "polynomial_interpolation",
+        },
+        {
+            "name": ["-u", "--user-metadata"],
+            "help": (
+                "Specify key-value pairs to be loaded into metadata using the format key=value. "
+                "Separate pairs with whitespace, and ensure no whitespaces before or after the = sign. "
+                "Avoid using = in keys. If multiple = signs are present, "
+                "only the first separates the key and value. "
+                "If a key or value contains whitespace, enclose it in quotes. "
+                "For example, facility='NSLS II', 'facility=NSLS II', beamline=28ID-2, "
+                "'beamline'='28ID-2', 'favorite color'=blue, are all valid key=value items. "
+            ),
+            "nargs": "+",
+            "metavar": "KEY=VALUE",
+        },
+        {
+            "name": ["-n", "--username"],
+            "help": (
+                "Username will be loaded from config files. Specify here "
+                "only if you want to override that behavior at runtime. "
+            ),
+            "default": None,
+        },
+        {
+            "name": ["-e", "--email"],
+            "help": (
+                "Email will be loaded from config files. Specify here "
+                "only if you want to override that behavior at runtime. "
+            ),
+            "default": None,
+        },
+        {
+            "name": ["-z", "--z-scan-file"],
+            "help": "Path to the z-scan file to be loaded to determine the mu*D value",
+            "default": None,
+            "widget": "FileChooser",
+        },
+    ]
+    return args
+
+
 def get_args(override_cli_inputs=None):
     p = ArgumentParser()
-    p.add_argument("mud", help="Value of mu*D for your " "sample. Required.", type=float)
-    p.add_argument(
-        "input",
-        nargs="+",
-        help=(
-            "The filename(s) or folder(s) of the datafile(s) to load. "
-            "Required.\nSupply a space-separated list of files or directories. "
-            "Long lists can be supplied, one per line, in a file with name "
-            "file_list.txt. If one or more directory is provided, all valid "
-            "data-files in that directory will be processed. Examples of valid "
-            "inputs are 'file.xy', 'data/file.xy', 'file.xy, data/file.xy', "
-            "'.' (load everything in the current directory), 'data' (load "
-            "everything in the folder ./data), 'data/file_list.txt' (load "
-            "the list of files contained in the text-file called "
-            "file_list.txt that can be found in the folder ./data), "
-            "'./*.chi', 'data/*.chi' (load all files with extension .chi in the "
-            "folder ./data)."
-        ),
-    )
-    p.add_argument(
-        "-a",
-        "--anode-type",
-        help=(
-            f"The type of the x-ray source. Allowed values are "
-            f"{*[known_sources], }. Either specify a known x-ray source or specify wavelength."
-        ),
-        default="Mo",
-    )
-    p.add_argument(
-        "-w",
-        "--wavelength",
-        help=(
-            "X-ray source wavelength in angstroms. Not needed if the anode-type "
-            "is specified. This wavelength will override the anode wavelength if both are specified."
-        ),
-        default=None,
-        type=float,
-    )
-    p.add_argument(
-        "-o",
-        "--output-directory",
-        help=(
-            "The name of the output directory. If not specified "
-            "then corrected files will be written to the current directory. "
-            "If the specified directory doesn't exist it will be created."
-        ),
-        default=None,
-    )
-    p.add_argument(
-        "-x",
-        "--xtype",
-        help=(
-            f"The quantity on the independent variable axis. Allowed "
-            f"values: {*XQUANTITIES, }. If not specified then two-theta "
-            f"is assumed for the independent variable."
-        ),
-        default="tth",
-    )
-    p.add_argument(
-        "-c",
-        "--output-correction",
-        action="store_true",
-        help=(
-            "The absorption correction will be output to a file if this "
-            "flag is set. Default is that it is not output."
-        ),
-    )
-    p.add_argument(
-        "-f",
-        "--force-overwrite",
-        action="store_true",
-        help="Outputs will not overwrite existing file unless --force is specified.",
-    )
-    p.add_argument(
-        "-m",
-        "--method",
-        help=(
-            f"The method for computing absorption correction. Allowed methods: {*CVE_METHODS, }. "
-            f"Default method is polynomial interpolation if not specified. "
-        ),
-        default="polynomial_interpolation",
-    )
-    p.add_argument(
-        "-u",
-        "--user-metadata",
-        metavar="KEY=VALUE",
-        nargs="+",
-        help=(
-            "Specify key-value pairs to be loaded into metadata using the format key=value. "
-            "Separate pairs with whitespace, and ensure no whitespaces before or after the = sign. "
-            "Avoid using = in keys. If multiple = signs are present, only the first separates the key and value. "
-            "If a key or value contains whitespace, enclose it in quotes. "
-            "For example, facility='NSLS II', 'facility=NSLS II', beamline=28ID-2, "
-            "'beamline'='28ID-2', 'favorite color'=blue, are all valid key=value items. "
-        ),
-    )
-    p.add_argument(
-        "-n",
-        "--username",
-        help=(
-            "Username will be loaded from config files. Specify here "
-            "only if you want to override that behavior at runtime. "
-        ),
-        default=None,
-    )
-    p.add_argument(
-        "-e",
-        "--email",
-        help=(
-            "Email will be loaded from config files. Specify here "
-            "only if you want to override that behavior at runtime. "
-        ),
-        default=None,
-    )
-    p.add_argument(
-        "-z",
-        "--z-scan-file",
-        help="Path to the z-scan file to be loaded to determine the mu*D value",
-        default=None,
-    )
+    for arg in define_arguments():
+        kwargs = {key: value for key, value in arg.items() if key != "name" and key != "widget"}
+        p.add_argument(*arg["name"], **kwargs)
     args = p.parse_args(override_cli_inputs)
     return args
 
 
+@Gooey(required_cols=1, optional_cols=1, program_name="Labpdfproc GUI")
+def gooey_parser():
+    p = GooeyParser()
+    for arg in define_arguments():
+        kwargs = {key: value for key, value in arg.items() if key != "name"}
+        p.add_argument(*arg["name"], **kwargs)
+    args = p.parse_args()
+    return args
+
+
 def main():
-    args = get_args()
+    args = gooey_parser() if len(sys.argv) == 1 or "--gui" in sys.argv else get_args()
     args = preprocessing_args(args)
 
     for filepath in args.input_paths:
