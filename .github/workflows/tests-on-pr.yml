@@ -32,11 +32,6 @@ jobs:
           conda config --set always_yes yes
           --set changeps1 no
 
-      - name: Install libgtk for Linux
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev
-
       - name: Install diffpy.labpdfproc and requirements
         run: |
           conda install --file requirements/test.txt
