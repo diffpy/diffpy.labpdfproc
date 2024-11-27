@@ -40,7 +40,8 @@ jobs:
       - name: Install diffpy.labpdfproc and requirements
         run: |
           conda install --file requirements/test.txt
-          pip install -r requirements/pip.txt
+          conda install --file requirements/conda.txt
+          pip install gooey
           python -m pip install . --no-deps
 
 

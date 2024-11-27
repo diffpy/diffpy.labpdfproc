@@ -2,4 +2,3 @@ numpy
 diffpy.utils
 pandas
 scipy
-gooey
