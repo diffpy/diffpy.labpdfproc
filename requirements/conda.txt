@@ -2,4 +2,4 @@ numpy
 diffpy.utils
 pandas
 scipy
-gooey
+wxpython

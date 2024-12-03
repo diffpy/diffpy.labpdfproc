@@ -25,22 +25,18 @@ jobs:
           auto-update-conda: true
           environment-file: environment.yml
           auto-activate-base: false
-          python-version: 3.13
+          python-version: 3.12
 
       - name: Conda config
         run: >-
           conda config --set always_yes yes
           --set changeps1 no
 
-      - name: Install libgtk for Linux
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev
-
       - name: Install diffpy.labpdfproc and requirements
         run: |
           conda install --file requirements/test.txt
-          pip install -r requirements/pip.txt
+          conda install --file requirements/conda.txt
+          pip install gooey
           python -m pip install . --no-deps
 
 
