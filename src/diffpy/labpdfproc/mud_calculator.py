@@ -91,12 +91,12 @@ def compute_mud(filepath):
 
     Parameters
     ----------
-    filepath: str
+    filepath : str
         The path to the z-scan file.
 
     Returns
     -------
-    mu*D: float
+    mu*D : float
         The best-fit mu*D value.
     """
     x_data, I_data = loadData(filepath, unpack=True)
