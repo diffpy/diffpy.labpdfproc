@@ -83,8 +83,7 @@ def _compute_single_mud(x_data, I_data):
 
 
 def compute_mud(filepath):
-    """
-    compute the best-fit mu*D value from a z-scan file, removing the sample holder effect
+    """Compute the best-fit mu*D value from a z-scan file, removing the sample holder effect.
 
     This function loads z-scan data and fits it to a model
     that convolves a top-hat function with I = I0 * e^{-mu * l}.
@@ -93,11 +92,12 @@ def compute_mud(filepath):
     Parameters
     ----------
     filepath: str
-        The path to the z-scan file
+        The path to the z-scan file.
 
     Returns
     -------
-    a float contains the best-fit mu*D value
+    mu*D: float
+        The best-fit mu*D value.
     """
     x_data, I_data = loadData(filepath, unpack=True)
     best_mud, _ = min((_compute_single_mud(x_data, I_data) for _ in range(20)), key=lambda pair: pair[1])
