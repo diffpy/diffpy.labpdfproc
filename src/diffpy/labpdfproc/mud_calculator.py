@@ -89,6 +89,11 @@ def compute_mud(filepath):
     that convolves a top-hat function with I = I0 * e^{-mu * l}.
     The fitting procedure is run multiple times, and we return the best-fit parameters based on the lowest rmse.
 
+    The full mathematical details are described in the paper:
+    An ad hoc Absorption Correction for Reliable Pair-Distribution Functions from Low Energy x-ray Sources,
+    Yucong Chen, Till Schertenleib, Andrew Yang, Pascal Schouwink, Wendy L. Queen and Simon J. L. Billinge,
+    in preparation.
+
     Parameters
     ----------
     filepath : str
