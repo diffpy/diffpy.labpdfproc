@@ -15,19 +15,19 @@ def _top_hat(z, half_slit_width):
 def _model_function(z, diameter, z0, I0, mud, slope):
     """
     Compute the model function with the following steps:
-    1. Recenter z to x by subtracting z0 (so that the circle is centered at 0 and it is easier to compute length l)
+    1. Let dz = z-z0, so that dz is centered at 0
     2. Compute length l that is the effective length for computing intensity I = I0 * e^{-mu * l}:
-    - For x within the diameter range, l is the chord length of the circle at position x
-    - For x outside this range, l = 0
+    - For dz within the capillary diameter, l is the chord length of the circle at position dz
+    - For dz outside this range, l = 0
     3. Apply a linear adjustment to I0 by taking I0 as I0 - slope * z
     """
     min_radius = -diameter / 2
     max_radius = diameter / 2
-    x = z - z0
+    dz = z - z0
     length = np.piecewise(
-        x,
-        [x < min_radius, (min_radius <= x) & (x <= max_radius), x > max_radius],
-        [0, lambda x: 2 * np.sqrt((diameter / 2) ** 2 - x**2), 0],
+        dz,
+        [dz < min_radius, (min_radius <= dz) & (dz <= max_radius), dz > max_radius],
+        [0, lambda dz: 2 * np.sqrt((diameter / 2) ** 2 - dz**2), 0],
     )
     return (I0 - slope * z) * np.exp(-mud / diameter * length)
 
