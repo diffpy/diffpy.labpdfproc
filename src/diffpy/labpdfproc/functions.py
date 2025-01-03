@@ -9,8 +9,7 @@ from diffpy.utils.diffraction_objects import XQUANTITIES, DiffractionObject
 
 RADIUS_MM = 1
 N_POINTS_ON_DIAMETER = 300
-TTH_GRID = np.arange(1, 180.1, 0.1)
-TTH_GRID = np.round(TTH_GRID, 1)
+TTH_GRID = np.round(np.arange(1, 180.1, 0.1), decimals=1)
 CVE_METHODS = ["brute_force", "polynomial_interpolation"]
 
 # pre-computed datasets for polynomial interpolation (fast calculation)
