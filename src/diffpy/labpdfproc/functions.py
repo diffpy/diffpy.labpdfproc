@@ -5,11 +5,12 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import interp1d
 
-from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
+from diffpy.utils.diffraction_objects import XQUANTITIES, DiffractionObject
 
 RADIUS_MM = 1
 N_POINTS_ON_DIAMETER = 300
 TTH_GRID = np.arange(1, 180.1, 0.1)
+TTH_GRID = np.round(TTH_GRID, 1)
 CVE_METHODS = ["brute_force", "polynomial_interpolation"]
 
 # pre-computed datasets for polynomial interpolation (fast calculation)
@@ -191,14 +192,14 @@ def _cve_brute_force(diffraction_data, mud):
     muls = np.array(muls) / abs_correction.total_points_in_grid
     cve = 1 / muls
 
-    cve_do = Diffraction_object(wavelength=diffraction_data.wavelength)
-    cve_do.insert_scattering_quantity(
-        TTH_GRID,
-        cve,
-        "tth",
-        metadata=diffraction_data.metadata,
-        name=f"absorption correction, cve, for {diffraction_data.name}",
+    cve_do = DiffractionObject(
+        xarray=TTH_GRID,
+        yarray=cve,
+        xtype="tth",
+        wavelength=diffraction_data.wavelength,
         scat_quantity="cve",
+        name=f"absorption correction, cve, for {diffraction_data.name}",
+        metadata=diffraction_data.metadata,
     )
     return cve_do
 
@@ -211,7 +212,7 @@ def _cve_polynomial_interpolation(diffraction_data, mud):
     if mud > 6 or mud < 0.5:
         raise ValueError(
             f"mu*D is out of the acceptable range (0.5 to 6) for polynomial interpolation. "
-            f"Please rerun with a value within this range or specifying another method from {* CVE_METHODS, }."
+            f"Please rerun with a value within this range or specifying another method from {*CVE_METHODS, }."
         )
     coeff_a, coeff_b, coeff_c, coeff_d, coeff_e = [
         interpolation_function(mud) for interpolation_function in INTERPOLATION_FUNCTIONS
@@ -219,14 +220,14 @@ def _cve_polynomial_interpolation(diffraction_data, mud):
     muls = np.array(coeff_a * MULS**4 + coeff_b * MULS**3 + coeff_c * MULS**2 + coeff_d * MULS + coeff_e)
     cve = 1 / muls
 
-    cve_do = Diffraction_object(wavelength=diffraction_data.wavelength)
-    cve_do.insert_scattering_quantity(
-        TTH_GRID,
-        cve,
-        "tth",
-        metadata=diffraction_data.metadata,
-        name=f"absorption correction, cve, for {diffraction_data.name}",
+    cve_do = DiffractionObject(
+        xarray=TTH_GRID,
+        yarray=cve,
+        xtype="tth",
+        wavelength=diffraction_data.wavelength,
         scat_quantity="cve",
+        name=f"absorption correction, cve, for {diffraction_data.name}",
+        metadata=diffraction_data.metadata,
     )
     return cve_do
 
@@ -257,7 +258,7 @@ def compute_cve(diffraction_data, mud, method="polynomial_interpolation", xtype=
     xtype str
       the quantity on the independent variable axis, allowed values are {*XQUANTITIES, }
     method str
-      the method used to calculate cve, must be one of {* CVE_METHODS, }
+      the method used to calculate cve, must be one of {*CVE_METHODS, }
 
     Returns
     -------
@@ -270,14 +271,14 @@ def compute_cve(diffraction_data, mud, method="polynomial_interpolation", xtype=
     global_xtype = cve_do_on_global_grid.on_xtype(xtype)[0]
     cve_on_global_xtype = cve_do_on_global_grid.on_xtype(xtype)[1]
     newcve = np.interp(orig_grid, global_xtype, cve_on_global_xtype)
-    cve_do = Diffraction_object(wavelength=diffraction_data.wavelength)
-    cve_do.insert_scattering_quantity(
-        orig_grid,
-        newcve,
-        xtype,
-        metadata=diffraction_data.metadata,
-        name=f"absorption correction, cve, for {diffraction_data.name}",
+    cve_do = DiffractionObject(
+        xarray=orig_grid,
+        yarray=newcve,
+        xtype=xtype,
+        wavelength=diffraction_data.wavelength,
         scat_quantity="cve",
+        name=f"absorption correction, cve, for {diffraction_data.name}",
+        metadata=diffraction_data.metadata,
     )
     return cve_do
 

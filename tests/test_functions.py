@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from diffpy.labpdfproc.functions import CVE_METHODS, Gridded_circle, apply_corr, compute_cve
-from diffpy.utils.scattering_objects.diffraction_objects import Diffraction_object
+from diffpy.utils.diffraction_objects import DiffractionObject
 
 params1 = [
     ([0.5, 3, 1], {(0.0, -0.5), (0.0, 0.0), (0.5, 0.0), (-0.5, 0.0), (0.0, 0.5)}),
@@ -59,11 +59,11 @@ def test_set_muls_at_angle(inputs, expected):
 
 
 def _instantiate_test_do(xarray, yarray, xtype="tth", name="test", scat_quantity="x-ray"):
-    test_do = Diffraction_object(wavelength=1.54)
-    test_do.insert_scattering_quantity(
-        xarray,
-        yarray,
-        xtype,
+    test_do = DiffractionObject(
+        xarray=xarray,
+        yarray=yarray,
+        xtype=xtype,
+        wavelength=1.54,
         scat_quantity=scat_quantity,
         name=name,
         metadata={"thing1": 1, "thing2": "thing2"},
@@ -81,14 +81,13 @@ params4 = [
 def test_compute_cve(inputs, expected, mocker):
     xarray, yarray = np.array([90, 90.1, 90.2]), np.array([2, 2, 2])
     expected_cve = np.array([0.5, 0.5, 0.5])
-    mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", xarray)
     mocker.patch("numpy.interp", return_value=expected_cve)
     input_pattern = _instantiate_test_do(xarray, yarray)
     actual_cve_do = compute_cve(input_pattern, mud=1, method="polynomial_interpolation", xtype=inputs[0])
     expected_cve_do = _instantiate_test_do(
-        expected[0],
-        expected[1],
-        expected[2],
+        xarray=expected[0],
+        yarray=expected[1],
+        xtype=expected[2],
         name="absorption correction, cve, for test",
         scat_quantity="cve",
     )
@@ -126,8 +125,8 @@ def test_apply_corr(mocker):
     mocker.patch("numpy.interp", return_value=expected_cve)
     input_pattern = _instantiate_test_do(xarray, yarray)
     absorption_correction = _instantiate_test_do(
-        xarray,
-        expected_cve,
+        xarray=xarray,
+        yarray=expected_cve,
         name="absorption correction, cve, for test",
         scat_quantity="cve",
     )
