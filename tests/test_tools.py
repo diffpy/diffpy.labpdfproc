@@ -18,7 +18,7 @@ from diffpy.labpdfproc.tools import (
     set_wavelength,
     set_xtype,
 )
-from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES
+from diffpy.utils.diffraction_objects import XQUANTITIES
 
 # Use cases can be found here: https://github.com/diffpy/diffpy.labpdfproc/issues/48
 
@@ -194,7 +194,7 @@ def test_set_wavelength_bad(inputs, msg):
 params4 = [
     ([], ["tth"]),
     (["--xtype", "2theta"], ["tth"]),
-    (["--xtype", "d"], ["tth"]),
+    (["--xtype", "d"], ["d"]),
     (["--xtype", "q"], ["q"]),
 ]
 
