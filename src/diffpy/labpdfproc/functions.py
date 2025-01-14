@@ -11,7 +11,7 @@ RADIUS_MM = 1
 N_POINTS_ON_DIAMETER = 300
 TTH_GRID = np.arange(1, 180.1, 0.1)
 # Round down the last element if it's slightly above 180 due to floating point precision
-TTH_GRID[-1] = 180
+TTH_GRID[-1] = 180.00
 CVE_METHODS = ["brute_force", "polynomial_interpolation"]
 
 # pre-computed datasets for polynomial interpolation (fast calculation)
