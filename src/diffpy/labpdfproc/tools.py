@@ -4,7 +4,7 @@ from pathlib import Path
 from diffpy.utils.diffraction_objects import ANGLEQUANTITIES, QQUANTITIES, XQUANTITIES
 from diffpy.utils.tools import check_and_build_global_config, compute_mud, get_package_info, get_user_info
 
-WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
+WAVELENGTHS = {"Mo": 0.71073, "Ag": 0.55941, "Cu": 1.5406}
 known_sources = [key for key in WAVELENGTHS.keys()]
 
 # Exclude wavelength from metadata to prevent duplication,
@@ -225,7 +225,8 @@ def load_user_metadata(args):
 
 def load_user_info(args):
     """
-    Update username and email using get_user_info function from diffpy.utils
+    Load user info into args. If args are not provided, call check_and_build_global_config function from
+    diffpy.utils to prompt the user for inputs. Otherwise, call get_user_info with the provided arguments.
 
     Parameters
     ----------
@@ -237,10 +238,11 @@ def load_user_info(args):
     the updated argparse Namespace with username and email inserted
 
     """
-    check_and_build_global_config()
+    if args.username is None or args.email is None:
+        check_and_build_global_config()
     config = get_user_info(owner_name=args.username, owner_email=args.email)
-    args.username = config["owner_name"]
-    args.email = config["owner_email"]
+    args.username = config.get("owner_name")
+    args.email = config.get("owner_email")
     return args
 
 

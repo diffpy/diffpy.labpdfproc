@@ -150,7 +150,7 @@ def test_set_output_directory_bad(user_filesystem):
 
 
 params2 = [
-    ([], [0.71, "Mo"]),
+    ([], [0.71073, "Mo"]),
     (["--anode-type", "Ag"], [0.59, "Ag"]),
     (["--wavelength", "0.25"], [0.25, None]),
     (["--wavelength", "0.25", "--anode-type", "Ag"], [0.25, None]),
