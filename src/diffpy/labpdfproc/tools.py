@@ -2,7 +2,7 @@ import copy
 from pathlib import Path
 
 from diffpy.utils.diffraction_objects import ANGLEQUANTITIES, QQUANTITIES, XQUANTITIES
-from diffpy.utils.tools import compute_mud, get_package_info, get_user_info
+from diffpy.utils.tools import check_and_build_global_config, compute_mud, get_package_info, get_user_info
 
 WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
 known_sources = [key for key in WAVELENGTHS.keys()]
@@ -237,6 +237,7 @@ def load_user_info(args):
     the updated argparse Namespace with username and email inserted
 
     """
+    check_and_build_global_config()
     config = get_user_info(owner_name=args.username, owner_email=args.email)
     args.username = config["owner_name"]
     args.email = config["owner_email"]
