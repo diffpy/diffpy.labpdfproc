@@ -5,8 +5,8 @@ from gooey import Gooey, GooeyParser
 
 from diffpy.labpdfproc.functions import CVE_METHODS, apply_corr, compute_cve
 from diffpy.labpdfproc.tools import known_sources, load_metadata, preprocessing_args
+from diffpy.utils.diffraction_objects import XQUANTITIES, DiffractionObject
 from diffpy.utils.parsers.loaddata import loadData
-from diffpy.utils.scattering_objects.diffraction_objects import XQUANTITIES, Diffraction_object
 
 
 def define_arguments():
@@ -170,12 +170,12 @@ def main():
                 f"exists. Please rerun specifying -f if you want to overwrite it."
             )
 
-        input_pattern = Diffraction_object(wavelength=args.wavelength)
         xarray, yarray = loadData(filepath, unpack=True)
-        input_pattern.insert_scattering_quantity(
-            xarray,
-            yarray,
-            args.xtype,
+        input_pattern = DiffractionObject(
+            xarray=xarray,
+            yarray=yarray,
+            xtype=args.xtype,
+            wavelength=args.wavelength,
             scat_quantity="x-ray",
             name=filepath.stem,
             metadata=load_metadata(args, filepath),

@@ -1,11 +1,10 @@
 import copy
 from pathlib import Path
 
-from diffpy.labpdfproc.mud_calculator import compute_mud
-from diffpy.utils.scattering_objects.diffraction_objects import QQUANTITIES, XQUANTITIES
-from diffpy.utils.tools import get_package_info, get_user_info
+from diffpy.utils.diffraction_objects import ANGLEQUANTITIES, QQUANTITIES, XQUANTITIES
+from diffpy.utils.tools import check_and_build_global_config, compute_mud, get_package_info, get_user_info
 
-WAVELENGTHS = {"Mo": 0.71, "Ag": 0.59, "Cu": 1.54}
+WAVELENGTHS = {"Mo": 0.71073, "Ag": 0.59, "Cu": 1.5406}
 known_sources = [key for key in WAVELENGTHS.keys()]
 
 # Exclude wavelength from metadata to prevent duplication,
@@ -154,7 +153,9 @@ def set_xtype(args):
     """
     if args.xtype.lower() not in XQUANTITIES:
         raise ValueError(f"Unknown xtype: {args.xtype}. Allowed xtypes are {*XQUANTITIES, }.")
-    args.xtype = "q" if args.xtype.lower() in QQUANTITIES else "tth"
+    args.xtype = (
+        "q" if args.xtype.lower() in QQUANTITIES else "tth" if args.xtype.lower() in ANGLEQUANTITIES else "d"
+    )
     return args
 
 
@@ -224,7 +225,8 @@ def load_user_metadata(args):
 
 def load_user_info(args):
     """
-    Update username and email using get_user_info function from diffpy.utils
+    Load user info into args. If args are not provided, call check_and_build_global_config function from
+    diffpy.utils to prompt the user for inputs. Otherwise, call get_user_info with the provided arguments.
 
     Parameters
     ----------
@@ -236,10 +238,11 @@ def load_user_info(args):
     the updated argparse Namespace with username and email inserted
 
     """
-    config = {"username": args.username, "email": args.email}
-    config = get_user_info(config)
-    args.username = config["username"]
-    args.email = config["email"]
+    if args.username is None or args.email is None:
+        check_and_build_global_config()
+    config = get_user_info(owner_name=args.username, owner_email=args.email)
+    args.username = config.get("owner_name")
+    args.email = config.get("owner_email")
     return args
 
 

@@ -49,7 +49,11 @@ def user_filesystem(tmp_path):
         f.write("good_data.xy \n")
         f.write(f"{str(input_dir.resolve() / 'good_data.txt')}\n")
 
-    home_config_data = {"username": "home_username", "email": "home@email.com"}
+    home_config_data = {
+        "owner_name": "home_username",
+        "owner_email": "home@email.com",
+        "owner_orcid": "home_orcid",
+    }
     with open(home_dir / "diffpyconfig.json", "w") as f:
         json.dump(home_config_data, f)
 

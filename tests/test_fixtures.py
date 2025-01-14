@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from diffpy.utils.parsers import loadData
+from diffpy.utils.parsers.loaddata import loadData
 
 
 # Test that our readable and unreadable files are indeed readable and
