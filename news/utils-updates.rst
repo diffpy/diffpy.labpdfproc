@@ -4,7 +4,7 @@
 
 **Changed:**
 
-* Functions related to diffraction_objects and tools modules in `diffpy.utils` to reflect changes in version 3.6.0.
+* Functions that use DiffractionObject` in `diffpy.utils` to follow the new API.
 
 **Deprecated:**
 

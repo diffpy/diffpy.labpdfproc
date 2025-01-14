@@ -4,7 +4,7 @@ from pathlib import Path
 from diffpy.utils.diffraction_objects import ANGLEQUANTITIES, QQUANTITIES, XQUANTITIES
 from diffpy.utils.tools import check_and_build_global_config, compute_mud, get_package_info, get_user_info
 
-WAVELENGTHS = {"Mo": 0.71073, "Ag": 0.55941, "Cu": 1.5406}
+WAVELENGTHS = {"Mo": 0.71073, "Ag": 0.59, "Cu": 1.5406}
 known_sources = [key for key in WAVELENGTHS.keys()]
 
 # Exclude wavelength from metadata to prevent duplication,
