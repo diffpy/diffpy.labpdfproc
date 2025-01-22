@@ -121,6 +121,14 @@ def define_arguments():
             "default": None,
         },
         {
+            "name": ["--orcid"],
+            "help": (
+                "ORCID will be loaded from config files. Specify here "
+                "only if you want to override that behavior at runtime. "
+            ),
+            "default": None,
+        },
+        {
             "name": ["-z", "--z-scan-file"],
             "help": "Path to the z-scan file to be loaded to determine the mu*D value",
             "default": None,
