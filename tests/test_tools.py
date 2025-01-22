@@ -20,62 +20,74 @@ from diffpy.labpdfproc.tools import (
 )
 from diffpy.utils.diffraction_objects import XQUANTITIES
 
-# Use cases can be found here: https://github.com/diffpy/diffpy.labpdfproc/issues/48
 
-# This test covers existing single input file, directory, a file list, and multiple files
-# We store absolute path into input_directory and file names into input_file
-params_input = [
-    (["good_data.chi"], ["good_data.chi"]),  # single good file, same directory
-    (["input_dir/good_data.chi"], ["input_dir/good_data.chi"]),  # single good file, input directory
-    (  # glob current directory
-        ["."],
-        ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
-    ),
-    (  # glob input directory
-        ["./input_dir"],
-        [
-            "input_dir/good_data.chi",
-            "input_dir/good_data.xy",
-            "input_dir/good_data.txt",
-            "input_dir/unreadable_file.txt",
-            "input_dir/binary.pkl",
-        ],
-    ),
-    (  # glob list of input directories
-        [".", "./input_dir"],
-        [
-            "./good_data.chi",
-            "./good_data.xy",
-            "./good_data.txt",
-            "./unreadable_file.txt",
-            "./binary.pkl",
-            "input_dir/good_data.chi",
-            "input_dir/good_data.xy",
-            "input_dir/good_data.txt",
-            "input_dir/unreadable_file.txt",
-            "input_dir/binary.pkl",
-        ],
-    ),
-    (  # file_list_example2.txt list of files provided in different directories with wildcard
-        ["input_dir/file_list_example2.txt"],
-        ["input_dir/good_data.chi", "good_data.xy", "input_dir/good_data.txt", "input_dir/unreadable_file.txt"],
-    ),
-    (  # wildcard pattern, matching files with .chi extension in the same directory
-        ["./*.chi"],
-        ["good_data.chi"],
-    ),
-    (  # wildcard pattern, matching files with .chi extension in the input directory
-        ["input_dir/*.chi"],
-        ["input_dir/good_data.chi"],
-    ),
-    (  # wildcard pattern, matching files starting with good_data
-        ["good_data*"],
-        ["good_data.chi", "good_data.xy", "good_data.txt"],
-    ),
-]
-
-
-@pytest.mark.parametrize("inputs, expected", params_input)
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
+        # Use cases can be found here: https://github.com/diffpy/diffpy.labpdfproc/issues/48
+        # This test covers existing single input file, directory, a file list, and multiple files
+        # We store absolute path into input_directory and file names into input_file
+        (  # C1: single good file in the current directory, expect to return the absolute Path of the file
+            ["good_data.chi"],
+            ["good_data.chi"],
+        ),
+        (  # C2: single good file in an input directory, expect to return the absolute Path of the file
+            ["input_dir/good_data.chi"],
+            ["input_dir/good_data.chi"],
+        ),
+        (  # C3: glob current directory, expect to return all files in the current directory
+            ["."],
+            ["good_data.chi", "good_data.xy", "good_data.txt", "unreadable_file.txt", "binary.pkl"],
+        ),
+        (  # C4: glob input directory, expect to return all files in that directory
+            ["./input_dir"],
+            [
+                "input_dir/good_data.chi",
+                "input_dir/good_data.xy",
+                "input_dir/good_data.txt",
+                "input_dir/unreadable_file.txt",
+                "input_dir/binary.pkl",
+            ],
+        ),
+        (  # C5: glob list of input directories, expect to return all files in the directories
+            [".", "./input_dir"],
+            [
+                "./good_data.chi",
+                "./good_data.xy",
+                "./good_data.txt",
+                "./unreadable_file.txt",
+                "./binary.pkl",
+                "input_dir/good_data.chi",
+                "input_dir/good_data.xy",
+                "input_dir/good_data.txt",
+                "input_dir/unreadable_file.txt",
+                "input_dir/binary.pkl",
+            ],
+        ),
+        (  # C6: file_list_example2.txt list of files provided in different directories with wildcard,
+            # expect to return all files listed on the file_list file
+            ["input_dir/file_list_example2.txt"],
+            [
+                "input_dir/good_data.chi",
+                "good_data.xy",
+                "input_dir/good_data.txt",
+                "input_dir/unreadable_file.txt",
+            ],
+        ),
+        (  # C7: wildcard pattern, expect to match files with .chi extension in the same directory
+            ["./*.chi"],
+            ["good_data.chi"],
+        ),
+        (  # C8: wildcard pattern, expect to match files with .chi extension in the input directory
+            ["input_dir/*.chi"],
+            ["input_dir/good_data.chi"],
+        ),
+        (  # C9: wildcard pattern, expect to match files starting with good_data
+            ["good_data*"],
+            ["good_data.chi", "good_data.xy", "good_data.txt"],
+        ),
+    ],
+)
 def test_set_input_lists(inputs, expected, user_filesystem):
     base_dir = Path(user_filesystem)
     os.chdir(base_dir)
@@ -87,53 +99,56 @@ def test_set_input_lists(inputs, expected, user_filesystem):
     assert sorted(actual_args.input_paths) == sorted(expected_paths)
 
 
-# This test covers non-existing single input file or directory, in this case we raise an error with message
-params_input_bad = [
-    (
-        ["non_existing_file.xy"],
-        "Cannot find non_existing_file.xy. Please specify valid input file(s) or directories.",
-    ),
-    (
-        ["./input_dir/non_existing_file.xy"],
-        "Cannot find ./input_dir/non_existing_file.xy. Please specify valid input file(s) or directories.",
-    ),
-    (["./non_existing_dir"], "Cannot find ./non_existing_dir. Please specify valid input file(s) or directories."),
-    (  # list of files provided (with missing files)
-        ["good_data.chi", "good_data.xy", "unreadable_file.txt", "missing_file.txt"],
-        "Cannot find missing_file.txt. Please specify valid input file(s) or directories.",
-    ),
-    (  # file_list.txt list of files provided (with missing files)
-        ["input_dir/file_list.txt"],
-        "Cannot find missing_file.txt. Please specify valid input file(s) or directories.",
-    ),
-]
-
-
-@pytest.mark.parametrize("inputs, msg", params_input_bad)
-def test_set_input_files_bad(inputs, msg, user_filesystem):
+@pytest.mark.parametrize(
+    "inputs, expected_error_msg",
+    [
+        # This test covers non-existing single input file or directory, in this case we raise an error with message
+        (  # C1: non-existing single file
+            ["non_existing_file.xy"],
+            "Cannot find non_existing_file.xy. Please specify valid input file(s) or directories.",
+        ),
+        (  # C2: non-existing single file with directory
+            ["./input_dir/non_existing_file.xy"],
+            "Cannot find ./input_dir/non_existing_file.xy. Please specify valid input file(s) or directories.",
+        ),
+        (  # C3: non-existing single directory
+            ["./non_existing_dir"],
+            "Cannot find ./non_existing_dir. Please specify valid input file(s) or directories.",
+        ),
+        (  # C4: list of files provided (with missing files)
+            ["good_data.chi", "good_data.xy", "unreadable_file.txt", "missing_file.txt"],
+            "Cannot find missing_file.txt. Please specify valid input file(s) or directories.",
+        ),
+        (  # C5: file_list.txt list of files provided (with missing files)
+            ["input_dir/file_list.txt"],
+            "Cannot find missing_file.txt. Please specify valid input file(s) or directories.",
+        ),
+    ],
+)
+def test_set_input_files_bad(inputs, expected_error_msg, user_filesystem):
     base_dir = Path(user_filesystem)
     os.chdir(base_dir)
     cli_inputs = ["2.5"] + inputs
     actual_args = get_args(cli_inputs)
-    with pytest.raises(FileNotFoundError, match=msg[0]):
+    with pytest.raises(FileNotFoundError, match=re.escape(expected_error_msg)):
         actual_args = set_input_lists(actual_args)
 
 
-params1 = [
-    ([], ["."]),
-    (["--output-directory", "."], ["."]),
-    (["--output-directory", "new_dir"], ["new_dir"]),
-    (["--output-directory", "input_dir"], ["input_dir"]),
-]
-
-
-@pytest.mark.parametrize("inputs, expected", params1)
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
+        ([], ["."]),
+        (["--output-directory", "."], ["."]),
+        (["--output-directory", "new_dir"], ["new_dir"]),
+        (["--output-directory", "input_dir"], ["input_dir"]),
+    ],
+)
 def test_set_output_directory(inputs, expected, user_filesystem):
     os.chdir(user_filesystem)
     expected_output_directory = Path(user_filesystem) / expected[0]
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
-    actual_args.output_directory = set_output_directory(actual_args)
+    actual_args = set_output_directory(actual_args)
     assert actual_args.output_directory == expected_output_directory
     assert Path(actual_args.output_directory).exists()
     assert Path(actual_args.output_directory).is_dir()
@@ -144,67 +159,66 @@ def test_set_output_directory_bad(user_filesystem):
     cli_inputs = ["2.5", "data.xy", "--output-directory", "good_data.chi"]
     actual_args = get_args(cli_inputs)
     with pytest.raises(FileExistsError):
-        actual_args.output_directory = set_output_directory(actual_args)
+        actual_args = set_output_directory(actual_args)
         assert Path(actual_args.output_directory).exists()
         assert not Path(actual_args.output_directory).is_dir()
 
 
-params2 = [
-    ([], [0.71073, "Mo"]),
-    (["--anode-type", "Ag"], [0.59, "Ag"]),
-    (["--wavelength", "0.25"], [0.25, None]),
-    (["--wavelength", "0.25", "--anode-type", "Ag"], [0.25, None]),
-]
-
-
-@pytest.mark.parametrize("inputs, expected", params2)
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
+        ([], {"wavelength": 0.71073, "anode_type": "Mo"}),
+        (["--anode-type", "Ag"], {"wavelength": 0.59, "anode_type": "Ag"}),
+        (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
+        (["--wavelength", "0.25", "--anode-type", "Ag"], {"wavelength": 0.25, "anode_type": None}),
+    ],
+)
 def test_set_wavelength(inputs, expected):
-    expected_wavelength, expected_anode_type = expected[0], expected[1]
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_wavelength(actual_args)
-    assert actual_args.wavelength == expected_wavelength
-    assert getattr(actual_args, "anode_type", None) == expected_anode_type
+    assert actual_args.wavelength == expected["wavelength"]
+    assert getattr(actual_args, "anode_type", None) == expected["anode_type"]
 
 
-params3 = [
-    (
-        ["--anode-type", "invalid"],
-        [f"Anode type not recognized. Please rerun specifying an anode_type from {*known_sources, }."],
-    ),
-    (
-        ["--wavelength", "0"],
-        ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength."],
-    ),
-    (
-        ["--wavelength", "-1", "--anode-type", "Mo"],
-        ["No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength."],
-    ),
-]
-
-
-@pytest.mark.parametrize("inputs, msg", params3)
-def test_set_wavelength_bad(inputs, msg):
+@pytest.mark.parametrize(
+    "inputs, expected_error_msg",
+    [
+        (
+            ["--anode-type", "invalid"],
+            f"Anode type not recognized. Please rerun specifying an anode_type from {*known_sources, }.",
+        ),
+        (
+            ["--wavelength", "0"],
+            "No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength.",
+        ),
+        (
+            ["--wavelength", "-1", "--anode-type", "Mo"],
+            "No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength.",
+        ),
+    ],
+)
+def test_set_wavelength_bad(inputs, expected_error_msg):
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
-    with pytest.raises(ValueError, match=re.escape(msg[0])):
+    with pytest.raises(ValueError, match=re.escape(expected_error_msg)):
         actual_args = set_wavelength(actual_args)
 
 
-params4 = [
-    ([], ["tth"]),
-    (["--xtype", "2theta"], ["tth"]),
-    (["--xtype", "d"], ["d"]),
-    (["--xtype", "q"], ["q"]),
-]
-
-
-@pytest.mark.parametrize("inputs, expected", params4)
-def test_set_xtype(inputs, expected):
+@pytest.mark.parametrize(
+    "inputs, expected_xtype",
+    [
+        ([], "tth"),
+        (["--xtype", "2theta"], "tth"),
+        (["--xtype", "d"], "d"),
+        (["--xtype", "q"], "q"),
+    ],
+)
+def test_set_xtype(inputs, expected_xtype):
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_xtype(actual_args)
-    assert actual_args.xtype == expected[0]
+    assert actual_args.xtype == expected_xtype
 
 
 def test_set_xtype_bad():
@@ -242,17 +256,17 @@ def test_set_mud_bad():
         actual_args = set_mud(actual_args)
 
 
-params5 = [
-    ([], []),
-    (
-        ["--user-metadata", "facility=NSLS II", "beamline=28ID-2", "favorite color=blue"],
-        [["facility", "NSLS II"], ["beamline", "28ID-2"], ["favorite color", "blue"]],
-    ),
-    (["--user-metadata", "x=y=z"], [["x", "y=z"]]),
-]
-
-
-@pytest.mark.parametrize("inputs, expected", params5)
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
+        ([], []),
+        (
+            ["--user-metadata", "facility=NSLS II", "beamline=28ID-2", "favorite color=blue"],
+            [["facility", "NSLS II"], ["beamline", "28ID-2"], ["favorite color", "blue"]],
+        ),
+        (["--user-metadata", "x=y=z"], [["x", "y=z"]]),
+    ],
+)
 def test_load_user_metadata(inputs, expected):
     expected_args = get_args(["2.5", "data.xy"])
     for expected_pair in expected:
@@ -265,52 +279,50 @@ def test_load_user_metadata(inputs, expected):
     assert actual_args == expected_args
 
 
-params6 = [
-    (
-        ["--user-metadata", "facility=", "NSLS II"],
-        [
+@pytest.mark.parametrize(
+    "inputs, expected_error_msg",
+    [
+        (
+            ["--user-metadata", "facility=", "NSLS II"],
             "Please provide key-value pairs in the format key=value. "
-            "For more information, use `labpdfproc --help.`"
-        ],
-    ),
-    (
-        ["--user-metadata", "favorite", "color=blue"],
-        "Please provide key-value pairs in the format key=value. "
-        "For more information, use `labpdfproc --help.`",
-    ),
-    (
-        ["--user-metadata", "beamline", "=", "28ID-2"],
-        "Please provide key-value pairs in the format key=value. "
-        "For more information, use `labpdfproc --help.`",
-    ),
-    (
-        ["--user-metadata", "facility=NSLS II", "facility=NSLS III"],
-        "Please do not specify repeated keys: facility. ",
-    ),
-    (
-        ["--user-metadata", "wavelength=2"],
-        "wavelength is a reserved name.  Please rerun using a different key name. ",
-    ),
-]
-
-
-@pytest.mark.parametrize("inputs, msg", params6)
-def test_load_user_metadata_bad(inputs, msg):
+            "For more information, use `labpdfproc --help.`",
+        ),
+        (
+            ["--user-metadata", "favorite", "color=blue"],
+            "Please provide key-value pairs in the format key=value. "
+            "For more information, use `labpdfproc --help.`",
+        ),
+        (
+            ["--user-metadata", "beamline", "=", "28ID-2"],
+            "Please provide key-value pairs in the format key=value. "
+            "For more information, use `labpdfproc --help.`",
+        ),
+        (
+            ["--user-metadata", "facility=NSLS II", "facility=NSLS III"],
+            "Please do not specify repeated keys: facility.",
+        ),
+        (
+            ["--user-metadata", "wavelength=2"],
+            "wavelength is a reserved name. Please rerun using a different key name.",
+        ),
+    ],
+)
+def test_load_user_metadata_bad(inputs, expected_error_msg):
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
-    with pytest.raises(ValueError, match=msg[0]):
+    with pytest.raises(ValueError, match=re.escape(expected_error_msg)):
         actual_args = load_user_metadata(actual_args)
 
 
-params_user_info = [
-    ([None, None], ["home_username", "home@email.com"]),
-    (["cli_username", None], ["cli_username", "home@email.com"]),
-    ([None, "cli@email.com"], ["home_username", "cli@email.com"]),
-    (["cli_username", "cli@email.com"], ["cli_username", "cli@email.com"]),
-]
-
-
-@pytest.mark.parametrize("inputs, expected", params_user_info)
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
+        ([None, None], ["home_username", "home@email.com"]),
+        (["cli_username", None], ["cli_username", "home@email.com"]),
+        ([None, "cli@email.com"], ["home_username", "cli@email.com"]),
+        (["cli_username", "cli@email.com"], ["cli_username", "cli@email.com"]),
+    ],
+)
 def test_load_user_info(monkeypatch, inputs, expected, user_filesystem):
     cwd = Path(user_filesystem)
     home_dir = cwd / "home_dir"
@@ -354,6 +366,8 @@ def test_load_metadata(mocker, user_filesystem):
         "cli_username",
         "--email",
         "cli@email.com",
+        "--orcid",
+        "cli_orcid",
     ]
     actual_args = get_args(cli_inputs)
     actual_args = preprocessing_args(actual_args)
@@ -369,6 +383,7 @@ def test_load_metadata(mocker, user_filesystem):
             "key": "value",
             "username": "cli_username",
             "email": "cli@email.com",
+            "orcid": "cli_orcid",
             "package_info": {"diffpy.labpdfproc": "1.2.3", "diffpy.utils": "3.3.0"},
             "z_scan_file": None,
         }

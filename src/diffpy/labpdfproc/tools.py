@@ -216,7 +216,7 @@ def load_user_metadata(args):
         The updated argparse Namespace with user metadata inserted as key-value pairs.
     """
 
-    reserved_keys = vars(args).keys()
+    reserved_keys = set(vars(args).keys())
 
     if args.user_metadata:
         for item in args.user_metadata:
