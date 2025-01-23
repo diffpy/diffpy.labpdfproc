@@ -1,10 +1,10 @@
 **Added:**
 
-* <news item>
+* Functionality in `load_user_info` to enable user to enter an ORCID.
 
 **Changed:**
 
-* <news item>
+* All function docstrings and tests to be more informative, incorporating new ORCID function and improving overall clarity.
 
 **Deprecated:**
 
