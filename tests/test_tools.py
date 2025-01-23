@@ -316,11 +316,27 @@ def test_load_user_metadata_bad(inputs, expected_error_msg):
 
 @pytest.mark.parametrize(
     "inputs, expected",
-    [
-        ([None, None], ["home_username", "home@email.com"]),
-        (["cli_username", None], ["cli_username", "home@email.com"]),
-        ([None, "cli@email.com"], ["home_username", "cli@email.com"]),
-        (["cli_username", "cli@email.com"], ["cli_username", "cli@email.com"]),
+    [  # Test that when cli inputs are present, they override home config, otherwise we take home config
+        (
+            {"username": None, "email": None, "orcid": None},
+            {"username": "home_username", "email": "home@email.com", "orcid": "home_orcid"},
+        ),
+        (
+            {"username": "cli_username", "email": None, "orcid": None},
+            {"username": "cli_username", "email": "home@email.com", "orcid": "home_orcid"},
+        ),
+        (
+            {"username": None, "email": "cli@email.com", "orcid": None},
+            {"username": "home_username", "email": "cli@email.com", "orcid": "home_orcid"},
+        ),
+        (
+            {"username": None, "email": None, "orcid": "cli_orcid"},
+            {"username": "home_username", "email": "home@email.com", "orcid": "cli_orcid"},
+        ),
+        (
+            {"username": "cli_username", "email": "cli@email.com", "orcid": "cli_orcid"},
+            {"username": "cli_username", "email": "cli@email.com", "orcid": "cli_orcid"},
+        ),
     ],
 )
 def test_load_user_info(monkeypatch, inputs, expected, user_filesystem):
@@ -329,12 +345,21 @@ def test_load_user_info(monkeypatch, inputs, expected, user_filesystem):
     monkeypatch.setattr("pathlib.Path.home", lambda _: home_dir)
     os.chdir(cwd)
 
-    expected_username, expected_email = expected
-    cli_inputs = ["2.5", "data.xy", "--username", inputs[0], "--email", inputs[1]]
+    cli_inputs = [
+        "2.5",
+        "data.xy",
+        "--username",
+        inputs["username"],
+        "--email",
+        inputs["email"],
+        "--orcid",
+        inputs["orcid"],
+    ]
     actual_args = get_args(cli_inputs)
     actual_args = load_user_info(actual_args)
-    assert actual_args.username == expected_username
-    assert actual_args.email == expected_email
+    assert actual_args.username == expected["username"]
+    assert actual_args.email == expected["email"]
+    assert actual_args.orcid == expected["orcid"]
 
 
 def test_load_package_info(mocker):
