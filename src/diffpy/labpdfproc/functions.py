@@ -14,7 +14,7 @@ TTH_GRID = np.arange(1, 180.1, 0.1)
 TTH_GRID[-1] = 180.00
 CVE_METHODS = ["brute_force", "polynomial_interpolation"]
 
-# pre-computed datasets for polynomial interpolation (fast calculation)
+# Pre-computed datasets for polynomial interpolation (fast calculation)
 MUD_LIST = [0.5, 1, 2, 3, 4, 5, 6]
 CWD = Path(__file__).parent.resolve()
 MULS = np.loadtxt(CWD / "data" / "inverse_cve.xy")
@@ -32,91 +32,43 @@ class Gridded_circle:
         self._get_grid_points()
 
     def _get_grid_points(self):
-        """
-        given a radius and a grid size, return a grid of points to uniformly sample that circle
-        """
+        """Given a radius and a grid size, return a grid of points to uniformly sample that circle."""
         xs = np.linspace(-self.radius, self.radius, self.npoints)
         ys = np.linspace(-self.radius, self.radius, self.npoints)
         self.grid = {(x, y) for x in xs for y in ys if x**2 + y**2 <= self.radius**2}
         self.total_points_in_grid = len(self.grid)
 
-    def set_distances_at_angle(self, angle):
-        """
-        given an angle, set the distances from the grid points to the entry and exit coordinates
-
-        Parameters
-        ----------
-        angle float
-          the angle in degrees
-
-        Returns
-        -------
-        the list of distances containing total distance, primary distance and secondary distance
-
-        """
-        self.primary_distances, self.secondary_distances, self.distances = [], [], []
-        for coord in self.grid:
-            distance, primary, secondary = self.get_path_length(coord, angle)
-            self.distances.append(distance)
-            self.primary_distances.append(primary)
-            self.secondary_distances.append(secondary)
-
-    def set_muls_at_angle(self, angle):
-        """
-        compute muls = exp(-mu*distance) for a given angle
-
-        Parameters
-        ----------
-        angle float
-          the angle in degrees
-
-        Returns
-        -------
-        an array of floats containing the muls corresponding to each angle
-
-        """
-        mu = self.mu
-        self.muls = []
-        if len(self.distances) == 0:
-            self.set_distances_at_angle(angle)
-        for distance in self.distances:
-            self.muls.append(np.exp(-mu * distance))
-
     def _get_entry_exit_coordinates(self, coordinate, angle):
-        """
-        get the coordinates where the beam enters and leaves the circle for a given angle and grid point
+        """Get the coordinates where the beam enters and leaves the circle for a given angle and grid point.
 
-        Parameters
-        ----------
-        grid_point tuple of floats
-          the coordinates of the grid point
-
-        angle float
-          the angle in degrees
-
-        radius float
-          the radius of the circle in units of inverse mu
-
-        it is calculated in the following way:
+        It is calculated in the following way:
         For the entry coordinate, the y-component will be the y of the grid point and the x-component will be minus
         the value of x on the circle at the height of this y.
 
         For the exit coordinate:
-        Find the line y = ax + b that passes through grid_point at angle angle
-        The circle is x^2 + y^2 = r^2
+        Find the line y = ax + b that passes through grid_point at angle.
+        The circle is x^2 + y^2 = r^2.
         The exit point is where these are simultaneous equations
         x^2 + y^2 = r^2 & y = ax + b
         x^2 + (ax+b)^2 = r^2
         => x^2 + a^2x^2 + 2abx + b^2 - r^2 = 0
         => (1+a^2) x^2 + 2abx + (b^2 - r^2) = 0
         to find x_exit we find the roots of these equations and pick the root that is above y-grid
-        then we get y_exit from y_exit = a*x_exit + b
+        then we get y_exit from y_exit = a*x_exit + b.
+
+        Parameters
+        ----------
+        coordinate : tuple of floats
+            The coordinates of the grid point.
+
+        angle : float
+            The angle in degrees.
 
         Returns
         -------
-        (1) the coordinate of the entry point and (2) of the exit point of a beam entering horizontally
-        impinging on a coordinate point that lies in the circle and then exiting at some angle, angle.
-
+        (entry_point, exit_point): tuple of floats
+            (1) The coordinate of the entry point and (2) of the exit point of a beam entering horizontally
+            impinging on a coordinate point that lies in the circle and then exiting at some angle, angle.
         """
         epsilon = 1e-7  # precision close to 90
         angle = math.radians(angle)
@@ -140,28 +92,22 @@ class Gridded_circle:
 
         return entry_point, exit_point
 
-    def get_path_length(self, grid_point, angle):
-        """
-        return the path length
-
-        This is the pathlength of a horizontal line entering the circle at the
-        same height to the grid point then exiting at angle angle
+    def _get_path_length(self, grid_point, angle):
+        """Return the path length of a horizontal line entering the circle at the
+        same height to the grid point then exiting at angle.
 
         Parameters
         ----------
-        grid_point double of floats
-          the coordinate inside the circle
+        grid_point : double of floats
+            The coordinate inside the circle.
 
-        angle float
-          the angle of the output beam
-
-        radius
-          the radius of the circle
+        angle : float
+            The angle of the output beam in degrees.
 
         Returns
         -------
-        floats total distance, primary distance and secondary distance
-
+        (total distance, primary distance, secondary distance): tuple of floats
+            The tuple containing three floats, which are the total distance, entry distance and exit distance.
         """
 
         # move angle a tad above zero if it is zero to avoid it having the wrong sign due to some rounding error
@@ -174,13 +120,41 @@ class Gridded_circle:
         total_distance = primary_distance + secondary_distance
         return total_distance, primary_distance, secondary_distance
 
+    def set_distances_at_angle(self, angle):
+        """Given an angle, set the distances from the grid points to the entry and exit coordinates.
 
-def _cve_brute_force(diffraction_data, mud):
-    """
-    compute cve for the given mud on a global grid using the brute-force method
-    assume mu=mud/2, given that the same mu*D yields the same cve and D/2=1
-    """
+        Parameters
+        ----------
+        angle : float
+            The angle of the output beam in degrees.
+        """
+        self.primary_distances, self.secondary_distances, self.distances = [], [], []
+        for coord in self.grid:
+            distance, primary, secondary = self._get_path_length(coord, angle)
+            self.distances.append(distance)
+            self.primary_distances.append(primary)
+            self.secondary_distances.append(secondary)
 
+    def set_muls_at_angle(self, angle):
+        """Compute muls = exp(-mu*distance) for a given angle.
+
+        Parameters
+        ----------
+        angle : float
+            The angle of the output beam in degrees.
+        """
+        mu = self.mu
+        self.muls = []
+        if len(self.distances) == 0:
+            self.set_distances_at_angle(angle)
+        for distance in self.distances:
+            self.muls.append(np.exp(-mu * distance))
+
+
+def _cve_brute_force(input_pattern, mud):
+    """Compute cve for the given mud on a global grid using the brute-force method.
+    Assume mu=mud/2, given that the same mu*D yields the same cve and D/2=1.
+    """
     mu_sample_invmm = mud / 2
     abs_correction = Gridded_circle(mu=mu_sample_invmm)
     distances, muls = [], []
@@ -197,19 +171,18 @@ def _cve_brute_force(diffraction_data, mud):
         xarray=TTH_GRID,
         yarray=cve,
         xtype="tth",
-        wavelength=diffraction_data.wavelength,
+        wavelength=input_pattern.wavelength,
         scat_quantity="cve",
-        name=f"absorption correction, cve, for {diffraction_data.name}",
-        metadata=diffraction_data.metadata,
+        name=f"absorption correction, cve, for {input_pattern.name}",
+        metadata=input_pattern.metadata,
     )
     return cve_do
 
 
-def _cve_polynomial_interpolation(diffraction_data, mud):
+def _cve_polynomial_interpolation(input_pattern, mud):
+    """Compute cve using polynomial interpolation method,
+    raise an error if the mu*D value is out of the range (0.5 to 6).
     """
-    compute cve using polynomial interpolation method, raise an error if mu*D is out of the range (0.5 to 6)
-    """
-
     if mud > 6 or mud < 0.5:
         raise ValueError(
             f"mu*D is out of the acceptable range (0.5 to 6) for polynomial interpolation. "
@@ -225,18 +198,16 @@ def _cve_polynomial_interpolation(diffraction_data, mud):
         xarray=TTH_GRID,
         yarray=cve,
         xtype="tth",
-        wavelength=diffraction_data.wavelength,
+        wavelength=input_pattern.wavelength,
         scat_quantity="cve",
-        name=f"absorption correction, cve, for {diffraction_data.name}",
-        metadata=diffraction_data.metadata,
+        name=f"absorption correction, cve, for {input_pattern.name}",
+        metadata=input_pattern.metadata,
     )
     return cve_do
 
 
 def _cve_method(method):
-    """
-    retrieve the cve computation function for the given method
-    """
+    """Retrieve the cve computation function for the given method."""
     methods = {
         "brute_force": _cve_brute_force,
         "polynomial_interpolation": _cve_polynomial_interpolation,
@@ -246,29 +217,28 @@ def _cve_method(method):
     return methods[method]
 
 
-def compute_cve(diffraction_data, mud, method="polynomial_interpolation", xtype="tth"):
-    f"""
-    compute and interpolate the cve for the given diffraction data and mud using the selected method
+def compute_cve(input_pattern, mud, method="polynomial_interpolation", xtype="tth"):
+    f"""Compute and interpolate the cve for the given input diffraction data and mu*D using the selected method.
 
     Parameters
     ----------
-    diffraction_data Diffraction_object
-      the diffraction pattern
-    mud float
-      the mu*D of the diffraction object, where D is the diameter of the circle
-    xtype str
-      the quantity on the independent variable axis, allowed values are {*XQUANTITIES, }
-    method str
-      the method used to calculate cve, must be one of {*CVE_METHODS, }
+    input_pattern : DiffractionObject
+        The input diffraction object to which the cve will be applied.
+    mud : float
+        The mu*D value of the diffraction object, where D is the diameter of the circle.
+    xtype : str
+        The quantity on the independent variable axis, allowed values are {*XQUANTITIES, }.
+    method : str
+        The method used to calculate cve, must be one of {*CVE_METHODS, }.
 
     Returns
     -------
-    the diffraction object with cve curves
+    cve_do: DiffractionObject
+        The diffraction object that contains the cve to be applied.
     """
-
     cve_function = _cve_method(method)
-    cve_do_on_global_grid = cve_function(diffraction_data, mud)
-    orig_grid = diffraction_data.on_xtype(xtype)[0]
+    cve_do_on_global_grid = cve_function(input_pattern, mud)
+    orig_grid = input_pattern.on_xtype(xtype)[0]
     global_xtype = cve_do_on_global_grid.on_xtype(xtype)[0]
     cve_on_global_xtype = cve_do_on_global_grid.on_xtype(xtype)[1]
     newcve = np.interp(orig_grid, global_xtype, cve_on_global_xtype)
@@ -276,30 +246,28 @@ def compute_cve(diffraction_data, mud, method="polynomial_interpolation", xtype=
         xarray=orig_grid,
         yarray=newcve,
         xtype=xtype,
-        wavelength=diffraction_data.wavelength,
+        wavelength=input_pattern.wavelength,
         scat_quantity="cve",
-        name=f"absorption correction, cve, for {diffraction_data.name}",
-        metadata=diffraction_data.metadata,
+        name=f"absorption correction, cve, for {input_pattern.name}",
+        metadata=input_pattern.metadata,
     )
     return cve_do
 
 
-def apply_corr(diffraction_pattern, absorption_correction):
-    """
-    Apply absorption correction to the given diffraction object modo with the correction diffraction object abdo
+def apply_corr(input_pattern, absorption_correction):
+    """Apply absorption correction to the given diffraction object with the correction diffraction object.
 
     Parameters
     ----------
-    diffraction_pattern Diffraction_object
-      the input diffraction object to which the cve will be applied
-    absorption_correction Diffraction_object
-      the diffraction object that contains the cve to be applied
+    input_pattern : DiffractionObject
+        The input diffraction object to which the cve will be applied.
+    absorption_correction : DiffractionObject
+        The diffraction object that contains the cve to be applied.
 
     Returns
     -------
-    a corrected diffraction object with the correction applied through multiplication
-
+    corrected_pattern: DiffractionObject
+        The corrected diffraction object with the correction applied through multiplication.
     """
-
-    corrected_pattern = diffraction_pattern * absorption_correction
+    corrected_pattern = input_pattern * absorption_correction
     return corrected_pattern
