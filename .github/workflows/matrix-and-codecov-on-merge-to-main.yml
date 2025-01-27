@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  coverage:
+  matrix-coverage:
     defaults:
       run:
         shell: bash -l {0}
