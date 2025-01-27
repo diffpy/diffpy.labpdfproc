@@ -4,7 +4,20 @@ from pathlib import Path
 from diffpy.utils.diffraction_objects import ANGLEQUANTITIES, QQUANTITIES, XQUANTITIES
 from diffpy.utils.tools import check_and_build_global_config, compute_mud, get_package_info, get_user_info
 
-WAVELENGTHS = {"Mo": 0.71073, "Ag": 0.59, "Cu": 1.5406}
+# Reference values are taken from https://x-server.gmca.aps.anl.gov/cgi/www_dbli.exe?x0hdb=waves
+# Ka1Ka2 values are calculated as: (Ka1 * 2 + Ka2) / 3
+# For CuKa1Ka2: (1.54056 * 2 + 1.544398) / 3 = 1.54184
+WAVELENGTHS = {
+    "Mo": 0.71073,
+    "MoKa1": 0.70930,
+    "MoKa1Ka2": 0.71073,
+    "Ag": 0.56087,
+    "AgKa1": 0.55941,
+    "AgKa1Ka2": 0.56087,
+    "Cu": 1.54184,
+    "CuKa1": 1.54056,
+    "CuKa1Ka2": 1.54184,
+}
 known_sources = [key for key in WAVELENGTHS.keys()]
 
 # Exclude wavelength from metadata to prevent duplication,

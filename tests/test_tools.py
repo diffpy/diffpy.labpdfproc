@@ -168,7 +168,7 @@ def test_set_output_directory_bad(user_filesystem):
     "inputs, expected",
     [
         ([], {"wavelength": 0.71073, "anode_type": "Mo"}),
-        (["--anode-type", "Ag"], {"wavelength": 0.59, "anode_type": "Ag"}),
+        (["--anode-type", "Ag"], {"wavelength": 0.56087, "anode_type": "Ag"}),
         (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
         (["--wavelength", "0.25", "--anode-type", "Ag"], {"wavelength": 0.25, "anode_type": None}),
     ],
