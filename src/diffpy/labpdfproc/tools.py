@@ -150,17 +150,18 @@ def set_wavelength(args):
         raise ValueError(
             "No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength."
         )
-    if not args.wavelength and args.anode_type and args.anode_type not in WAVELENGTHS:
-        raise ValueError(
-            f"Anode type not recognized. Please rerun specifying an anode_type from {*known_sources, }."
-        )
-
-    if args.wavelength:
-        delattr(args, "anode_type")
-    elif args.anode_type:
+    elif not args.wavelength and args.anode_type:
+        matched_anode_type = next((key for key in WAVELENGTHS if key.lower() == args.anode_type.lower()), None)
+        if matched_anode_type is None:
+            raise ValueError(
+                f"Anode type not recognized. Please rerun specifying an anode_type from {*known_sources, }."
+            )
+        args.anode_type = matched_anode_type
         args.wavelength = WAVELENGTHS[args.anode_type]
-    else:
+    elif not args.wavelength:
         args.wavelength = WAVELENGTHS["Mo"]
+    else:
+        delattr(args, "anode_type")
     return args
 
 

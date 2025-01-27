@@ -167,9 +167,26 @@ def test_set_output_directory_bad(user_filesystem):
 @pytest.mark.parametrize(
     "inputs, expected",
     [
+        # C1: nothing passed in, expect default is Mo
         ([], {"wavelength": 0.71073, "anode_type": "Mo"}),
+        # C2: only a valid anode type was entered (case independent),
+        # expect to match the corresponding wavelength and preserve the correct case anode type
+        (["--anode-type", "Mo"], {"wavelength": 0.71073, "anode_type": "Mo"}),
+        (["--anode-type", "MoKa1"], {"wavelength": 0.70930, "anode_type": "MoKa1"}),
+        (["--anode-type", "MoKa1Ka2"], {"wavelength": 0.71073, "anode_type": "MoKa1Ka2"}),
         (["--anode-type", "Ag"], {"wavelength": 0.56087, "anode_type": "Ag"}),
+        (["--anode-type", "AgKa1"], {"wavelength": 0.55941, "anode_type": "AgKa1"}),
+        (["--anode-type", "AgKa1Ka2"], {"wavelength": 0.56087, "anode_type": "AgKa1Ka2"}),
+        (["--anode-type", "Cu"], {"wavelength": 1.54184, "anode_type": "Cu"}),
+        (["--anode-type", "CuKa1"], {"wavelength": 1.54056, "anode_type": "CuKa1"}),
+        (["--anode-type", "CuKa1Ka2"], {"wavelength": 1.54184, "anode_type": "CuKa1Ka2"}),
+        (["--anode-type", "moKa1Ka2"], {"wavelength": 0.71073, "anode_type": "MoKa1Ka2"}),
+        (["--anode-type", "ag"], {"wavelength": 0.56087, "anode_type": "Ag"}),
+        (["--anode-type", "cuka1"], {"wavelength": 1.54056, "anode_type": "CuKa1"}),
+        # C3: only a valid wavelength was entered, expect to include the wavelength only and anode type is None
         (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
+        # C4: both valid anode type and wavelength were entered,
+        # expect to remove the anode type and preserve wavelength only
         (["--wavelength", "0.25", "--anode-type", "Ag"], {"wavelength": 0.25, "anode_type": None}),
     ],
 )
