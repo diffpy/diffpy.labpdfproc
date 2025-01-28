@@ -10,7 +10,8 @@ from diffpy.utils.diffraction_objects import XQUANTITIES, DiffractionObject
 RADIUS_MM = 1
 N_POINTS_ON_DIAMETER = 300
 TTH_GRID = np.arange(1, 180.1, 0.1)
-# Round down the last element if it's slightly above 180 due to floating point precision
+# Round down the last element if it's slightly above 180.00
+# due to floating point precision
 TTH_GRID[-1] = 180.00
 CVE_METHODS = ["brute_force", "polynomial_interpolation"]
 
@@ -18,12 +19,18 @@ CVE_METHODS = ["brute_force", "polynomial_interpolation"]
 MUD_LIST = [0.5, 1, 2, 3, 4, 5, 6]
 CWD = Path(__file__).parent.resolve()
 MULS = np.loadtxt(CWD / "data" / "inverse_cve.xy")
-COEFFICIENT_LIST = np.array(pd.read_csv(CWD / "data" / "coefficient_list.csv", header=None))
-INTERPOLATION_FUNCTIONS = [interp1d(MUD_LIST, coefficients, kind="quadratic") for coefficients in COEFFICIENT_LIST]
+COEFFICIENT_LIST = np.array(
+    pd.read_csv(CWD / "data" / "coefficient_list.csv", header=None)
+)
+INTERPOLATION_FUNCTIONS = [
+    interp1d(MUD_LIST, coeffs, kind="quadratic") for coeffs in COEFFICIENT_LIST
+]
 
 
 class Gridded_circle:
-    def __init__(self, radius=1, n_points_on_diameter=N_POINTS_ON_DIAMETER, mu=None):
+    def __init__(
+        self, radius=1, n_points_on_diameter=N_POINTS_ON_DIAMETER, mu=None
+    ):
         self.radius = radius
         self.npoints = n_points_on_diameter
         self.mu = mu
@@ -32,17 +39,23 @@ class Gridded_circle:
         self._get_grid_points()
 
     def _get_grid_points(self):
-        """Given a radius and a grid size, return a grid of points to uniformly sample that circle."""
+        """Given a radius and a grid size,
+        return a grid of points to uniformly sample that circle."""
         xs = np.linspace(-self.radius, self.radius, self.npoints)
         ys = np.linspace(-self.radius, self.radius, self.npoints)
-        self.grid = {(x, y) for x in xs for y in ys if x**2 + y**2 <= self.radius**2}
+        self.grid = {
+            (x, y) for x in xs for y in ys if x**2 + y**2 <= self.radius**2
+        }
         self.total_points_in_grid = len(self.grid)
 
     def _get_entry_exit_coordinates(self, coordinate, angle):
-        """Get the coordinates where the beam enters and leaves the circle for a given angle and grid point.
+        """Get the coordinates where the beam enters and leaves the circle
+        for a given angle and grid point.
 
         It is calculated in the following way:
-        For the entry coordinate, the y-component will be the y of the grid point and the x-component will be minus
+        For the entry coordinate,
+        the y-component will be the y of the grid point
+        and the x-component will be minus
         the value of x on the circle at the height of this y.
 
         For the exit coordinate:
@@ -53,7 +66,8 @@ class Gridded_circle:
         x^2 + (ax+b)^2 = r^2
         => x^2 + a^2x^2 + 2abx + b^2 - r^2 = 0
         => (1+a^2) x^2 + 2abx + (b^2 - r^2) = 0
-        to find x_exit we find the roots of these equations and pick the root that is above y-grid
+        to find x_exit we find the roots of these equations
+        and pick the root that is above y-grid
         then we get y_exit from y_exit = a*x_exit + b.
 
         Parameters
@@ -67,8 +81,10 @@ class Gridded_circle:
         Returns
         -------
         (entry_point, exit_point): tuple of floats
-            (1) The coordinate of the entry point and (2) of the exit point of a beam entering horizontally
-            impinging on a coordinate point that lies in the circle and then exiting at some angle, angle.
+            (1) The coordinate of the entry point and
+            (2) of the exit point of a beam entering horizontally
+            impinging on a coordinate point that lies in the circle
+            and then exiting at some angle, angle.
         """
         epsilon = 1e-7  # precision close to 90
         angle = math.radians(angle)
@@ -80,7 +96,9 @@ class Gridded_circle:
         if not math.isclose(angle, math.pi / 2, abs_tol=epsilon):
             b = ygrid - xgrid * math.tan(angle)
             a = math.tan(angle)
-            xexit_root1, xexit_root2 = np.roots((1 + a**2, 2 * a * b, b**2 - self.radius**2))
+            xexit_root1, xexit_root2 = np.roots(
+                (1 + a**2, 2 * a * b, b**2 - self.radius**2)
+            )
             yexit_root1 = a * xexit_root1 + b
             yexit_root2 = a * xexit_root2 + b
             if yexit_root2 >= yexit_root1:  # We pick the point above
@@ -93,8 +111,9 @@ class Gridded_circle:
         return entry_point, exit_point
 
     def _get_path_length(self, grid_point, angle):
-        """Return the path length of a horizontal line entering the circle at the
-        same height to the grid point then exiting at angle.
+        """Return the path length of
+        a horizontal line entering the circle at the same height
+        to the grid point then exiting at angle.
 
         Parameters
         ----------
@@ -107,10 +126,12 @@ class Gridded_circle:
         Returns
         -------
         (total distance, primary distance, secondary distance): tuple of floats
-            The tuple containing three floats, which are the total distance, entry distance and exit distance.
+            The tuple containing three floats,
+            which are the total distance, entry distance and exit distance.
         """
 
-        # move angle a tad above zero if it is zero to avoid it having the wrong sign due to some rounding error
+        # move angle a tad above zero if it is zero
+        # to avoid it having the wrong sign due to some rounding error
         angle_delta = 0.000001
         if angle == float(0):
             angle = angle + angle_delta
@@ -121,14 +142,17 @@ class Gridded_circle:
         return total_distance, primary_distance, secondary_distance
 
     def set_distances_at_angle(self, angle):
-        """Given an angle, set the distances from the grid points to the entry and exit coordinates.
+        """Given an angle, set the distances from the grid points
+        to the entry and exit coordinates.
 
         Parameters
         ----------
         angle : float
             The angle of the output beam in degrees.
         """
-        self.primary_distances, self.secondary_distances, self.distances = [], [], []
+        self.primary_distances = []
+        self.secondary_distances = []
+        self.distances = []
         for coord in self.grid:
             distance, primary, secondary = self._get_path_length(coord, angle)
             self.distances.append(distance)
@@ -152,7 +176,8 @@ class Gridded_circle:
 
 
 def _cve_brute_force(input_pattern, mud):
-    """Compute cve for the given mud on a global grid using the brute-force method.
+    """Compute cve for the given mud on a global grid
+    using the brute-force method.
     Assume mu=mud/2, given that the same mu*D yields the same cve and D/2=1.
     """
     mu_sample_invmm = mud / 2
@@ -185,13 +210,22 @@ def _cve_polynomial_interpolation(input_pattern, mud):
     """
     if mud > 6 or mud < 0.5:
         raise ValueError(
-            f"mu*D is out of the acceptable range (0.5 to 6) for polynomial interpolation. "
-            f"Please rerun with a value within this range or specifying another method from {*CVE_METHODS, }."
+            f"mu*D is out of the acceptable range (0.5 to 6) "
+            f"for polynomial interpolation. "
+            f"Please rerun with a value within this range "
+            f"or specifying another method from {*CVE_METHODS, }."
         )
     coeff_a, coeff_b, coeff_c, coeff_d, coeff_e = [
-        interpolation_function(mud) for interpolation_function in INTERPOLATION_FUNCTIONS
+        interpolation_function(mud)
+        for interpolation_function in INTERPOLATION_FUNCTIONS
     ]
-    muls = np.array(coeff_a * MULS**4 + coeff_b * MULS**3 + coeff_c * MULS**2 + coeff_d * MULS + coeff_e)
+    muls = np.array(
+        coeff_a * MULS**4
+        + coeff_b * MULS**3
+        + coeff_c * MULS**2
+        + coeff_d * MULS
+        + coeff_e
+    )
     cve = 1 / muls
 
     cve_do = DiffractionObject(
@@ -213,21 +247,30 @@ def _cve_method(method):
         "polynomial_interpolation": _cve_polynomial_interpolation,
     }
     if method not in CVE_METHODS:
-        raise ValueError(f"Unknown method: {method}. Allowed methods are {*CVE_METHODS, }.")
+        raise ValueError(
+            f"Unknown method: {method}. "
+            f"Allowed methods are {*CVE_METHODS, }."
+        )
     return methods[method]
 
 
-def compute_cve(input_pattern, mud, method="polynomial_interpolation", xtype="tth"):
-    f"""Compute and interpolate the cve for the given input diffraction data and mu*D using the selected method.
+def compute_cve(
+    input_pattern, mud, method="polynomial_interpolation", xtype="tth"
+):
+    f"""Compute and interpolate the cve
+    for the given input diffraction data and mu*D
+    using the selected method.
 
     Parameters
     ----------
     input_pattern : DiffractionObject
         The input diffraction object to which the cve will be applied.
     mud : float
-        The mu*D value of the diffraction object, where D is the diameter of the circle.
+        The mu*D value of the diffraction object,
+        where D is the diameter of the circle.
     xtype : str
-        The quantity on the independent variable axis, allowed values are {*XQUANTITIES, }.
+        The quantity on the independent variable axis,
+        allowed values are {*XQUANTITIES, }.
     method : str
         The method used to calculate cve, must be one of {*CVE_METHODS, }.
 
@@ -255,7 +298,8 @@ def compute_cve(input_pattern, mud, method="polynomial_interpolation", xtype="tt
 
 
 def apply_corr(input_pattern, absorption_correction):
-    """Apply absorption correction to the given diffraction object with the correction diffraction object.
+    """Apply absorption correction to the given diffraction object
+    with the correction diffraction object.
 
     Parameters
     ----------
@@ -267,7 +311,8 @@ def apply_corr(input_pattern, absorption_correction):
     Returns
     -------
     corrected_pattern: DiffractionObject
-        The corrected diffraction object with the correction applied through multiplication.
+        The corrected diffraction object
+        with the correction applied through multiplication.
     """
     corrected_pattern = input_pattern * absorption_correction
     return corrected_pattern
