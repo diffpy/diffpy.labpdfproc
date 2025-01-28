@@ -1,4 +1,5 @@
 import copy
+import json
 from pathlib import Path
 
 from diffpy.utils.diffraction_objects import ANGLEQUANTITIES, QQUANTITIES, XQUANTITIES
@@ -7,17 +8,10 @@ from diffpy.utils.tools import check_and_build_global_config, compute_mud, get_p
 # Reference values are taken from https://x-server.gmca.aps.anl.gov/cgi/www_dbli.exe?x0hdb=waves
 # Ka1Ka2 values are calculated as: (Ka1 * 2 + Ka2) / 3
 # For CuKa1Ka2: (1.54056 * 2 + 1.544398) / 3 = 1.54184
-WAVELENGTHS = {
-    "Mo": 0.71073,
-    "MoKa1": 0.70930,
-    "MoKa1Ka2": 0.71073,
-    "Ag": 0.56087,
-    "AgKa1": 0.55941,
-    "AgKa1Ka2": 0.56087,
-    "Cu": 1.54184,
-    "CuKa1": 1.54056,
-    "CuKa1Ka2": 1.54184,
-}
+CWD = Path(__file__).parent.resolve()
+WAVELENGTH_FILE_PATH = CWD / "data" / "wavelengths_config.json"
+with open(WAVELENGTH_FILE_PATH, "r") as file:
+    WAVELENGTHS = json.load(file)
 known_sources = [key for key in WAVELENGTHS.keys()]
 
 # Exclude wavelength from metadata to prevent duplication,
@@ -146,11 +140,7 @@ def set_wavelength(args):
     args : argparse.Namespace
         The updated arguments with the wavelength.
     """
-    if args.wavelength is not None and args.wavelength <= 0:
-        raise ValueError(
-            "No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength."
-        )
-    elif not args.wavelength and args.anode_type:
+    if args.wavelength is None:
         matched_anode_type = next((key for key in WAVELENGTHS if key.lower() == args.anode_type.lower()), None)
         if matched_anode_type is None:
             raise ValueError(
@@ -158,10 +148,13 @@ def set_wavelength(args):
             )
         args.anode_type = matched_anode_type
         args.wavelength = WAVELENGTHS[args.anode_type]
-    elif not args.wavelength:
-        args.wavelength = WAVELENGTHS["Mo"]
     else:
-        delattr(args, "anode_type")
+        if args.wavelength <= 0:
+            raise ValueError(
+                "No valid wavelength. Please rerun specifying a known anode_type or a positive wavelength."
+            )
+        else:
+            delattr(args, "anode_type")
     return args
 
 
