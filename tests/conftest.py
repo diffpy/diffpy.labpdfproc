@@ -14,9 +14,14 @@ def user_filesystem(tmp_path):
     test_dir = base_dir / "test_dir"
     test_dir.mkdir(parents=True, exist_ok=True)
 
-    chi_data = "dataformat = twotheta\n mode = xray\n # chi_Q chi_I\n 1 2\n 3 4\n 5 6\n 7 8\n"
+    chi_data = (
+        "dataformat = twotheta\n mode = "
+        "xray\n # chi_Q chi_I\n 1 2\n 3 4\n 5 6\n 7 8\n"
+    )
     xy_data = "1 2\n 3 4\n 5 6\n 7 8"
-    unreadable_data = "This is a file with no data that is non-readable by " "LoadData"
+    unreadable_data = (
+        "This is a file with no data " "that is non-readable by LoadData"
+    )
     binary_data = b"\x00\x01\x02\x03\x04"
 
     with open(base_dir / "good_data.chi", "w") as f:
@@ -42,7 +47,12 @@ def user_filesystem(tmp_path):
         f.write(binary_data)
 
     with open(input_dir / "file_list.txt", "w") as f:
-        f.write("good_data.chi \n good_data.xy \n good_data.txt \n missing_file.txt")
+        f.write(
+            "good_data.chi"
+            " \n good_data.xy"
+            " \n good_data.txt"
+            " \n missing_file.txt"
+        )
     with open(input_dir / "file_list_example2.txt", "w") as f:
         f.write("input_dir/*.txt \n")
         f.write("input_dir/good_data.chi \n")
