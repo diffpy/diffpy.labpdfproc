@@ -4,7 +4,11 @@ from argparse import ArgumentParser
 from gooey import Gooey, GooeyParser
 
 from diffpy.labpdfproc.functions import CVE_METHODS, apply_corr, compute_cve
-from diffpy.labpdfproc.tools import known_sources, load_metadata, preprocessing_args
+from diffpy.labpdfproc.tools import (
+    known_sources,
+    load_metadata,
+    preprocessing_args,
+)
 from diffpy.utils.diffraction_objects import XQUANTITIES, DiffractionObject
 from diffpy.utils.parsers.loaddata import loadData
 
@@ -20,17 +24,22 @@ def define_arguments():
             "name": ["input"],
             "help": (
                 "The filename(s) or folder(s) of the datafile(s) to load. "
-                "Required.\nSupply a space-separated list of files or directories. "
-                "Long lists can be supplied, one per line, in a file with name "
-                "file_list.txt. If one or more directory is provided, all valid "
-                "data-files in that directory will be processed. Examples of valid "
-                "inputs are 'file.xy', 'data/file.xy', 'file.xy, data/file.xy', "
-                "'.' (load everything in the current directory), 'data' (load "
-                "everything in the folder ./data), 'data/file_list.txt' (load "
-                "the list of files contained in the text-file called "
-                "file_list.txt that can be found in the folder ./data), "
-                "'./*.chi', 'data/*.chi' (load all files with extension .chi in the "
-                "folder ./data)."
+                "Required.\n"
+                "Supply a space-separated list of files or directories. "
+                "Long lists can be supplied, one per line, "
+                "in a file with name file_list.txt. "
+                "If one or more directory is provided, all valid "
+                "data-files in that directory will be processed. "
+                "Examples of valid "
+                "inputs are 'file.xy', 'data/file.xy', "
+                "'file.xy, data/file.xy', "
+                "'.' (load everything in the current directory), "
+                "'data' (load everything in the folder ./data), "
+                "'data/file_list.txt' (load the list of files "
+                "contained in the text-file called file_list.txt "
+                "that can be found in the folder ./data), "
+                "'./*.chi', 'data/*.chi' "
+                "(load all files with extension .chi in the folder ./data)."
             ),
             "nargs": "+",
             "widget": "MultiFileChooser",
@@ -38,24 +47,28 @@ def define_arguments():
         {
             "name": ["-a", "--anode-type"],
             "help": (
-                f"The type of the x-ray source. Allowed values are "
-                f"{*[known_sources], }. Either specify a known x-ray source or specify wavelength."
+                f"The type of the x-ray source. "
+                f"Allowed values are {*[known_sources], }. "
+                f"Either specify a known x-ray source or specify wavelength."
             ),
             "default": "Mo",
         },
         {
             "name": ["-w", "--wavelength"],
             "help": (
-                "X-ray source wavelength in angstroms. Not needed if the anode-type "
-                "is specified. This wavelength will override the anode wavelength if both are specified."
+                "X-ray source wavelength in angstroms. "
+                "Not needed if the anode-type is specified. "
+                "This wavelength will override the anode wavelength "
+                "if both are specified."
             ),
             "type": float,
         },
         {
             "name": ["-o", "--output-directory"],
             "help": (
-                "The name of the output directory. If not specified "
-                "then corrected files will be written to the current directory. "
+                "The name of the output directory. "
+                "If not specified then corrected files will be "
+                "written to the current directory. "
                 "If the specified directory doesn't exist it will be created."
             ),
             "default": None,
@@ -63,8 +76,9 @@ def define_arguments():
         {
             "name": ["-x", "--xtype"],
             "help": (
-                f"The quantity on the independent variable axis. Allowed "
-                f"values: {*XQUANTITIES, }. If not specified then two-theta "
+                f"The quantity on the independent variable axis. "
+                f"Allowed values: {*XQUANTITIES, }. "
+                f"If not specified then two-theta "
                 f"is assumed for the independent variable."
             ),
             "default": "tth",
@@ -72,34 +86,42 @@ def define_arguments():
         {
             "name": ["-c", "--output-correction"],
             "help": (
-                "The absorption correction will be output to a file if this "
-                "flag is set. Default is that it is not output."
+                "The absorption correction will be output to a file "
+                "if this flag is set. "
+                "Default is that it is not output."
             ),
             "action": "store_true",
         },
         {
             "name": ["-f", "--force-overwrite"],
-            "help": "Outputs will not overwrite existing file unless --force is specified.",
+            "help": "Outputs will not overwrite existing file "
+            "unless --force is specified.",
             "action": "store_true",
         },
         {
             "name": ["-m", "--method"],
             "help": (
-                f"The method for computing absorption correction. Allowed methods: {*CVE_METHODS, }. "
-                f"Default method is polynomial interpolation if not specified. "
+                f"The method for computing absorption correction. "
+                f"Allowed methods: {*CVE_METHODS, }. "
+                f"Default method is polynomial interpolation "
+                f"if not specified. "
             ),
             "default": "polynomial_interpolation",
         },
         {
             "name": ["-u", "--user-metadata"],
             "help": (
-                "Specify key-value pairs to be loaded into metadata using the format key=value. "
-                "Separate pairs with whitespace, and ensure no whitespaces before or after the = sign. "
+                "Specify key-value pairs to be loaded into metadata "
+                "using the format key=value. "
+                "Separate pairs with whitespace, "
+                "and ensure no whitespaces before or after the = sign. "
                 "Avoid using = in keys. If multiple = signs are present, "
                 "only the first separates the key and value. "
                 "If a key or value contains whitespace, enclose it in quotes. "
-                "For example, facility='NSLS II', 'facility=NSLS II', beamline=28ID-2, "
-                "'beamline'='28ID-2', 'favorite color'=blue, are all valid key=value items. "
+                "For example, facility='NSLS II', "
+                "'facility=NSLS II', beamline=28ID-2, "
+                "'beamline'='28ID-2', 'favorite color'=blue, "
+                "are all valid key=value items. "
             ),
             "nargs": "+",
             "metavar": "KEY=VALUE",
@@ -107,30 +129,34 @@ def define_arguments():
         {
             "name": ["-n", "--username"],
             "help": (
-                "Username will be loaded from config files. Specify here "
-                "only if you want to override that behavior at runtime. "
+                "Username will be loaded from config files. "
+                "Specify here only if you want to "
+                "override that behavior at runtime. "
             ),
             "default": None,
         },
         {
             "name": ["-e", "--email"],
             "help": (
-                "Email will be loaded from config files. Specify here "
-                "only if you want to override that behavior at runtime. "
+                "Email will be loaded from config files. "
+                "Specify here only if you want to "
+                "override that behavior at runtime. "
             ),
             "default": None,
         },
         {
             "name": ["--orcid"],
             "help": (
-                "ORCID will be loaded from config files. Specify here "
-                "only if you want to override that behavior at runtime. "
+                "ORCID will be loaded from config files. "
+                "Specify here only if you want to "
+                "override that behavior at runtime. "
             ),
             "default": None,
         },
         {
             "name": ["-z", "--z-scan-file"],
-            "help": "Path to the z-scan file to be loaded to determine the mu*D value",
+            "help": "Path to the z-scan file to be loaded "
+            "to determine the mu*D value.",
             "default": None,
             "widget": "FileChooser",
         },
@@ -141,7 +167,11 @@ def define_arguments():
 def get_args(override_cli_inputs=None):
     p = ArgumentParser()
     for arg in define_arguments():
-        kwargs = {key: value for key, value in arg.items() if key != "name" and key != "widget"}
+        kwargs = {
+            key: value
+            for key, value in arg.items()
+            if key != "name" and key != "widget"
+        }
         p.add_argument(*arg["name"], **kwargs)
     args = p.parse_args(override_cli_inputs)
     return args
@@ -158,7 +188,11 @@ def gooey_parser():
 
 
 def main():
-    args = gooey_parser() if len(sys.argv) == 1 or "--gui" in sys.argv else get_args()
+    args = (
+        gooey_parser()
+        if len(sys.argv) == 1 or "--gui" in sys.argv
+        else get_args()
+    )
     args = preprocessing_args(args)
 
     for filepath in args.input_paths:
@@ -169,13 +203,18 @@ def main():
 
         if outfile.exists() and not args.force_overwrite:
             sys.exit(
-                f"Output file {str(outfile)} already exists. Please rerun "
-                f"specifying -f if you want to overwrite it."
+                f"Output file {str(outfile)} already exists. "
+                f"Please rerun specifying -f if you want to overwrite it."
             )
-        if corrfile.exists() and args.output_correction and not args.force_overwrite:
+        if (
+            corrfile.exists()
+            and args.output_correction
+            and not args.force_overwrite
+        ):
             sys.exit(
-                f"Corrections file {str(corrfile)} was requested and already "
-                f"exists. Please rerun specifying -f if you want to overwrite it."
+                f"Corrections file {str(corrfile)} "
+                f"was requested and already exists. "
+                f"Please rerun specifying -f if you want to overwrite it."
             )
 
         xarray, yarray = loadData(filepath, unpack=True)
@@ -189,9 +228,13 @@ def main():
             metadata=load_metadata(args, filepath),
         )
 
-        absorption_correction = compute_cve(input_pattern, args.mud, args.method, args.xtype)
+        absorption_correction = compute_cve(
+            input_pattern, args.mud, args.method, args.xtype
+        )
         corrected_data = apply_corr(input_pattern, absorption_correction)
-        corrected_data.name = f"Absorption corrected input_data: {input_pattern.name}"
+        corrected_data.name = (
+            f"Absorption corrected input_data: " f"{input_pattern.name}"
+        )
         corrected_data.dump(f"{outfile}", xtype=args.xtype)
 
         if args.output_correction:
