@@ -13,7 +13,21 @@ from diffpy.utils.tools import (
     get_user_info,
 )
 
-WAVELENGTHS = {"Mo": 0.71073, "Ag": 0.59, "Cu": 1.5406}
+# Reference values are taken from
+# https://x-server.gmca.aps.anl.gov/cgi/www_dbli.exe?x0hdb=waves
+# Ka1Ka2 values are calculated as: (Ka1 * 2 + Ka2) / 3
+# For CuKa1Ka2: (1.54056 * 2 + 1.544398) / 3 = 1.54184
+WAVELENGTHS = {
+    "Mo": 0.71073,
+    "MoKa1": 0.70930,
+    "MoKa1Ka2": 0.71073,
+    "Ag": 0.56087,
+    "AgKa1": 0.55941,
+    "AgKa1Ka2": 0.56087,
+    "Cu": 1.54184,
+    "CuKa1": 1.54056,
+    "CuKa1Ka2": 1.54184,
+}
 known_sources = [key for key in WAVELENGTHS.keys()]
 
 # Exclude wavelength from metadata to prevent duplication,
@@ -166,28 +180,32 @@ def set_wavelength(args):
     args : argparse.Namespace
         The updated arguments with the wavelength.
     """
-    if args.wavelength is not None and args.wavelength <= 0:
-        raise ValueError(
-            "No valid wavelength. "
-            "Please rerun specifying a known anode_type "
-            "or a positive wavelength."
+    if args.wavelength is None:
+        matched_anode_type = next(
+            (
+                key
+                for key in WAVELENGTHS
+                if key.lower() == args.anode_type.lower()
+            ),
+            None,
         )
-    if (
-        not args.wavelength
-        and args.anode_type
-        and args.anode_type not in WAVELENGTHS
-    ):
-        raise ValueError(
-            f"Anode type not recognized. "
-            f"Please rerun specifying an anode_type from {*known_sources, }."
-        )
-
-    if args.wavelength:
-        delattr(args, "anode_type")
-    elif args.anode_type:
+        if matched_anode_type is None:
+            raise ValueError(
+                f"Anode type not recognized. "
+                f"Please rerun specifying an anode_type "
+                f"from {*known_sources, }."
+            )
+        args.anode_type = matched_anode_type
         args.wavelength = WAVELENGTHS[args.anode_type]
     else:
-        args.wavelength = WAVELENGTHS["Mo"]
+        if args.wavelength <= 0:
+            raise ValueError(
+                "No valid wavelength. "
+                "Please rerun specifying a known anode_type "
+                "or a positive wavelength."
+            )
+        else:
+            delattr(args, "anode_type")
     return args
 
 
