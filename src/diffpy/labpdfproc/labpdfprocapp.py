@@ -30,8 +30,7 @@ def define_arguments():
                 "in a file with name file_list.txt. "
                 "If one or more directory is provided, all valid "
                 "data-files in that directory will be processed. "
-                "Examples of valid "
-                "inputs are 'file.xy', 'data/file.xy', "
+                "Examples of valid inputs are 'file.xy', 'data/file.xy', "
                 "'file.xy, data/file.xy', "
                 "'.' (load everything in the current directory), "
                 "'data' (load everything in the folder ./data), "
@@ -48,18 +47,16 @@ def define_arguments():
             "name": ["-a", "--anode-type"],
             "help": (
                 f"The type of the x-ray source. "
-                f"Allowed values are {*[known_sources], }. "
+                f"Allowed values are {*known_sources, }. "
                 f"Either specify a known x-ray source or specify wavelength."
             ),
-            "default": "Mo",
+            "default": None,
         },
         {
             "name": ["-w", "--wavelength"],
             "help": (
                 "X-ray source wavelength in angstroms. "
                 "Not needed if the anode-type is specified. "
-                "This wavelength will override the anode wavelength "
-                "if both are specified."
             ),
             "type": float,
         },

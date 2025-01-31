@@ -160,9 +160,9 @@ def set_input_lists(args):
 
 
 def set_wavelength(args):
-    """Set the wavelength based on the given anode_type.
-    If a wavelength is provided,
-    it will be used, and the anode_type argument will be removed.
+    """Set the wavelength based on the given anode_type or wavelength.
+    First checks from args. If neither is provided,
+    it attempts to load from local and then global config file.
 
     Parameters
     ----------
@@ -172,15 +172,31 @@ def set_wavelength(args):
     Raises
     ------
     ValueError
-        Raised when input wavelength is non-positive
-        or if input anode_type is not one of the known sources.
+        Raised if:
+        (1) neither is provided, and either mu*D needs to be looked up or
+            xtype is not the two-theta grid,
+        (2) both are provided,
+        (3) anode_type is not one of the known sources,
+        (4) wavelength is non-positive.
 
     Returns
     -------
     args : argparse.Namespace
         The updated arguments with the wavelength.
     """
-    if args.wavelength is None:
+    # first load values from config file
+    if args.wavelength is None and args.anode_type is None:
+        if not (args.mud is not None and args.xtype in ANGLEQUANTITIES):
+            raise ValueError(
+                f"Please provide a wavelength or anode type. "
+                f"Allowed anode types are {*known_sources, }."
+            )
+    elif args.wavelength is not None and args.anode_type is not None:
+        raise ValueError(
+            f"Please provide either a wavelength or an anode type, not both. "
+            f"Allowed anode types are {*known_sources, }."
+        )
+    elif args.anode_type is not None:
         matched_anode_type = next(
             (
                 key
@@ -197,15 +213,12 @@ def set_wavelength(args):
             )
         args.anode_type = matched_anode_type
         args.wavelength = WAVELENGTHS[args.anode_type]
-    else:
-        if args.wavelength <= 0:
-            raise ValueError(
-                "No valid wavelength. "
-                "Please rerun specifying a known anode_type "
-                "or a positive wavelength."
-            )
-        else:
-            delattr(args, "anode_type")
+    elif args.wavelength is not None and args.wavelength <= 0:
+        raise ValueError(
+            "No valid wavelength. "
+            "Please rerun specifying a known anode_type "
+            "or a positive wavelength."
+        )
     return args
 
 
@@ -362,7 +375,8 @@ def load_package_info(args):
 def preprocessing_args(args):
     """Perform preprocessing on the provided args.
     The process includes loading package and user information,
-    setting input, output, wavelength, xtype, mu*D, and loading user metadata.
+    setting input, output, wavelength, anode type, xtype, mu*D,
+    and loading user metadata.
 
     Parameters
     ----------
