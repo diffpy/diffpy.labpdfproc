@@ -35,14 +35,6 @@ diffpy.labpdfproc.tools module
     :undoc-members:
     :show-inheritance:
 
-diffpy.labpdfproc.mud_calculator module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: diffpy.labpdfproc.mud_calculator
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 diffpy.labpdfproc.labpdfprocapp module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
