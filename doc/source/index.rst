@@ -34,6 +34,8 @@ Table of contents
 
    license
    release
+   Utilities <utilities/utilities>
+   Examples <examples/examples>
    Package API <api/diffpy.labpdfproc>
 
 =======
