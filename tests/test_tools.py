@@ -272,11 +272,13 @@ def test_set_wavelength(inputs, expected):
             f"Allowed anode types are {*known_sources, }.",
         ),
         (  # C3: invalid anode type
+            # expect error asking to specify a valid anode type
             ["--anode-type", "invalid"],
             f"Anode type not recognized. "
             f"Please rerun specifying an anode_type from {*known_sources, }.",
         ),
         (  # C4: invalid wavelength
+            # expect error asking to specify a valid wavelength or anode type
             ["--wavelength", "0"],
             "No valid wavelength. "
             "Please rerun specifying a known anode_type "
@@ -506,6 +508,11 @@ def test_load_package_info(mocker):
 
 
 def test_load_metadata(mocker, user_filesystem):
+    # Test if the function loads args
+    # (which will be loaded into the header file).
+    # Expect to include mu*D, anode type, xtype, cve method,
+    # user-specified metadata, user info, package info, z-scan file,
+    # and full paths for current input and output directories.
     cwd = Path(user_filesystem)
     home_dir = cwd / "home_dir"
     mocker.patch("pathlib.Path.home", lambda _: home_dir)

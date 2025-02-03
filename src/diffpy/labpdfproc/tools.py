@@ -161,6 +161,7 @@ def set_input_lists(args):
 
 def set_wavelength(args):
     """Set the wavelength based on the given anode_type or wavelength.
+
     First checks from args. If neither is provided,
     it attempts to load from local and then global config file.
 
@@ -173,7 +174,8 @@ def set_wavelength(args):
     ------
     ValueError
         Raised if:
-        (1) neither is provided, and either mu*D needs to be looked up or
+        (1) neither wavelength or anode type is provided,
+            and either mu*D needs to be looked up or
             xtype is not the two-theta grid,
         (2) both are provided,
         (3) anode_type is not one of the known sources,
@@ -186,7 +188,9 @@ def set_wavelength(args):
     """
     # first load values from config file
     if args.wavelength is None and args.anode_type is None:
-        if not (args.mud is not None and args.xtype in ANGLEQUANTITIES):
+        # either mu*D needs to be looked up or
+        # xtype is not the two-theta grid
+        if args.mud is None or args.xtype not in ANGLEQUANTITIES:
             raise ValueError(
                 f"Please provide a wavelength or anode type. "
                 f"Allowed anode types are {*known_sources, }."

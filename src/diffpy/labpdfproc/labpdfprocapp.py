@@ -56,7 +56,7 @@ def define_arguments():
             "name": ["-w", "--wavelength"],
             "help": (
                 "X-ray source wavelength in angstroms. "
-                "Not needed if the anode-type is specified. "
+                "Not needed if the anode-type is specified."
             ),
             "type": float,
         },
@@ -101,7 +101,7 @@ def define_arguments():
                 f"The method for computing absorption correction. "
                 f"Allowed methods: {*CVE_METHODS, }. "
                 f"Default method is polynomial interpolation "
-                f"if not specified. "
+                f"if not specified."
             ),
             "default": "polynomial_interpolation",
         },
@@ -118,7 +118,7 @@ def define_arguments():
                 "For example, facility='NSLS II', "
                 "'facility=NSLS II', beamline=28ID-2, "
                 "'beamline'='28ID-2', 'favorite color'=blue, "
-                "are all valid key=value items. "
+                "are all valid key=value items."
             ),
             "nargs": "+",
             "metavar": "KEY=VALUE",
@@ -128,7 +128,7 @@ def define_arguments():
             "help": (
                 "Username will be loaded from config files. "
                 "Specify here only if you want to "
-                "override that behavior at runtime. "
+                "override that behavior at runtime."
             ),
             "default": None,
         },
@@ -137,7 +137,7 @@ def define_arguments():
             "help": (
                 "Email will be loaded from config files. "
                 "Specify here only if you want to "
-                "override that behavior at runtime. "
+                "override that behavior at runtime."
             ),
             "default": None,
         },
@@ -146,7 +146,7 @@ def define_arguments():
             "help": (
                 "ORCID will be loaded from config files. "
                 "Specify here only if you want to "
-                "override that behavior at runtime. "
+                "override that behavior at runtime."
             ),
             "default": None,
         },
