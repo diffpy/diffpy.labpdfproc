@@ -257,14 +257,13 @@ def test_set_wavelength(inputs, expected):
 @pytest.mark.parametrize(
     "inputs, expected_error_msg",
     [
-        (  # C1.1: nothing passed in, xtype is not on tth
+        (  # C1: nothing passed in, xtype is not on tth
             # expect error asking for either wavelength or anode type
             ["--xtype", "q"],
-            f"Please provide a wavelength or anode type. "
+            f"Please provide a wavelength or anode type "
+            f"because the independent variable axis is not on two-theta. "
             f"Allowed anode types are {*known_sources, }.",
         ),
-        # C1.2: nothing passed in, need to look up mu*D
-        # expect error asking for either wavelength or anode type
         (  # C2: both wavelength and anode type were specified
             # expect error asking not to specify both
             ["--wavelength", "0.7", "--anode-type", "Mo"],

@@ -175,8 +175,7 @@ def set_wavelength(args):
     ValueError
         Raised if:
         (1) neither wavelength or anode type is provided,
-            and either mu*D needs to be looked up or
-            xtype is not the two-theta grid,
+            and xtype is not the two-theta grid,
         (2) both are provided,
         (3) anode_type is not one of the known sources,
         (4) wavelength is non-positive.
@@ -188,11 +187,10 @@ def set_wavelength(args):
     """
     # first load values from config file
     if args.wavelength is None and args.anode_type is None:
-        # either mu*D needs to be looked up or
-        # xtype is not the two-theta grid
-        if args.mud is None or args.xtype not in ANGLEQUANTITIES:
+        if args.xtype not in ANGLEQUANTITIES:
             raise ValueError(
-                f"Please provide a wavelength or anode type. "
+                f"Please provide a wavelength or anode type "
+                f"because the independent variable axis is not on two-theta. "
                 f"Allowed anode types are {*known_sources, }."
             )
     elif args.wavelength is not None and args.anode_type is not None:
