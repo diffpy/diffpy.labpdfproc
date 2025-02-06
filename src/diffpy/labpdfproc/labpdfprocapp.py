@@ -30,8 +30,7 @@ def define_arguments():
                 "in a file with name file_list.txt. "
                 "If one or more directory is provided, all valid "
                 "data-files in that directory will be processed. "
-                "Examples of valid "
-                "inputs are 'file.xy', 'data/file.xy', "
+                "Examples of valid inputs are 'file.xy', 'data/file.xy', "
                 "'file.xy, data/file.xy', "
                 "'.' (load everything in the current directory), "
                 "'data' (load everything in the folder ./data), "
@@ -48,18 +47,16 @@ def define_arguments():
             "name": ["-a", "--anode-type"],
             "help": (
                 f"The type of the x-ray source. "
-                f"Allowed values are {*[known_sources], }. "
+                f"Allowed values are {*known_sources, }. "
                 f"Either specify a known x-ray source or specify wavelength."
             ),
-            "default": "Mo",
+            "default": None,
         },
         {
             "name": ["-w", "--wavelength"],
             "help": (
                 "X-ray source wavelength in angstroms. "
-                "Not needed if the anode-type is specified. "
-                "This wavelength will override the anode wavelength "
-                "if both are specified."
+                "Not needed if the anode-type is specified."
             ),
             "type": float,
         },
@@ -104,7 +101,7 @@ def define_arguments():
                 f"The method for computing absorption correction. "
                 f"Allowed methods: {*CVE_METHODS, }. "
                 f"Default method is polynomial interpolation "
-                f"if not specified. "
+                f"if not specified."
             ),
             "default": "polynomial_interpolation",
         },
@@ -121,7 +118,7 @@ def define_arguments():
                 "For example, facility='NSLS II', "
                 "'facility=NSLS II', beamline=28ID-2, "
                 "'beamline'='28ID-2', 'favorite color'=blue, "
-                "are all valid key=value items. "
+                "are all valid key=value items."
             ),
             "nargs": "+",
             "metavar": "KEY=VALUE",
@@ -131,7 +128,7 @@ def define_arguments():
             "help": (
                 "Username will be loaded from config files. "
                 "Specify here only if you want to "
-                "override that behavior at runtime. "
+                "override that behavior at runtime."
             ),
             "default": None,
         },
@@ -140,7 +137,7 @@ def define_arguments():
             "help": (
                 "Email will be loaded from config files. "
                 "Specify here only if you want to "
-                "override that behavior at runtime. "
+                "override that behavior at runtime."
             ),
             "default": None,
         },
@@ -149,7 +146,7 @@ def define_arguments():
             "help": (
                 "ORCID will be loaded from config files. "
                 "Specify here only if you want to "
-                "override that behavior at runtime. "
+                "override that behavior at runtime."
             ),
             "default": None,
         },

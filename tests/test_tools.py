@@ -198,9 +198,7 @@ def test_set_output_directory_bad(user_filesystem):
 @pytest.mark.parametrize(
     "inputs, expected",
     [
-        # C1: nothing passed in, expect default is Mo
-        ([], {"wavelength": 0.71073, "anode_type": "Mo"}),
-        # C2: only a valid anode type was entered (case independent),
+        # C1: only a valid anode type was entered (case independent),
         # expect to match the corresponding wavelength
         # and preserve the correct case anode type
         (["--anode-type", "Mo"], {"wavelength": 0.71073, "anode_type": "Mo"}),
@@ -239,15 +237,13 @@ def test_set_output_directory_bad(user_filesystem):
             ["--anode-type", "cuka1"],
             {"wavelength": 1.54056, "anode_type": "CuKa1"},
         ),
-        # C3: only a valid wavelength was entered,
+        # C2: a valid wavelength was entered,
         # expect to include the wavelength only and anode type is None
         (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
-        # C4: both valid anode type and wavelength were entered,
-        # expect to remove the anode type and preserve wavelength only
-        (
-            ["--wavelength", "0.25", "--anode-type", "Ag"],
-            {"wavelength": 0.25, "anode_type": None},
-        ),
+        # C3: nothing passed in, but mu*D was provided and xtype is on tth
+        # expect wavelength and anode type to be None
+        # and program proceeds without error
+        ([], {"wavelength": None, "anode_type": None}),
     ],
 )
 def test_set_wavelength(inputs, expected):
@@ -255,25 +251,34 @@ def test_set_wavelength(inputs, expected):
     actual_args = get_args(cli_inputs)
     actual_args = set_wavelength(actual_args)
     assert actual_args.wavelength == expected["wavelength"]
-    assert getattr(actual_args, "anode_type", None) == expected["anode_type"]
+    assert actual_args.anode_type == expected["anode_type"]
 
 
 @pytest.mark.parametrize(
     "inputs, expected_error_msg",
     [
-        (
+        (  # C1: nothing passed in, xtype is not on tth
+            # expect error asking for either wavelength or anode type
+            ["--xtype", "q"],
+            f"Please provide a wavelength or anode type "
+            f"because the independent variable axis is not on two-theta. "
+            f"Allowed anode types are {*known_sources, }.",
+        ),
+        (  # C2: both wavelength and anode type were specified
+            # expect error asking not to specify both
+            ["--wavelength", "0.7", "--anode-type", "Mo"],
+            f"Please provide either a wavelength or an anode type, not both. "
+            f"Allowed anode types are {*known_sources, }.",
+        ),
+        (  # C3: invalid anode type
+            # expect error asking to specify a valid anode type
             ["--anode-type", "invalid"],
             f"Anode type not recognized. "
             f"Please rerun specifying an anode_type from {*known_sources, }.",
         ),
-        (
+        (  # C4: invalid wavelength
+            # expect error asking to specify a valid wavelength or anode type
             ["--wavelength", "0"],
-            "No valid wavelength. "
-            "Please rerun specifying a known anode_type "
-            "or a positive wavelength.",
-        ),
-        (
-            ["--wavelength", "-1", "--anode-type", "Mo"],
             "No valid wavelength. "
             "Please rerun specifying a known anode_type "
             "or a positive wavelength.",
@@ -502,6 +507,11 @@ def test_load_package_info(mocker):
 
 
 def test_load_metadata(mocker, user_filesystem):
+    # Test if the function loads args
+    # (which will be loaded into the header file).
+    # Expect to include mu*D, anode type, xtype, cve method,
+    # user-specified metadata, user info, package info, z-scan file,
+    # and full paths for current input and output directories.
     cwd = Path(user_filesystem)
     home_dir = cwd / "home_dir"
     mocker.patch("pathlib.Path.home", lambda _: home_dir)
@@ -515,6 +525,8 @@ def test_load_metadata(mocker, user_filesystem):
     cli_inputs = [
         "2.5",
         ".",
+        "--anode-type",
+        "Mo",
         "--user-metadata",
         "key=value",
         "--username",
