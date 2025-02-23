@@ -60,6 +60,7 @@ def user_filesystem(tmp_path):
         f.write(f"{str(input_dir.resolve() / 'good_data.txt')}\n")
 
     home_config_data = {
+        "wavelength": 0.25,
         "owner_name": "home_username",
         "owner_email": "home@email.com",
         "owner_orcid": "home_orcid",

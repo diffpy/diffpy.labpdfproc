@@ -6,6 +6,7 @@ import pytest
 
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
+    _load_wavelength_from_config_file,
     known_sources,
     load_metadata,
     load_package_info,
@@ -193,6 +194,28 @@ def test_set_output_directory_bad(user_filesystem):
         actual_args = set_output_directory(actual_args)
         assert Path(actual_args.output_directory).exists()
         assert not Path(actual_args.output_directory).is_dir()
+
+
+def test_load_wavelength_from_config_file_with_home_conf_file():
+    # C1: args provided, return args
+    # C2: no args, local config exists, return local config
+    # C3: no args or local config file, return global config
+    return True
+
+
+def test_load_wavelength_from_config_file_with_local_conf_file():
+    # C1: args provided, return args
+    # C2: no args, return local config file
+    # remove global config file to test again
+    return True
+
+
+def test_load_wavelength_from_config_file_without_conf_files(user_filesystem):
+    # C1: args provided, return args
+    cli_inputs = ["2.5", "data.xy", "-w", "0.25"]
+    actual_args = get_args(cli_inputs)
+    actual_args = _load_wavelength_from_config_file(actual_args)
+    assert actual_args.wavelength == 0.25
 
 
 @pytest.mark.parametrize(
