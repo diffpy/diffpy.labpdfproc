@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from pathlib import Path
@@ -196,26 +197,119 @@ def test_set_output_directory_bad(user_filesystem):
         assert not Path(actual_args.output_directory).is_dir()
 
 
-def test_load_wavelength_from_config_file_with_home_conf_file():
-    # C1: args provided, return args
-    # C2: no args, local config exists, return local config
-    # C3: no args or local config file, return global config
-    return True
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
+        # Test when only a home config file exists (no local config file),
+        # expect to return args if wavelength or anode type is specified,
+        # otherwise update args with values from the home config file.
+        # C1: no args, expect to update arg values from home config
+        ([""], {"wavelength": 0.3, "anode_type": None}),
+        # C2: wavelength provided, expect to return args unchanged
+        (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
+        # C3: anode type provided, expect to return args unchanged
+        (["--anode-type", "Mo"], {"wavelength": None, "anode_type": "Mo"}),
+        # C4: both wavelength and anode type provided,
+        # expect to return args unchanged
+        (
+            ["--wavelength", "0.7", "--anode-type", "Mo"],
+            {"wavelength": 0.7, "anode_type": "Mo"},
+        ),
+    ],
+)
+def test_load_wavelength_from_config_file_with_home_conf_file(
+    mocker, user_filesystem, inputs, expected
+):
+    cwd = Path(user_filesystem)
+    home_dir = cwd / "home_dir"
+    mocker.patch("pathlib.Path.home", lambda _: home_dir)
+    os.chdir(cwd)
 
-
-def test_load_wavelength_from_config_file_with_local_conf_file():
-    # C1: args provided, return args
-    # C2: no args, return local config file
-    # remove global config file to test again
-    return True
-
-
-def test_load_wavelength_from_config_file_without_conf_files(user_filesystem):
-    # C1: args provided, return args
-    cli_inputs = ["2.5", "data.xy", "-w", "0.25"]
+    cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = _load_wavelength_from_config_file(actual_args)
-    assert actual_args.wavelength == 0.25
+    assert actual_args.wavelength == expected["wavelength"]
+    assert actual_args.anode_type == expected["anode_type"]
+
+
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
+        # Test when a local config file exists,
+        # expect to return args if wavelength or anode type is specified,
+        # otherwise update args with values from the home config file.
+        # Results should be the same whether if the home config exists.
+        # C1: no args, expect to update arg values from local config
+        ([""], {"wavelength": 0.6, "anode_type": None}),
+        # C2: wavelength provided, expect to return args unchanged
+        (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
+        # C3: anode type provided, expect to return args unchanged
+        (["--anode-type", "Mo"], {"wavelength": None, "anode_type": "Mo"}),
+        # C4: both wavelength and anode type provided,
+        # expect to return args unchanged
+        (
+            ["--wavelength", "0.7", "--anode-type", "Mo"],
+            {"wavelength": 0.7, "anode_type": "Mo"},
+        ),
+    ],
+)
+def test_load_wavelength_from_config_file_with_local_conf_file(
+    mocker, user_filesystem, inputs, expected
+):
+    cwd = Path(user_filesystem)
+    home_dir = cwd / "home_dir"
+    mocker.patch("pathlib.Path.home", lambda _: home_dir)
+    os.chdir(cwd)
+    local_config_data = {"wavelength": 0.6}
+    with open(cwd / "diffpyconfig.json", "w") as f:
+        json.dump(local_config_data, f)
+
+    cli_inputs = ["2.5", "data.xy"] + inputs
+    actual_args = get_args(cli_inputs)
+    actual_args = _load_wavelength_from_config_file(actual_args)
+    assert actual_args.wavelength == expected["wavelength"]
+    assert actual_args.anode_type == expected["anode_type"]
+
+    # remove home config file, expect the same results
+    confile = home_dir / "diffpyconfig.json"
+    os.remove(confile)
+    assert actual_args.wavelength == expected["wavelength"]
+    assert actual_args.anode_type == expected["anode_type"]
+
+
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
+        # Test when no config files exist,
+        # expect to return args without modification.
+        # C1: no args
+        ([""], {"wavelength": None, "anode_type": None}),
+        # C1: wavelength provided
+        (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
+        # C2: anode type provided
+        (["--anode-type", "Mo"], {"wavelength": None, "anode_type": "Mo"}),
+        # C4: both wavelength and anode type provided
+        (
+            ["--wavelength", "0.7", "--anode-type", "Mo"],
+            {"wavelength": 0.7, "anode_type": "Mo"},
+        ),
+    ],
+)
+def test_load_wavelength_from_config_file_without_conf_files(
+    mocker, user_filesystem, inputs, expected
+):
+    cwd = Path(user_filesystem)
+    home_dir = cwd / "home_dir"
+    mocker.patch("pathlib.Path.home", lambda _: home_dir)
+    os.chdir(cwd)
+    confile = home_dir / "diffpyconfig.json"
+    os.remove(confile)
+
+    cli_inputs = ["2.5", "data.xy"] + inputs
+    actual_args = get_args(cli_inputs)
+    actual_args = _load_wavelength_from_config_file(actual_args)
+    assert actual_args.wavelength == expected["wavelength"]
+    assert actual_args.anode_type == expected["anode_type"]
 
 
 @pytest.mark.parametrize(
