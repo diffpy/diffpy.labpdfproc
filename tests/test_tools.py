@@ -113,7 +113,7 @@ def test_set_input_lists(inputs, expected, user_filesystem):
         base_dir.resolve() / expected_path for expected_path in expected
     ]
 
-    cli_inputs = ["2.5"] + inputs
+    cli_inputs = inputs + ["--mud", "2.5"]
     actual_args = get_args(cli_inputs)
     actual_args = set_input_lists(actual_args)
     assert sorted(actual_args.input_paths) == sorted(expected_paths)
@@ -159,7 +159,7 @@ def test_set_input_lists(inputs, expected, user_filesystem):
 def test_set_input_files_bad(inputs, expected_error_msg, user_filesystem):
     base_dir = Path(user_filesystem)
     os.chdir(base_dir)
-    cli_inputs = ["2.5"] + inputs
+    cli_inputs = inputs + ["--mud", "2.5"]
     actual_args = get_args(cli_inputs)
     with pytest.raises(FileNotFoundError, match=re.escape(expected_error_msg)):
         actual_args = set_input_lists(actual_args)
@@ -177,7 +177,7 @@ def test_set_input_files_bad(inputs, expected_error_msg, user_filesystem):
 def test_set_output_directory(inputs, expected, user_filesystem):
     os.chdir(user_filesystem)
     expected_output_directory = Path(user_filesystem) / expected[0]
-    cli_inputs = ["2.5", "data.xy"] + inputs
+    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_output_directory(actual_args)
     assert actual_args.output_directory == expected_output_directory
@@ -187,7 +187,13 @@ def test_set_output_directory(inputs, expected, user_filesystem):
 
 def test_set_output_directory_bad(user_filesystem):
     os.chdir(user_filesystem)
-    cli_inputs = ["2.5", "data.xy", "--output-directory", "good_data.chi"]
+    cli_inputs = [
+        "data.xy",
+        "--mud",
+        "2.5",
+        "--output-directory",
+        "good_data.chi",
+    ]
     actual_args = get_args(cli_inputs)
     with pytest.raises(FileExistsError):
         actual_args = set_output_directory(actual_args)
@@ -247,7 +253,7 @@ def test_set_output_directory_bad(user_filesystem):
     ],
 )
 def test_set_wavelength(inputs, expected):
-    cli_inputs = ["2.5", "data.xy"] + inputs
+    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_wavelength(actual_args)
     assert actual_args.wavelength == expected["wavelength"]
@@ -286,7 +292,7 @@ def test_set_wavelength(inputs, expected):
     ],
 )
 def test_set_wavelength_bad(inputs, expected_error_msg):
-    cli_inputs = ["2.5", "data.xy"] + inputs
+    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=re.escape(expected_error_msg)):
         actual_args = set_wavelength(actual_args)
@@ -302,50 +308,63 @@ def test_set_wavelength_bad(inputs, expected_error_msg):
     ],
 )
 def test_set_xtype(inputs, expected_xtype):
-    cli_inputs = ["2.5", "data.xy"] + inputs
+    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_xtype(actual_args)
     assert actual_args.xtype == expected_xtype
 
 
 def test_set_xtype_bad():
-    cli_inputs = ["2.5", "data.xy", "--xtype", "invalid"]
+    cli_inputs = ["data.xy", "--mud", "2.5", "--xtype", "invalid"]
     actual_args = get_args(cli_inputs)
     with pytest.raises(
         ValueError,
         match=re.escape(
-            f"Unknown xtype: invalid. " f"Allowed xtypes are {*XQUANTITIES, }."
+            f"Unknown xtype: invalid. Allowed xtypes are {*XQUANTITIES, }."
         ),
     ):
         actual_args = set_xtype(actual_args)
 
 
-def test_set_mud(user_filesystem):
-    cli_inputs = ["2.5", "data.xy"]
-    actual_args = get_args(cli_inputs)
-    actual_args = set_mud(actual_args)
-    assert actual_args.mud == pytest.approx(2.5, rel=1e-4, abs=0.1)
-    assert actual_args.z_scan_file is None
-
+@pytest.mark.parametrize(
+    "inputs, expected_mud",
+    [
+        # C1: user enters muD manually, expect to return the same value
+        (["--mud", "2.5"], 2.5),
+        # C2: user provides a z-scan file, expect to estimate through the file
+        (["--z-scan-file", "test_dir/testfile.xy"], 3),
+    ],
+)
+def test_set_mud(user_filesystem, inputs, expected_mud):
     cwd = Path(user_filesystem)
-    test_dir = cwd / "test_dir"
     os.chdir(cwd)
-    inputs = ["--z-scan-file", "test_dir/testfile.xy"]
-    expected = [3, str(test_dir / "testfile.xy")]
-    cli_inputs = ["2.5", "data.xy"] + inputs
+    cli_inputs = ["data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_mud(actual_args)
-    assert actual_args.mud == pytest.approx(expected[0], rel=1e-4, abs=0.1)
-    assert actual_args.z_scan_file == expected[1]
+    assert actual_args.mud == pytest.approx(expected_mud, rel=1e-4, abs=0.1)
 
 
-def test_set_mud_bad():
-    cli_inputs = ["2.5", "data.xy", "--z-scan-file", "invalid file"]
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
+        # C1: user provides an invalid z-scan file,
+        # expect FileNotFoundError and message to specify a valid file path
+        (
+            ["--z-scan-file", "invalid file"],
+            [
+                FileNotFoundError,
+                "Cannot find invalid file. Please specify a valid file path.",
+            ],
+        ),
+    ],
+)
+def test_set_mud_bad(user_filesystem, inputs, expected):
+    expected_error, expected_error_msg = expected
+    cwd = Path(user_filesystem)
+    os.chdir(cwd)
+    cli_inputs = ["data.xy"] + inputs
     actual_args = get_args(cli_inputs)
-    with pytest.raises(
-        FileNotFoundError,
-        match="Cannot find invalid file. " "Please specify a valid file path.",
-    ):
+    with pytest.raises(expected_error, match=expected_error_msg):
         actual_args = set_mud(actual_args)
 
 
@@ -370,12 +389,12 @@ def test_set_mud_bad():
     ],
 )
 def test_load_user_metadata(inputs, expected):
-    expected_args = get_args(["2.5", "data.xy"])
+    expected_args = get_args(["data.xy", "--mud", "2.5"])
     for expected_pair in expected:
         setattr(expected_args, expected_pair[0], expected_pair[1])
     delattr(expected_args, "user_metadata")
 
-    cli_inputs = ["2.5", "data.xy"] + inputs
+    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = load_user_metadata(actual_args)
     assert actual_args == expected_args
@@ -411,7 +430,7 @@ def test_load_user_metadata(inputs, expected):
     ],
 )
 def test_load_user_metadata_bad(inputs, expected_error_msg):
-    cli_inputs = ["2.5", "data.xy"] + inputs
+    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=re.escape(expected_error_msg)):
         actual_args = load_user_metadata(actual_args)
@@ -474,8 +493,9 @@ def test_load_user_info(monkeypatch, inputs, expected, user_filesystem):
     os.chdir(cwd)
 
     cli_inputs = [
-        "2.5",
         "data.xy",
+        "--mud",
+        "2.5",
         "--username",
         inputs["username"],
         "--email",
@@ -497,7 +517,7 @@ def test_load_package_info(mocker):
             "3.3.0" if package_name == "diffpy.utils" else "1.2.3"
         ),
     )
-    cli_inputs = ["2.5", "data.xy"]
+    cli_inputs = ["data.xy", "--mud", "2.5"]
     actual_args = get_args(cli_inputs)
     actual_args = load_package_info(actual_args)
     assert actual_args.package_info == {
@@ -523,8 +543,9 @@ def test_load_metadata(mocker, user_filesystem):
         ),
     )
     cli_inputs = [
-        "2.5",
         ".",
+        "--mud",
+        "2.5",
         "--anode-type",
         "Mo",
         "--user-metadata",
