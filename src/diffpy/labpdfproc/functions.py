@@ -16,7 +16,7 @@ TTH_GRID[-1] = 180.00
 CVE_METHODS = ["brute_force", "polynomial_interpolation"]
 
 # Pre-computed datasets for polynomial interpolation (fast calculation)
-MUD_LIST = [0.5, 1, 2, 3, 4, 5, 6]
+MUD_LIST = [0.5, 1, 2, 3, 4, 5, 6, 7]
 CWD = Path(__file__).parent.resolve()
 MULS = np.loadtxt(CWD / "data" / "inverse_cve.xy")
 COEFFICIENT_LIST = np.array(
@@ -206,25 +206,28 @@ def _cve_brute_force(input_pattern, mud):
 
 def _cve_polynomial_interpolation(input_pattern, mud):
     """Compute cve using polynomial interpolation method,
-    raise an error if the mu*D value is out of the range (0.5 to 6).
+    raise an error if the mu*D value is out of the range (0.5 to 7).
     """
-    if mud > 6 or mud < 0.5:
+    if mud > 7 or mud < 0.5:
         raise ValueError(
-            f"mu*D is out of the acceptable range (0.5 to 6) "
+            f"Input mu*D = {mud} is out of the acceptable range "
+            f"({min(MUD_LIST)} to {max(MUD_LIST)}) "
             f"for polynomial interpolation. "
             f"Please rerun with a value within this range "
             f"or specifying another method from {*CVE_METHODS, }."
         )
-    coeff_a, coeff_b, coeff_c, coeff_d, coeff_e = [
+    coef1, coef2, coef3, coef4, coef5, coef6, coef7 = [
         interpolation_function(mud)
         for interpolation_function in INTERPOLATION_FUNCTIONS
     ]
     muls = np.array(
-        coeff_a * MULS**4
-        + coeff_b * MULS**3
-        + coeff_c * MULS**2
-        + coeff_d * MULS
-        + coeff_e
+        coef1 * MULS**6
+        + coef2 * MULS**5
+        + coef3 * MULS**4
+        + coef4 * MULS**3
+        + coef5 * MULS**2
+        + coef6 * MULS
+        + coef7
     )
     cve = 1 / muls
 

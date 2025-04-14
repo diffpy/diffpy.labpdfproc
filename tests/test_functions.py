@@ -160,8 +160,8 @@ def test_compute_cve(input_xtype, expected, mocker):
     "inputs, msg",
     [
         (
-            {"mud": 7, "method": "polynomial_interpolation"},
-            f"mu*D is out of the acceptable range (0.5 to 6) "
+            {"mud": 10, "method": "polynomial_interpolation"},
+            f"mu*D = 10 is out of the acceptable range (0.5 to 7) "
             f"for polynomial interpolation. "
             f"Please rerun with a value within this range "
             f"or specifying another method from {*CVE_METHODS, }.",
