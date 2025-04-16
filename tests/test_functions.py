@@ -105,49 +105,55 @@ def test_set_muls_at_angle(input_mu, expected_muls):
 
 
 @pytest.mark.parametrize(
-    "input_xtype, expected",
-    [
-        (
-            "tth",
+    "input_diffraction_data, input_cve_params",
+    [  # Test that cve diffraction object contains the expected info
+        # Note that all cve values are interpolated to 0.5
+        # cve do should contain the same input xarray, xtype,
+        # wavelength, and metadata
+        (  # C1: User did not specify method, default to fast calculation
             {
                 "xarray": np.array([90, 90.1, 90.2]),
-                "yarray": np.array([0.5, 0.5, 0.5]),
-                "xtype": "tth",
+                "yarray": np.array([2, 2, 2]),
             },
+            {"mud": 1, "xtype": "tth"},
         ),
-        (
-            "q",
+        (  # C2: User specified brute-force computation method
             {
-                "xarray": np.array([5.76998, 5.77501, 5.78004]),
-                "yarray": np.array([0.5, 0.5, 0.5]),
-                "xtype": "q",
+                "xarray": np.array([5.1, 5.2, 5.3]),
+                "yarray": np.array([2, 2, 2]),
             },
+            {"mud": 1, "method": "brute_force", "xtype": "q"},
+        ),
+        (  # C3: User specified mu*D outside the fast calculation range,
+            # default to brute-force computation
+            {
+                "xarray": np.array([5.1, 5.2, 5.3]),
+                "yarray": np.array([2, 2, 2]),
+            },
+            {"mud": 20, "xtype": "q"},
         ),
     ],
 )
-def test_compute_cve(input_xtype, expected, mocker):
-    xarray, yarray = np.array([90, 90.1, 90.2]), np.array([2, 2, 2])
+def test_compute_cve(mocker, input_diffraction_data, input_cve_params):
+    expected_xarray = input_diffraction_data["xarray"]
     expected_cve = np.array([0.5, 0.5, 0.5])
+    expected_xtype = input_cve_params["xtype"]
+    mocker.patch("diffpy.labpdfproc.functions.N_POINTS_ON_DIAMETER", 4)
     mocker.patch("numpy.interp", return_value=expected_cve)
     input_pattern = DiffractionObject(
-        xarray=xarray,
-        yarray=yarray,
-        xtype="tth",
+        xarray=input_diffraction_data["xarray"],
+        yarray=input_diffraction_data["yarray"],
+        xtype=input_cve_params["xtype"],
         wavelength=1.54,
         scat_quantity="x-ray",
         name="test",
         metadata={"thing1": 1, "thing2": "thing2"},
     )
-    actual_cve_do = compute_cve(
-        input_pattern,
-        mud=1,
-        method="polynomial_interpolation",
-        xtype=input_xtype,
-    )
+    actual_cve_do = compute_cve(input_pattern, **input_cve_params)
     expected_cve_do = DiffractionObject(
-        xarray=expected["xarray"],
-        yarray=expected["yarray"],
-        xtype=expected["xtype"],
+        xarray=expected_xarray,
+        yarray=expected_cve,
+        xtype=expected_xtype,
         wavelength=1.54,
         scat_quantity="cve",
         name="absorption correction, cve, for test",
@@ -156,32 +162,9 @@ def test_compute_cve(input_xtype, expected, mocker):
     assert actual_cve_do == expected_cve_do
 
 
-@pytest.mark.parametrize(
-    "inputs, msg",
-    [
-        (
-            {"mud": 10, "method": "polynomial_interpolation"},
-            f"mu*D = 10 is out of the acceptable range (0.5 to 7) "
-            f"for polynomial interpolation. "
-            f"Please rerun with a value within this range "
-            f"or specifying another method from {*CVE_METHODS, }.",
-        ),
-        (
-            {"mud": 1, "method": "invalid_method"},
-            f"Unknown method: invalid_method. "
-            f"Allowed methods are {*CVE_METHODS, }.",
-        ),
-        (
-            {"mud": 7, "method": "invalid_method"},
-            f"Unknown method: invalid_method. "
-            f"Allowed methods are {*CVE_METHODS, }.",
-        ),
-    ],
-)
-def test_compute_cve_bad(mocker, inputs, msg):
+def test_compute_cve_bad(mocker):
     xarray, yarray = np.array([90, 90.1, 90.2]), np.array([2, 2, 2])
     expected_cve = np.array([0.5, 0.5, 0.5])
-    mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", xarray)
     mocker.patch("numpy.interp", return_value=expected_cve)
     input_pattern = DiffractionObject(
         xarray=xarray,
@@ -192,14 +175,21 @@ def test_compute_cve_bad(mocker, inputs, msg):
         name="test",
         metadata={"thing1": 1, "thing2": "thing2"},
     )
-    with pytest.raises(ValueError, match=re.escape(msg)):
-        compute_cve(input_pattern, mud=inputs["mud"], method=inputs["method"])
+    # Test that the function raises a ValueError
+    # when an invalid method is provided
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            f"Unknown method: invalid_method. "
+            f"Allowed methods are {*CVE_METHODS, }."
+        ),
+    ):
+        compute_cve(input_pattern, mud=1, method="invalid_method")
 
 
 def test_apply_corr(mocker):
     xarray, yarray = np.array([90, 90.1, 90.2]), np.array([2, 2, 2])
     expected_cve = np.array([0.5, 0.5, 0.5])
-    mocker.patch("diffpy.labpdfproc.functions.TTH_GRID", xarray)
     mocker.patch("numpy.interp", return_value=expected_cve)
     input_pattern = DiffractionObject(
         xarray=xarray,

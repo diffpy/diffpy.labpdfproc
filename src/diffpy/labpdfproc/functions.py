@@ -1,4 +1,5 @@
 import math
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -16,7 +17,7 @@ TTH_GRID[-1] = 180.00
 CVE_METHODS = ["brute_force", "polynomial_interpolation"]
 
 # Pre-computed datasets for polynomial interpolation (fast calculation)
-MUD_LIST = [0.5, 1, 2, 3, 4, 5, 6, 7]
+MUD_LIST = np.array([0.5, 1, 2, 3, 4, 5, 6, 7])
 CWD = Path(__file__).parent.resolve()
 MULS = np.loadtxt(CWD / "data" / "inverse_cve.xy")
 COEFFICIENT_LIST = np.array(
@@ -74,7 +75,6 @@ class Gridded_circle:
         ----------
         coordinate : tuple of floats
             The coordinates of the grid point.
-
         angle : float
             The angle in degrees.
 
@@ -90,9 +90,7 @@ class Gridded_circle:
         angle = math.radians(angle)
         xgrid = coordinate[0]
         ygrid = coordinate[1]
-
         entry_point = (-math.sqrt(self.radius**2 - ygrid**2), ygrid)
-
         if not math.isclose(angle, math.pi / 2, abs_tol=epsilon):
             b = ygrid - xgrid * math.tan(angle)
             a = math.tan(angle)
@@ -107,7 +105,6 @@ class Gridded_circle:
                 exit_point = (xexit_root1, yexit_root1)
         else:
             exit_point = (xgrid, math.sqrt(self.radius**2 - xgrid**2))
-
         return entry_point, exit_point
 
     def _get_path_length(self, grid_point, angle):
@@ -119,7 +116,6 @@ class Gridded_circle:
         ----------
         grid_point : double of floats
             The coordinate inside the circle.
-
         angle : float
             The angle of the output beam in degrees.
 
@@ -129,7 +125,6 @@ class Gridded_circle:
             The tuple containing three floats,
             which are the total distance, entry distance and exit distance.
         """
-
         # move angle a tad above zero if it is zero
         # to avoid it having the wrong sign due to some rounding error
         angle_delta = 0.000001
@@ -181,7 +176,9 @@ def _cve_brute_force(input_pattern, mud):
     Assume mu=mud/2, given that the same mu*D yields the same cve and D/2=1.
     """
     mu_sample_invmm = mud / 2
-    abs_correction = Gridded_circle(mu=mu_sample_invmm)
+    abs_correction = Gridded_circle(
+        n_points_on_diameter=N_POINTS_ON_DIAMETER, mu=mu_sample_invmm
+    )
     distances, muls = [], []
     for angle in TTH_GRID:
         abs_correction.set_distances_at_angle(angle)
@@ -191,7 +188,6 @@ def _cve_brute_force(input_pattern, mud):
     distances = np.array(distances) / abs_correction.total_points_in_grid
     muls = np.array(muls) / abs_correction.total_points_in_grid
     cve = 1 / muls
-
     cve_do = DiffractionObject(
         xarray=TTH_GRID,
         yarray=cve,
@@ -206,31 +202,21 @@ def _cve_brute_force(input_pattern, mud):
 
 def _cve_polynomial_interpolation(input_pattern, mud):
     """Compute cve using polynomial interpolation method,
-    raise an error if the mu*D value is out of the range (0.5 to 7).
+    default to brute-force computation if mu*D is
+    out of the range (0.5 to 7).
     """
     if mud > 7 or mud < 0.5:
-        raise ValueError(
+        warnings.warn(
             f"Input mu*D = {mud} is out of the acceptable range "
-            f"({min(MUD_LIST)} to {max(MUD_LIST)}) "
+            f"({np.min(MUD_LIST)} to {np.max(MUD_LIST)}) "
             f"for polynomial interpolation. "
-            f"Please rerun with a value within this range "
-            f"or specifying another method from {*CVE_METHODS, }."
+            f"Proceeding with brute-force computation. "
         )
-    coef1, coef2, coef3, coef4, coef5, coef6, coef7 = [
-        interpolation_function(mud)
-        for interpolation_function in INTERPOLATION_FUNCTIONS
-    ]
-    muls = np.array(
-        coef1 * MULS**6
-        + coef2 * MULS**5
-        + coef3 * MULS**4
-        + coef4 * MULS**3
-        + coef5 * MULS**2
-        + coef6 * MULS
-        + coef7
-    )
-    cve = 1 / muls
+        return _cve_brute_force(input_pattern, mud)
 
+    coeffs = np.array([f(mud) for f in INTERPOLATION_FUNCTIONS])
+    muls = np.polyval(coeffs, MULS)
+    cve = 1 / muls
     cve_do = DiffractionObject(
         xarray=TTH_GRID,
         yarray=cve,
