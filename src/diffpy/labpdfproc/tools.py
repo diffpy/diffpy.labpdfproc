@@ -251,8 +251,34 @@ def set_xtype(args):
     return args
 
 
+def _estimate_mud_from_zscan(args):
+    """Compute mu*D based on the given z-scan file.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        The arguments from the parser.
+
+    Returns
+    -------
+    args : argparse.Namespace
+        The updated arguments with mu*D.
+    """
+    filepath = Path(args.z_scan_file).resolve()
+    if not filepath.is_file():
+        raise FileNotFoundError(
+            f"Cannot find {args.z_scan_file}. "
+            f"Please specify a valid file path."
+        )
+    args.z_scan_file = str(filepath)
+    args.mud = compute_mud(filepath)
+    return args
+
+
 def set_mud(args):
-    """Compute mu*D based on the given z-scan file, if provided.
+    """Compute and set mu*D based on different options.
+    Current options include manually entering a value,
+    or estimating from a z-scan file.
 
     Parameters
     ----------
@@ -265,14 +291,7 @@ def set_mud(args):
         The updated arguments with mu*D.
     """
     if args.z_scan_file:
-        filepath = Path(args.z_scan_file).resolve()
-        if not filepath.is_file():
-            raise FileNotFoundError(
-                f"Cannot find {args.z_scan_file}. "
-                f"Please specify a valid file path."
-            )
-        args.z_scan_file = str(filepath)
-        args.mud = compute_mud(filepath)
+        return _estimate_mud_from_zscan(args)
     return args
 
 
@@ -390,13 +409,13 @@ def preprocessing_args(args):
     args : argparse.Namespace
         The updated argparse Namespace with arguments preprocessed.
     """
+    args = set_mud(args)
     args = load_package_info(args)
     args = load_user_info(args)
     args = set_input_lists(args)
     args = set_output_directory(args)
     args = set_wavelength(args)
     args = set_xtype(args)
-    args = set_mud(args)
     args = load_user_metadata(args)
     return args
 

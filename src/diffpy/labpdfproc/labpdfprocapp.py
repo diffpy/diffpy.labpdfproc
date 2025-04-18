@@ -13,13 +13,8 @@ from diffpy.utils.diffraction_objects import XQUANTITIES, DiffractionObject
 from diffpy.utils.parsers.loaddata import loadData
 
 
-def define_arguments():
+def _define_arguments():
     args = [
-        {
-            "name": ["mud"],
-            "help": "Value of mu*D for your sample. Required.",
-            "type": float,
-        },
         {
             "name": ["input"],
             "help": (
@@ -150,20 +145,37 @@ def define_arguments():
             ),
             "default": None,
         },
-        {
-            "name": ["-z", "--z-scan-file"],
-            "help": "Path to the z-scan file to be loaded "
-            "to determine the mu*D value.",
-            "default": None,
-            "widget": "FileChooser",
-        },
     ]
     return args
 
 
+def _add_mud_selection_group(p, is_gui=False):
+    """Current Options:
+    1. Manually enter muD (`--mud`).
+    2. Estimate muD from a z-scan file (`-z` or `--z-scan-file`).
+    """
+    g = p.add_argument_group("Options for setting mu*D value (Required)")
+    g = g.add_mutually_exclusive_group(required=True)
+    g.add_argument(
+        "--mud",
+        type=float,
+        help="Enter the mu*D value manually.",
+        **({"widget": "DecimalField"} if is_gui else {}),
+    )
+    g.add_argument(
+        "-z",
+        "--z-scan-file",
+        help="Provide the path to the z-scan file to be loaded "
+        "to determine the mu*D value.",
+        **({"widget": "FileChooser"} if is_gui else {}),
+    )
+    return p
+
+
 def get_args(override_cli_inputs=None):
     p = ArgumentParser()
-    for arg in define_arguments():
+    p = _add_mud_selection_group(p, is_gui=False)
+    for arg in _define_arguments():
         kwargs = {
             key: value
             for key, value in arg.items()
@@ -177,7 +189,8 @@ def get_args(override_cli_inputs=None):
 @Gooey(required_cols=1, optional_cols=1, program_name="Labpdfproc GUI")
 def gooey_parser():
     p = GooeyParser()
-    for arg in define_arguments():
+    p = _add_mud_selection_group(p, is_gui=True)
+    for arg in _define_arguments():
         kwargs = {key: value for key, value in arg.items() if key != "name"}
         p.add_argument(*arg["name"], **kwargs)
     args = p.parse_args()
