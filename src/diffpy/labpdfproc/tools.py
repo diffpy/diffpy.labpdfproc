@@ -7,6 +7,7 @@ from diffpy.utils.diffraction_objects import (
     XQUANTITIES,
 )
 from diffpy.utils.tools import (
+    _load_config,
     check_and_build_global_config,
     compute_mud,
     get_package_info,
@@ -159,6 +160,33 @@ def set_input_lists(args):
     return args
 
 
+def _load_wavelength_from_config_file(args):
+    """Load wavelength and anode type from config files.
+    It takes cli inputs first, and local config, and then global config.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        The arguments from the parser.
+
+    Returns
+    -------
+    args : argparse.Namespace
+        The updated arguments with the updated wavelength and anode type.
+    """
+    if args.wavelength or args.anode_type:
+        return args
+    global_config = _load_config(Path().home() / "diffpyconfig.json")
+    local_config = _load_config(Path().cwd() / "diffpyconfig.json")
+    if local_config:
+        args.wavelength = local_config.get("wavelength")
+        args.anode_type = local_config.get("anode_type")
+    elif global_config:
+        args.wavelength = global_config.get("wavelength")
+        args.anode_type = global_config.get("anode_type")
+    return args
+
+
 def set_wavelength(args):
     """Set the wavelength based on the given anode_type or wavelength.
 
@@ -185,7 +213,7 @@ def set_wavelength(args):
     args : argparse.Namespace
         The updated arguments with the wavelength.
     """
-    # first load values from config file
+    args = _load_wavelength_from_config_file(args)
     if args.wavelength is None and args.anode_type is None:
         if args.xtype not in ANGLEQUANTITIES:
             raise ValueError(
