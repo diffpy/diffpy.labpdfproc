@@ -214,7 +214,7 @@ def test_set_output_directory_bad(user_filesystem):
         # This test only checks loading behavior,
         # not value validation (which is handled by `set_wavelength`).
         # C1: no args, expect to update arg values from home config
-        ([""], {"wavelength": 0.3, "anode_type": None}),
+        ([], {"wavelength": 0.3, "anode_type": None}),
         # C2: wavelength provided, expect to return args unchanged
         (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
         # C3: anode type provided, expect to return args unchanged
@@ -235,7 +235,7 @@ def test_load_wavelength_from_config_file_with_home_conf_file(
     mocker.patch("pathlib.Path.home", lambda _: home_dir)
     os.chdir(cwd)
 
-    cli_inputs = ["2.5", "data.xy"] + inputs
+    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = load_wavelength_from_config_file(actual_args)
     assert actual_args.wavelength == expected["wavelength"]
@@ -254,7 +254,7 @@ def test_load_wavelength_from_config_file_with_home_conf_file(
         # This test only checks loading behavior,
         # not value validation (which is handled by `set_wavelength`).
         # C1: no args, expect to update arg values from local config
-        ([""], {"wavelength": 0.6, "anode_type": None}),
+        ([], {"wavelength": 0.6, "anode_type": None}),
         # C2: wavelength provided, expect to return args unchanged
         (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
         # C3: anode type provided, expect to return args unchanged
@@ -278,7 +278,7 @@ def test_load_wavelength_from_config_file_with_local_conf_file(
     with open(cwd / "diffpyconfig.json", "w") as f:
         json.dump(local_config_data, f)
 
-    cli_inputs = ["2.5", "data.xy"] + inputs
+    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = load_wavelength_from_config_file(actual_args)
     assert actual_args.wavelength == expected["wavelength"]
@@ -299,7 +299,7 @@ def test_load_wavelength_from_config_file_with_local_conf_file(
         # This test only checks loading behavior,
         # not value validation (which is handled by `set_wavelength`).
         # C1: no args
-        ([""], {"wavelength": None, "anode_type": None}),
+        ([], {"wavelength": None, "anode_type": None}),
         # C1: wavelength provided
         (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
         # C2: anode type provided
@@ -321,7 +321,7 @@ def test_load_wavelength_from_config_file_without_conf_files(
     confile = home_dir / "diffpyconfig.json"
     os.remove(confile)
 
-    cli_inputs = ["2.5", "data.xy"] + inputs
+    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = load_wavelength_from_config_file(actual_args)
     assert actual_args.wavelength == expected["wavelength"]
@@ -406,13 +406,13 @@ def test_set_wavelength(inputs, expected):
         (  # C3: invalid anode type
             # expect error asking to specify a valid anode type
             ["--anode-type", "invalid"],
-            f"Anode type not recognized. "
+            f"Anode type 'invalid' not recognized. "
             f"Please rerun specifying an anode_type from {*known_sources, }.",
         ),
         (  # C4: invalid wavelength
             # expect error asking to specify a valid wavelength or anode type
-            ["--wavelength", "0"],
-            "No valid wavelength. "
+            ["--wavelength", "-0.2"],
+            "Wavelength = -0.2 is not valid. "
             "Please rerun specifying a known anode_type "
             "or a positive wavelength.",
         ),
@@ -421,6 +421,7 @@ def test_set_wavelength(inputs, expected):
 def test_set_wavelength_bad(inputs, expected_error_msg):
     cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
+    print(actual_args.wavelength)
     with pytest.raises(ValueError, match=re.escape(expected_error_msg)):
         actual_args = set_wavelength(actual_args)
 

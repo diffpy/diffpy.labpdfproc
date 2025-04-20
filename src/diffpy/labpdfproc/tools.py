@@ -256,7 +256,7 @@ def set_wavelength(args):
         )
         if matched_anode_type is None:
             raise ValueError(
-                f"Anode type not recognized. "
+                f"Anode type '{args.anode_type}' not recognized. "
                 f"Please rerun specifying an anode_type "
                 f"from {*known_sources, }."
             )
@@ -264,7 +264,7 @@ def set_wavelength(args):
         args.wavelength = WAVELENGTHS[args.anode_type]
     elif args.wavelength is not None and args.wavelength <= 0:
         raise ValueError(
-            "No valid wavelength. "
+            f"Wavelength = {args.wavelength} is not valid. "
             "Please rerun specifying a known anode_type "
             "or a positive wavelength."
         )
