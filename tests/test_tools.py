@@ -421,7 +421,6 @@ def test_set_wavelength(inputs, expected):
 def test_set_wavelength_bad(inputs, expected_error_msg):
     cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
-    print(actual_args.wavelength)
     with pytest.raises(ValueError, match=re.escape(expected_error_msg)):
         actual_args = set_wavelength(actual_args)
 
