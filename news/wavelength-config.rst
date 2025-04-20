@@ -1,6 +1,6 @@
 **Added:**
 
-* Functionality to allow users to specify wavelength or anode type in a diffpy config file.
+* Functionality to read wavelength and anode type directly from a diffpy configuration file.
 
 **Changed:**
 

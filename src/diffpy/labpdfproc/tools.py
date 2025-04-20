@@ -160,9 +160,11 @@ def set_input_lists(args):
     return args
 
 
-def _load_wavelength_from_config_file(args):
+def load_wavelength_from_config_file(args):
     """Load wavelength and anode type from config files.
-    It takes cli inputs first, and local config, and then global config.
+
+    It prioritizes values in the following order:
+    1. cli inputs, 2. local config file, 3. global config file.
 
     Parameters
     ----------
@@ -174,16 +176,33 @@ def _load_wavelength_from_config_file(args):
     args : argparse.Namespace
         The updated arguments with the updated wavelength and anode type.
     """
-    if args.wavelength or args.anode_type:
-        return args
     global_config = _load_config(Path().home() / "diffpyconfig.json")
     local_config = _load_config(Path().cwd() / "diffpyconfig.json")
-    if local_config:
-        args.wavelength = local_config.get("wavelength")
-        args.anode_type = local_config.get("anode_type")
-    elif global_config:
-        args.wavelength = global_config.get("wavelength")
-        args.anode_type = global_config.get("anode_type")
+    local_has_data = local_config and (
+        "wavelength" in local_config or "anode_type" in local_config
+    )
+    global_has_data = global_config and (
+        "wavelength" in global_config or "anode_type" in global_config
+    )
+    if not local_has_data and not global_has_data:
+        print(
+            "No configuration file was found containing information "
+            "about the wavelength or anode type. \n"
+            "You can add the wavelength or anode type "
+            "to a configuration file on the current computer "
+            "and it will be automatically associated with "
+            "subsequent diffpy data by default. \n"
+            "You will only have to do that once. \n"
+            "For more information, please refer to www.diffpy.org/"
+            "diffpy.labpdfproc/examples/toolsexample.html"
+        )
+
+    if args.wavelength or args.anode_type:
+        return args
+    config = local_config if local_has_data else global_config
+    if config:
+        args.wavelength = args.wavelength or config.get("wavelength")
+        args.anode_type = args.anode_type or config.get("anode_type")
     return args
 
 
@@ -202,7 +221,7 @@ def set_wavelength(args):
     ------
     ValueError
         Raised if:
-        (1) neither wavelength or anode type is provided,
+        (1) neither wavelength or anode type is provided
             and xtype is not the two-theta grid,
         (2) both are provided,
         (3) anode_type is not one of the known sources,
@@ -213,7 +232,7 @@ def set_wavelength(args):
     args : argparse.Namespace
         The updated arguments with the wavelength.
     """
-    args = _load_wavelength_from_config_file(args)
+    args = load_wavelength_from_config_file(args)
     if args.wavelength is None and args.anode_type is None:
         if args.xtype not in ANGLEQUANTITIES:
             raise ValueError(

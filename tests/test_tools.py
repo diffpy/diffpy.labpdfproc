@@ -7,12 +7,12 @@ import pytest
 
 from diffpy.labpdfproc.labpdfprocapp import get_args
 from diffpy.labpdfproc.tools import (
-    _load_wavelength_from_config_file,
     known_sources,
     load_metadata,
     load_package_info,
     load_user_info,
     load_user_metadata,
+    load_wavelength_from_config_file,
     preprocessing_args,
     set_input_lists,
     set_mud,
@@ -200,9 +200,13 @@ def test_set_output_directory_bad(user_filesystem):
 @pytest.mark.parametrize(
     "inputs, expected",
     [
-        # Test when only a home config file exists (no local config file),
-        # expect to return args if wavelength or anode type is specified,
-        # otherwise update args with values from the home config file.
+        # Test with only a home config file (no local config),
+        # expect to return values directly from args
+        # if either wavelength or anode type is specified,
+        # otherwise update args with values from the home config file
+        # (wavelength=0.3, no anode type).
+        # This test only checks loading behavior,
+        # not value validation (which is handled by `set_wavelength`).
         # C1: no args, expect to update arg values from home config
         ([""], {"wavelength": 0.3, "anode_type": None}),
         # C2: wavelength provided, expect to return args unchanged
@@ -227,7 +231,7 @@ def test_load_wavelength_from_config_file_with_home_conf_file(
 
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
-    actual_args = _load_wavelength_from_config_file(actual_args)
+    actual_args = load_wavelength_from_config_file(actual_args)
     assert actual_args.wavelength == expected["wavelength"]
     assert actual_args.anode_type == expected["anode_type"]
 
@@ -236,9 +240,13 @@ def test_load_wavelength_from_config_file_with_home_conf_file(
     "inputs, expected",
     [
         # Test when a local config file exists,
-        # expect to return args if wavelength or anode type is specified,
-        # otherwise update args with values from the home config file.
+        # expect to return values directly from args
+        # if either wavelength or anode type is specified,
+        # otherwise update args with values from the local config file
+        # (wavelength=0.6, no anode type).
         # Results should be the same whether if the home config exists.
+        # This test only checks loading behavior,
+        # not value validation (which is handled by `set_wavelength`).
         # C1: no args, expect to update arg values from local config
         ([""], {"wavelength": 0.6, "anode_type": None}),
         # C2: wavelength provided, expect to return args unchanged
@@ -266,7 +274,7 @@ def test_load_wavelength_from_config_file_with_local_conf_file(
 
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
-    actual_args = _load_wavelength_from_config_file(actual_args)
+    actual_args = load_wavelength_from_config_file(actual_args)
     assert actual_args.wavelength == expected["wavelength"]
     assert actual_args.anode_type == expected["anode_type"]
 
@@ -282,6 +290,8 @@ def test_load_wavelength_from_config_file_with_local_conf_file(
     [
         # Test when no config files exist,
         # expect to return args without modification.
+        # This test only checks loading behavior,
+        # not value validation (which is handled by `set_wavelength`).
         # C1: no args
         ([""], {"wavelength": None, "anode_type": None}),
         # C1: wavelength provided
@@ -307,7 +317,7 @@ def test_load_wavelength_from_config_file_without_conf_files(
 
     cli_inputs = ["2.5", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
-    actual_args = _load_wavelength_from_config_file(actual_args)
+    actual_args = load_wavelength_from_config_file(actual_args)
     assert actual_args.wavelength == expected["wavelength"]
     assert actual_args.anode_type == expected["anode_type"]
 
