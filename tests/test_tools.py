@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from pathlib import Path
@@ -11,6 +12,7 @@ from diffpy.labpdfproc.tools import (
     load_package_info,
     load_user_info,
     load_user_metadata,
+    load_wavelength_from_config_file,
     preprocessing_args,
     set_input_lists,
     set_mud,
@@ -204,6 +206,131 @@ def test_set_output_directory_bad(user_filesystem):
 @pytest.mark.parametrize(
     "inputs, expected",
     [
+        # Test with only a home config file (no local config),
+        # expect to return values directly from args
+        # if either wavelength or anode type is specified,
+        # otherwise update args with values from the home config file
+        # (wavelength=0.3, no anode type).
+        # This test only checks loading behavior,
+        # not value validation (which is handled by `set_wavelength`).
+        # C1: no args, expect to update arg values from home config
+        ([], {"wavelength": 0.3, "anode_type": None}),
+        # C2: wavelength provided, expect to return args unchanged
+        (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
+        # C3: anode type provided, expect to return args unchanged
+        (["--anode-type", "Mo"], {"wavelength": None, "anode_type": "Mo"}),
+        # C4: both wavelength and anode type provided,
+        # expect to return args unchanged
+        (
+            ["--wavelength", "0.7", "--anode-type", "Mo"],
+            {"wavelength": 0.7, "anode_type": "Mo"},
+        ),
+    ],
+)
+def test_load_wavelength_from_config_file_with_home_conf_file(
+    mocker, user_filesystem, inputs, expected
+):
+    cwd = Path(user_filesystem)
+    home_dir = cwd / "home_dir"
+    mocker.patch("pathlib.Path.home", lambda _: home_dir)
+    os.chdir(cwd)
+
+    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
+    actual_args = get_args(cli_inputs)
+    actual_args = load_wavelength_from_config_file(actual_args)
+    assert actual_args.wavelength == expected["wavelength"]
+    assert actual_args.anode_type == expected["anode_type"]
+
+
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
+        # Test when a local config file exists,
+        # expect to return values directly from args
+        # if either wavelength or anode type is specified,
+        # otherwise update args with values from the local config file
+        # (wavelength=0.6, no anode type).
+        # Results should be the same whether if the home config exists.
+        # This test only checks loading behavior,
+        # not value validation (which is handled by `set_wavelength`).
+        # C1: no args, expect to update arg values from local config
+        ([], {"wavelength": 0.6, "anode_type": None}),
+        # C2: wavelength provided, expect to return args unchanged
+        (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
+        # C3: anode type provided, expect to return args unchanged
+        (["--anode-type", "Mo"], {"wavelength": None, "anode_type": "Mo"}),
+        # C4: both wavelength and anode type provided,
+        # expect to return args unchanged
+        (
+            ["--wavelength", "0.7", "--anode-type", "Mo"],
+            {"wavelength": 0.7, "anode_type": "Mo"},
+        ),
+    ],
+)
+def test_load_wavelength_from_config_file_with_local_conf_file(
+    mocker, user_filesystem, inputs, expected
+):
+    cwd = Path(user_filesystem)
+    home_dir = cwd / "home_dir"
+    mocker.patch("pathlib.Path.home", lambda _: home_dir)
+    os.chdir(cwd)
+    local_config_data = {"wavelength": 0.6}
+    with open(cwd / "diffpyconfig.json", "w") as f:
+        json.dump(local_config_data, f)
+
+    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
+    actual_args = get_args(cli_inputs)
+    actual_args = load_wavelength_from_config_file(actual_args)
+    assert actual_args.wavelength == expected["wavelength"]
+    assert actual_args.anode_type == expected["anode_type"]
+
+    # remove home config file, expect the same results
+    confile = home_dir / "diffpyconfig.json"
+    os.remove(confile)
+    assert actual_args.wavelength == expected["wavelength"]
+    assert actual_args.anode_type == expected["anode_type"]
+
+
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
+        # Test when no config files exist,
+        # expect to return args without modification.
+        # This test only checks loading behavior,
+        # not value validation (which is handled by `set_wavelength`).
+        # C1: no args
+        ([], {"wavelength": None, "anode_type": None}),
+        # C1: wavelength provided
+        (["--wavelength", "0.25"], {"wavelength": 0.25, "anode_type": None}),
+        # C2: anode type provided
+        (["--anode-type", "Mo"], {"wavelength": None, "anode_type": "Mo"}),
+        # C4: both wavelength and anode type provided
+        (
+            ["--wavelength", "0.7", "--anode-type", "Mo"],
+            {"wavelength": 0.7, "anode_type": "Mo"},
+        ),
+    ],
+)
+def test_load_wavelength_from_config_file_without_conf_files(
+    mocker, user_filesystem, inputs, expected
+):
+    cwd = Path(user_filesystem)
+    home_dir = cwd / "home_dir"
+    mocker.patch("pathlib.Path.home", lambda _: home_dir)
+    os.chdir(cwd)
+    confile = home_dir / "diffpyconfig.json"
+    os.remove(confile)
+
+    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
+    actual_args = get_args(cli_inputs)
+    actual_args = load_wavelength_from_config_file(actual_args)
+    assert actual_args.wavelength == expected["wavelength"]
+    assert actual_args.anode_type == expected["anode_type"]
+
+
+@pytest.mark.parametrize(
+    "inputs, expected",
+    [
         # C1: only a valid anode type was entered (case independent),
         # expect to match the corresponding wavelength
         # and preserve the correct case anode type
@@ -279,13 +406,13 @@ def test_set_wavelength(inputs, expected):
         (  # C3: invalid anode type
             # expect error asking to specify a valid anode type
             ["--anode-type", "invalid"],
-            f"Anode type not recognized. "
+            f"Anode type 'invalid' not recognized. "
             f"Please rerun specifying an anode_type from {*known_sources, }.",
         ),
         (  # C4: invalid wavelength
             # expect error asking to specify a valid wavelength or anode type
-            ["--wavelength", "0"],
-            "No valid wavelength. "
+            ["--wavelength", "-0.2"],
+            "Wavelength = -0.2 is not valid. "
             "Please rerun specifying a known anode_type "
             "or a positive wavelength.",
         ),
