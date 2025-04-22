@@ -110,14 +110,14 @@ Example
 Navigate to the directory that contains 1D diffraction patterns that you would like to process.
 Activate the conda environment (`conda activate diffpy.labpdfproc_env`) that contains the package and run the following command ::
 
-        labpdfproc <muD> <path/to/inputfile.txt>
+        labpdfproc <path/to/inputfile.txt> --mud <muD>
 
 Here replace <muD> with the value of muD for your sample
 and <path/to/inputfile.txt> with the path and filename of your input file.
 For example, if the uncorrected data case is called zro2_mo.xy and is in the current directory
 and it has a muD of 2.5 then the command would be ::
 
-        labpdfproc 2.5 zro2_mo.xy
+        labpdfproc zro2_mo.xy --mud 2.5
 
 Please type ::
 

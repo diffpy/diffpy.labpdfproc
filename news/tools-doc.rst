@@ -1,10 +1,10 @@
 **Added:**
 
-* <news item>
+* Utility and example documentation for ``tools`` module.
 
 **Changed:**
 
-* <news item>
+* Readme: muD now requires the ``--mud`` flag instead of a required argument.
 
 **Deprecated:**
 
