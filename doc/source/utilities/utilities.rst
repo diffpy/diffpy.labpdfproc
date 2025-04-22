@@ -11,3 +11,4 @@ Check the :ref:`examples<Examples>` provided for how to use these.
    :depth: 2
 
 .. include:: functions_utility.rst
+.. include:: tools_utility.rst
