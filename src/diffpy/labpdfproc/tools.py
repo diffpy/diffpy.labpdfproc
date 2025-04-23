@@ -9,6 +9,7 @@ from diffpy.utils.diffraction_objects import (
 from diffpy.utils.tools import (
     _load_config,
     check_and_build_global_config,
+    compute_mu_using_xraydb,
     compute_mud,
     get_package_info,
     get_user_info,
@@ -31,14 +32,19 @@ WAVELENGTHS = {
 }
 known_sources = [key for key in WAVELENGTHS.keys()]
 
-# Exclude wavelength from metadata to prevent duplication,
-# as the dump function in diffpy.utils writes it explicitly.
+# Exclude wavelength to avoid duplication,
+# as it's written explicitly by diffpy.utils dump function.
+# Exclude "theoretical_from_density" and "theoretical_from_packing"
+# as they are only used for theoretical mu*D estimation
+# and will be written into separate arguments for clarity.
 METADATA_KEYS_TO_EXCLUDE = [
     "output_correction",
     "force_overwrite",
     "input",
     "input_paths",
     "wavelength",
+    "theoretical_from_density",
+    "theoretical_from_packing",
 ]
 
 
@@ -298,19 +304,8 @@ def set_xtype(args):
     return args
 
 
-def _estimate_mud_from_zscan(args):
-    """Compute mu*D based on the given z-scan file.
-
-    Parameters
-    ----------
-    args : argparse.Namespace
-        The arguments from the parser.
-
-    Returns
-    -------
-    args : argparse.Namespace
-        The updated arguments with mu*D.
-    """
+def _set_mud_from_zscan(args):
+    """Experimental estimation of mu*D from a z-scan file."""
     filepath = Path(args.z_scan_file).resolve()
     if not filepath.is_file():
         raise FileNotFoundError(
@@ -322,10 +317,64 @@ def _estimate_mud_from_zscan(args):
     return args
 
 
+def _parse_theoretical_input(input_str):
+    """Helper function to parse and validate the input string."""
+    parts = input_str.split(",")
+    if len(parts) != 3:
+        raise ValueError(
+            f"Invalid mu*D input '{input_str}'. "
+            "Expected format is 'sample composition, energy, "
+            "sample mass density or packing fraction' "
+            "with no whitespaces (e.g., 'ZrO2,2,0.8').",
+        )
+    sample_composition = parts[0]
+    energy = float(parts[1])
+    mass_density_or_packing_fraction = float(parts[2])
+    return sample_composition, energy, mass_density_or_packing_fraction
+
+
+def _set_theoretical_mud_from_density(args):
+    """Theoretical estimation of mu*D from
+    sample composition, energy, and sample mass density."""
+    sample_composition, energy, sample_mass_density = _parse_theoretical_input(
+        args.theoretical_from_density
+    )
+    args.sample_composition = sample_composition
+    args.energy = energy
+    args.sample_mass_density = sample_mass_density
+    args.mud = compute_mu_using_xraydb(
+        args.sample_composition,
+        args.energy,
+        sample_mass_density=args.sample_mass_density,
+    )
+    return args
+
+
+def _set_theoretical_mud_from_packing(args):
+    """Theoretical estimation of mu*D from
+    sample composition, energy, and packing fraction."""
+    sample_composition, energy, packing_fraction = _parse_theoretical_input(
+        args.theoretical_from_packing
+    )
+    args.sample_composition = sample_composition
+    args.energy = energy
+    args.packing_fraction = packing_fraction
+    args.mud = compute_mu_using_xraydb(
+        args.sample_composition,
+        args.energy,
+        packing_fraction=args.packing_fraction,
+    )
+    return args
+
+
 def set_mud(args):
-    """Compute and set mu*D based on different options.
-    Current options include manually entering a value,
-    or estimating from a z-scan file.
+    """Compute and set mu*D based on the selected method.
+
+    Options include:
+    1. Manually entering a value.
+    2. Estimating from a z-scan file.
+    3. Estimating theoretically based on sample mass density.
+    4. Estimating theoretically based on packing fraction.
 
     Parameters
     ----------
@@ -338,7 +387,11 @@ def set_mud(args):
         The updated arguments with mu*D.
     """
     if args.z_scan_file:
-        return _estimate_mud_from_zscan(args)
+        return _set_mud_from_zscan(args)
+    elif args.theoretical_from_density:
+        return _set_theoretical_mud_from_density(args)
+    elif args.theoretical_from_packing:
+        return _set_theoretical_mud_from_packing(args)
     return args
 
 

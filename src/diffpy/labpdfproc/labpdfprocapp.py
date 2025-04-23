@@ -152,7 +152,11 @@ def _define_arguments():
 def _add_mud_selection_group(p, is_gui=False):
     """Current Options:
     1. Manually enter muD (`--mud`).
-    2. Estimate muD from a z-scan file (`-z` or `--z-scan-file`).
+    2. Estimate from a z-scan file (`-z` or `--z-scan-file`).
+    3. Estimate theoretically based on sample mass density
+    (`-td` or `--theoretical-from-density`).
+    4. Estimate theoretically based on packing fraction
+    (`-tp` or `--theoretical-from-packing`).
     """
     g = p.add_argument_group("Options for setting mu*D value (Required)")
     g = g.add_mutually_exclusive_group(required=True)
@@ -165,9 +169,38 @@ def _add_mud_selection_group(p, is_gui=False):
     g.add_argument(
         "-z",
         "--z-scan-file",
-        help="Provide the path to the z-scan file to be loaded "
-        "to determine the mu*D value.",
+        help=(
+            "Estimate mu*D experimentally from a z-scan file. "
+            "Specify the path to the file "
+            "used to compute the mu*D value."
+        ),
         **({"widget": "FileChooser"} if is_gui else {}),
+    )
+    g.add_argument(
+        "-td",
+        "--theoretical-from-density",
+        help=(
+            "Estimate mu*D theoretically using sample mass density. "
+            "Specify the sample composition (chemical formula), "
+            "incident x-ray energy in keV, "
+            "and sample mass density in g/cm^3 "
+            "in that exact order "
+            "and separated by commas with no whitespaces "
+            "(e.g., 'ZrO2,2,1.2')."
+        ),
+    )
+    g.add_argument(
+        "-tp",
+        "--theoretical-from-packing",
+        help=(
+            "Estimate mu*D theoretically using packing fraction. "
+            "Specify the sample composition (chemical formula), "
+            "incident x-ray energy in keV, "
+            "and packing fraction (0 to 1) "
+            "in that exact order "
+            "and separated by commas with no whitespaces "
+            "(e.g., 'ZrO2,2,0.5')."
+        ),
     )
     return p
 
@@ -186,7 +219,7 @@ def get_args(override_cli_inputs=None):
     return args
 
 
-@Gooey(required_cols=1, optional_cols=1, program_name="Labpdfproc GUI")
+@Gooey(required_cols=1, optional_cols=2, program_name="labpdfproc GUI")
 def gooey_parser():
     p = GooeyParser()
     p = _add_mud_selection_group(p, is_gui=True)
