@@ -457,13 +457,13 @@ def preprocessing_args(args):
         The updated argparse Namespace with arguments preprocessed.
     """
     args = set_mud(args)
-    args = load_package_info(args)
-    args = load_user_info(args)
     args = set_input_lists(args)
     args = set_output_directory(args)
     args = set_wavelength(args)
     args = set_xtype(args)
     args = load_user_metadata(args)
+    args = load_user_info(args)
+    args = load_package_info(args)
     return args
 
 
