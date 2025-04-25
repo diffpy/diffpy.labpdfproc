@@ -319,13 +319,13 @@ def _set_mud_from_zscan(args):
 
 def _parse_theoretical_input(input_str):
     """Helper function to parse and validate the input string."""
-    parts = input_str.split(",")
+    parts = [part.strip() for part in input_str.split(",")]
     if len(parts) != 3:
         raise ValueError(
             f"Invalid mu*D input '{input_str}'. "
             "Expected format is 'sample composition, energy, "
             "sample mass density or packing fraction' "
-            "with no whitespaces (e.g., 'ZrO2,2,0.8').",
+            "(e.g., 'ZrO2,20,0.8').",
         )
     sample_composition = parts[0]
     energy = float(parts[1])

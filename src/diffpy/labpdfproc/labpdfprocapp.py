@@ -21,12 +21,13 @@ def _define_arguments():
                 "The filename(s) or folder(s) of the datafile(s) to load. "
                 "Required.\n"
                 "Supply a space-separated list of files or directories. "
+                "If a filename contains whitespace, enclose it in quotes. "
                 "Long lists can be supplied, one per line, "
                 "in a file with name file_list.txt. "
                 "If one or more directory is provided, all valid "
                 "data-files in that directory will be processed. "
                 "Examples of valid inputs are 'file.xy', 'data/file.xy', "
-                "'file.xy, data/file.xy', "
+                "'file.xy data/file.xy', "
                 "'.' (load everything in the current directory), "
                 "'data' (load everything in the folder ./data), "
                 "'data/file_list.txt' (load the list of files "
@@ -177,29 +178,27 @@ def _add_mud_selection_group(p, is_gui=False):
         **({"widget": "FileChooser"} if is_gui else {}),
     )
     g.add_argument(
-        "-td",
+        "-d",
         "--theoretical-from-density",
         help=(
             "Estimate mu*D theoretically using sample mass density. "
-            "Specify the sample composition (chemical formula), "
-            "incident x-ray energy in keV, "
-            "and sample mass density in g/cm^3 "
-            "in that exact order "
-            "and separated by commas with no whitespaces "
-            "(e.g., 'ZrO2,2,1.2')."
+            "Specify the chemical formula, incident x-ray energy (in keV), "
+            "and sample mass density (in g/cm^3), in that exact order, "
+            "separated by commas (e.g., ZrO2,20,1.5). "
+            "If you add whitespaces, "
+            "enclose it in quotes (e.g., 'ZrO2, 20, 1.5'). "
         ),
     )
     g.add_argument(
-        "-tp",
+        "-p",
         "--theoretical-from-packing",
         help=(
             "Estimate mu*D theoretically using packing fraction. "
-            "Specify the sample composition (chemical formula), "
-            "incident x-ray energy in keV, "
-            "and packing fraction (0 to 1) "
-            "in that exact order "
-            "and separated by commas with no whitespaces "
-            "(e.g., 'ZrO2,2,0.5')."
+            "Specify the chemical formula, incident x-ray energy (in keV), "
+            "and packing fraction (0 to 1), in that exact order, "
+            "separated by commas (e.g., ZrO2,20,0.5). "
+            "If you add whitespaces, "
+            "enclose it in quotes (e.g., 'ZrO2, 20, 0.5'). "
         ),
     )
     return p
