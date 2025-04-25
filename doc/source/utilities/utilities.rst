@@ -10,5 +10,6 @@ Check the :ref:`examples<Examples>` provided for how to use these.
 .. contents::
    :depth: 2
 
+.. include:: labpdfprocapp_utility.rst
 .. include:: functions_utility.rst
 .. include:: tools_utility.rst
