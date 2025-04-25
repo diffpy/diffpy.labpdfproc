@@ -155,9 +155,9 @@ def _add_mud_selection_group(p, is_gui=False):
     1. Manually enter muD (`--mud`).
     2. Estimate from a z-scan file (`-z` or `--z-scan-file`).
     3. Estimate theoretically based on sample mass density
-    (`-td` or `--theoretical-from-density`).
+    (`-d` or `--theoretical-from-density`).
     4. Estimate theoretically based on packing fraction
-    (`-tp` or `--theoretical-from-packing`).
+    (`-p` or `--theoretical-from-packing`).
     """
     g = p.add_argument_group("Options for setting mu*D value (Required)")
     g = g.add_mutually_exclusive_group(required=True)
