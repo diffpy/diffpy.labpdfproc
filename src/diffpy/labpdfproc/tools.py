@@ -325,7 +325,7 @@ def _parse_theoretical_input(input_str):
             f"Invalid mu*D input '{input_str}'. "
             "Expected format is 'sample composition, energy, "
             "sample mass density or packing fraction' "
-            "(e.g., 'ZrO2,20,0.8').",
+            "(e.g., 'ZrO2,17.45,0.5').",
         )
     sample_composition = parts[0]
     energy = float(parts[1])

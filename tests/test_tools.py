@@ -502,7 +502,7 @@ def test_set_mud(user_filesystem, inputs, expected_mud):
                 "Invalid mu*D input 'ZrO2,0.5'. "
                 "Expected format is 'sample composition, energy, "
                 "sample mass density or packing fraction' "
-                "(e.g., 'ZrO2,20,0.8').",
+                "(e.g., 'ZrO2,17.45,0.5').",
             ],
         ),
         # C2.2: (packing fraction option)
@@ -515,33 +515,33 @@ def test_set_mud(user_filesystem, inputs, expected_mud):
                 "Invalid mu*D input 'ZrO2,0.5'. "
                 "Expected format is 'sample composition, energy, "
                 "sample mass density or packing fraction' "
-                "(e.g., 'ZrO2,20,0.8').",
+                "(e.g., 'ZrO2,17.45,0.5').",
             ],
         ),
         # C3.1: (sample mass density option)
         # user provides more than 3 input values
         # expect ValueError with a message indicating the correct format
         (
-            ["--theoretical-from-density", "ZrO2,1.5,1.5,0.5"],
+            ["--theoretical-from-density", "ZrO2,17.45,1.5,0.5"],
             [
                 ValueError,
-                "Invalid mu*D input 'ZrO2,1.5,1.5,0.5'. "
+                "Invalid mu*D input 'ZrO2,17.45,1.5,0.5'. "
                 "Expected format is 'sample composition, energy, "
                 "sample mass density or packing fraction' "
-                "(e.g., 'ZrO2,20,0.8').",
+                "(e.g., 'ZrO2,17.45,0.5').",
             ],
         ),
         # C3.2: (packing fraction option)
         # user provides more than 3 input values
         # expect ValueError with a message indicating the correct format
         (
-            ["--theoretical-from-packing", "ZrO2,1.5,1.5,0.5"],
+            ["--theoretical-from-packing", "ZrO2,17.45,1.5,0.5"],
             [
                 ValueError,
-                "Invalid mu*D input 'ZrO2,1.5,1.5,0.5'. "
+                "Invalid mu*D input 'ZrO2,17.45,1.5,0.5'. "
                 "Expected format is 'sample composition, energy, "
                 "sample mass density or packing fraction' "
-                "(e.g., 'ZrO2,20,0.8').",
+                "(e.g., 'ZrO2,17.45,0.5').",
             ],
         ),
     ],

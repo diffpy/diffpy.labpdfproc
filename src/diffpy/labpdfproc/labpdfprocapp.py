@@ -12,6 +12,13 @@ from diffpy.labpdfproc.tools import (
 from diffpy.utils.diffraction_objects import XQUANTITIES, DiffractionObject
 from diffpy.utils.parsers.loaddata import loadData
 
+theoretical_mud_hmsg_suffix = (
+    "in that exact order, "
+    "separated by commas (e.g., ZrO2,17.45,0.5). "
+    "If you add whitespaces, "
+    "enclose it in quotes (e.g., 'ZrO2, 17.45, 0.5'). "
+)
+
 
 def _define_arguments():
     args = [
@@ -21,7 +28,8 @@ def _define_arguments():
                 "The filename(s) or folder(s) of the datafile(s) to load. "
                 "Required.\n"
                 "Supply a space-separated list of files or directories. "
-                "If a filename contains whitespace, enclose it in quotes. "
+                "Avoid spaces in filenames when possible; "
+                "if present, enclose the name in quotes. "
                 "Long lists can be supplied, one per line, "
                 "in a file with name file_list.txt. "
                 "If one or more directory is provided, all valid "
@@ -183,10 +191,8 @@ def _add_mud_selection_group(p, is_gui=False):
         help=(
             "Estimate mu*D theoretically using sample mass density. "
             "Specify the chemical formula, incident x-ray energy (in keV), "
-            "and sample mass density (in g/cm^3), in that exact order, "
-            "separated by commas (e.g., ZrO2,20,1.5). "
-            "If you add whitespaces, "
-            "enclose it in quotes (e.g., 'ZrO2, 20, 1.5'). "
+            "and sample mass density (in g/cm^3), "
+            + theoretical_mud_hmsg_suffix
         ),
     )
     g.add_argument(
@@ -195,10 +201,7 @@ def _add_mud_selection_group(p, is_gui=False):
         help=(
             "Estimate mu*D theoretically using packing fraction. "
             "Specify the chemical formula, incident x-ray energy (in keV), "
-            "and packing fraction (0 to 1), in that exact order, "
-            "separated by commas (e.g., ZrO2,20,0.5). "
-            "If you add whitespaces, "
-            "enclose it in quotes (e.g., 'ZrO2, 20, 0.5'). "
+            "and packing fraction (0 to 1), " + theoretical_mud_hmsg_suffix
         ),
     )
     return p
