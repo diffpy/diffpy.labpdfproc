@@ -272,7 +272,7 @@ def set_wavelength(args):
 
 
 def set_xtype(args):
-    f"""Set the xtype based on the given input arguments,
+    """Set the xtype based on the given input arguments,
     raise an error if xtype is not one of {*XQUANTITIES, }.
 
     Parameters

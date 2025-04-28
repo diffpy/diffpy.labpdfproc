@@ -7,8 +7,8 @@ The ``diffpy.labpdfproc.tools`` module provides functions to
 manage user inputs, output directories, and diffraction information.
 These functions work mostly with an ``argparse.Namespace`` object and help prepare data for diffraction processing.
 
-- ``set_mud()``: This function determines the mu*D value used to compute absorption correction.
-  Users can either provide mu*D directly, upload a z-scan file,
+- ``set_mud()``: This function determines the muD value used to compute absorption correction.
+  Users can either provide the value directly, upload a z-scan file,
   or specify relevant chemical information to get a theoretical estimation.
 
 - ``set_input_lists()``: This function parses all specified input files.
@@ -42,7 +42,7 @@ These functions work mostly with an ``argparse.Namespace`` object and help prepa
 - ``load_package_info()``: This functions stores the package name and version for record-keeping.
 
 - ``preprocessing_args()``: This is a convenience function that runs all standard setup steps listed above.
-  It ensures the input/output paths, wavelength, mu*D value, metadata, and user and package info are
+  It ensures the input/output paths, wavelength, muD value, metadata, and user and package info are
   fully initialized before applying the correction.
 
 - ``load_metadata()``: This function transfers all collected information from the ``argparse.Namespace`` object
