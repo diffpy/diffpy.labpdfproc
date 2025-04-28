@@ -12,6 +12,13 @@ from diffpy.labpdfproc.tools import (
 from diffpy.utils.diffraction_objects import XQUANTITIES, DiffractionObject
 from diffpy.utils.parsers.loaddata import loadData
 
+theoretical_mud_hmsg_suffix = (
+    "in that exact order, "
+    "separated by commas (e.g., ZrO2,17.45,0.5). "
+    "If you add whitespaces, "
+    "enclose it in quotes (e.g., 'ZrO2, 17.45, 0.5'). "
+)
+
 
 def _define_arguments():
     args = [
@@ -21,12 +28,14 @@ def _define_arguments():
                 "The filename(s) or folder(s) of the datafile(s) to load. "
                 "Required.\n"
                 "Supply a space-separated list of files or directories. "
+                "Avoid spaces in filenames when possible; "
+                "if present, enclose the name in quotes. "
                 "Long lists can be supplied, one per line, "
                 "in a file with name file_list.txt. "
                 "If one or more directory is provided, all valid "
                 "data-files in that directory will be processed. "
                 "Examples of valid inputs are 'file.xy', 'data/file.xy', "
-                "'file.xy, data/file.xy', "
+                "'file.xy data/file.xy', "
                 "'.' (load everything in the current directory), "
                 "'data' (load everything in the folder ./data), "
                 "'data/file_list.txt' (load the list of files "
@@ -152,7 +161,11 @@ def _define_arguments():
 def _add_mud_selection_group(p, is_gui=False):
     """Current Options:
     1. Manually enter muD (`--mud`).
-    2. Estimate muD from a z-scan file (`-z` or `--z-scan-file`).
+    2. Estimate from a z-scan file (`-z` or `--z-scan-file`).
+    3. Estimate theoretically based on sample mass density
+    (`-d` or `--theoretical-from-density`).
+    4. Estimate theoretically based on packing fraction
+    (`-p` or `--theoretical-from-packing`).
     """
     g = p.add_argument_group("Options for setting mu*D value (Required)")
     g = g.add_mutually_exclusive_group(required=True)
@@ -165,9 +178,31 @@ def _add_mud_selection_group(p, is_gui=False):
     g.add_argument(
         "-z",
         "--z-scan-file",
-        help="Provide the path to the z-scan file to be loaded "
-        "to determine the mu*D value.",
+        help=(
+            "Estimate mu*D experimentally from a z-scan file. "
+            "Specify the path to the file "
+            "used to compute the mu*D value."
+        ),
         **({"widget": "FileChooser"} if is_gui else {}),
+    )
+    g.add_argument(
+        "-d",
+        "--theoretical-from-density",
+        help=(
+            "Estimate mu*D theoretically using sample mass density. "
+            "Specify the chemical formula, incident x-ray energy (in keV), "
+            "and sample mass density (in g/cm^3), "
+            + theoretical_mud_hmsg_suffix
+        ),
+    )
+    g.add_argument(
+        "-p",
+        "--theoretical-from-packing",
+        help=(
+            "Estimate mu*D theoretically using packing fraction. "
+            "Specify the chemical formula, incident x-ray energy (in keV), "
+            "and packing fraction (0 to 1), " + theoretical_mud_hmsg_suffix
+        ),
     )
     return p
 
@@ -186,7 +221,7 @@ def get_args(override_cli_inputs=None):
     return args
 
 
-@Gooey(required_cols=1, optional_cols=1, program_name="Labpdfproc GUI")
+@Gooey(required_cols=1, optional_cols=2, program_name="labpdfproc GUI")
 def gooey_parser():
     p = GooeyParser()
     p = _add_mud_selection_group(p, is_gui=True)

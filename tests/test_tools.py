@@ -460,6 +460,15 @@ def test_set_xtype_bad():
         (["--mud", "2.5"], 2.5),
         # C2: user provides a z-scan file, expect to estimate through the file
         (["--z-scan-file", "test_dir/testfile.xy"], 3),
+        # C3: user specifies sample composition, energy,
+        # and sample mass density,
+        # both with and without whitespaces, expect to estimate theoretically
+        (["--theoretical-from-density", "ZrO2,17.45,1.2"], 1.49),
+        (["--theoretical-from-density", "ZrO2, 17.45, 1.2"], 1.49),
+        # C4: user specifies sample composition, energy, and packing fraction
+        # both with and without whitespaces, expect to estimate theoretically
+        # (["--theoretical-from-packing", "ZrO2,17.45,0.3"], 1.49),
+        # (["--theoretical-from-packing", "ZrO2, 17.45, 0.3"], 1.49),
     ],
 )
 def test_set_mud(user_filesystem, inputs, expected_mud):
@@ -483,6 +492,58 @@ def test_set_mud(user_filesystem, inputs, expected_mud):
                 "Cannot find invalid file. Please specify a valid file path.",
             ],
         ),
+        # C2.1: (sample mass density option)
+        # user provides fewer than three input values
+        # expect ValueError with a message indicating the correct format
+        (
+            ["--theoretical-from-density", "ZrO2,0.5"],
+            [
+                ValueError,
+                "Invalid mu*D input 'ZrO2,0.5'. "
+                "Expected format is 'sample composition, energy, "
+                "sample mass density or packing fraction' "
+                "(e.g., 'ZrO2,17.45,0.5').",
+            ],
+        ),
+        # C2.2: (packing fraction option)
+        # user provides fewer than three input values
+        # expect ValueError with a message indicating the correct format
+        (
+            ["--theoretical-from-packing", "ZrO2,0.5"],
+            [
+                ValueError,
+                "Invalid mu*D input 'ZrO2,0.5'. "
+                "Expected format is 'sample composition, energy, "
+                "sample mass density or packing fraction' "
+                "(e.g., 'ZrO2,17.45,0.5').",
+            ],
+        ),
+        # C3.1: (sample mass density option)
+        # user provides more than 3 input values
+        # expect ValueError with a message indicating the correct format
+        (
+            ["--theoretical-from-density", "ZrO2,17.45,1.5,0.5"],
+            [
+                ValueError,
+                "Invalid mu*D input 'ZrO2,17.45,1.5,0.5'. "
+                "Expected format is 'sample composition, energy, "
+                "sample mass density or packing fraction' "
+                "(e.g., 'ZrO2,17.45,0.5').",
+            ],
+        ),
+        # C3.2: (packing fraction option)
+        # user provides more than 3 input values
+        # expect ValueError with a message indicating the correct format
+        (
+            ["--theoretical-from-packing", "ZrO2,17.45,1.5,0.5"],
+            [
+                ValueError,
+                "Invalid mu*D input 'ZrO2,17.45,1.5,0.5'. "
+                "Expected format is 'sample composition, energy, "
+                "sample mass density or packing fraction' "
+                "(e.g., 'ZrO2,17.45,0.5').",
+            ],
+        ),
     ],
 )
 def test_set_mud_bad(user_filesystem, inputs, expected):
@@ -491,7 +552,7 @@ def test_set_mud_bad(user_filesystem, inputs, expected):
     os.chdir(cwd)
     cli_inputs = ["data.xy"] + inputs
     actual_args = get_args(cli_inputs)
-    with pytest.raises(expected_error, match=expected_error_msg):
+    with pytest.raises(expected_error, match=re.escape(expected_error_msg)):
         actual_args = set_mud(actual_args)
 
 
