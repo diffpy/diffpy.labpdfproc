@@ -48,14 +48,14 @@ which is the most common geometry for lab PDF measurements.
 
 The theory is described in the following paper:
 
-An ad hoc Absorption Correction for Reliable
+An Absorption Correction for Reliable
 Pair-Distribution Functions from Low Energy x-ray Sources,
 Yucong Chen, Till Schertenleib, Andrew Yang, Pascal Schouwink,
 Wendy L. Queen and Simon J. L. Billinge, in preparation.
 
 The related experimental data acquisition protocols are described in the following paper:
 
-Protocols for Obtaining Reliable PDFs from Laboratory
+Testing Protocols for Obtaining Reliable PDFs from Laboratory
 x-ray Sources Using PDFgetX3,
 Till Schertenleib, Daniel Schmuckler, Yucong Chen, Geng Bang Jin,
 Wendy L. Queen and Simon J. L. Billinge, in preparation.

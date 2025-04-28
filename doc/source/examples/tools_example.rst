@@ -19,27 +19,13 @@ You can do this in one of the following four ways:
     args = Namespace(mud=2)
     # Option 2: From a z-scan file
     args = Namespace(z_scan_file="zscan.xy")
-    # Option 3: Using mass density
-    args = Namespace(sample_composition="ZrO2", energy=1.745, density=1.2)
+    # Option 3: Using sample mass density
+    args = Namespace(theoretical_from_density="ZrO2,17.45,1.2")
     # Option 4: Using packing fraction
-    args = Namespace(sample_composition="ZrO2", energy=1.745, packing_fraction=0.3)
+    args = Namespace(theoretical_from_packing="ZrO2,17.45,0.3")
     # Set and view the computed mu*D value
     args = set_mud(args)
     print(args.mud)
-
-Note that only one method should be used at a time. The following are invalid examples:
-
-.. code-block:: python
-
-    # Invalid example 1: manual mu*D and z-scan file both provided
-    args = Namespace(mud=2, z_scan_file="zscan.xy")
-    # Invalid example 2: missing required energy
-    args = Namespace(sample_composition="ZrO2", density=1.2)
-    # Invalid example 3: both mass density and packing fraction specified
-    args = Namespace(sample_composition="ZrO2", energy=1.745, density=1.2, packing_fraction=0.3)
-
-If the packing fraction option is not supported at the moment, you can approximate
-``mass density = packing fraction * material density``, where the material density can be looked up manually.
 
 
 2. Next, we load the input files for correction using ``set_input_lists(args)``:

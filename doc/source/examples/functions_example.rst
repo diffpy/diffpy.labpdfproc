@@ -9,14 +9,14 @@ This example will demonstrate how to use ``diffpy.labpdfproc.functions`` module 
 to apply absorption correction to your 1D diffraction data.
 
 1. First, you will need to prepare and load your input diffraction data.
-For example, if you want to load data from ``zro2_mo.xy`` in the ``example_data`` directory, you can write:
+For example, if you want to load data from ``zro2_mo.xy`` in the ``example-data`` directory, you can write:
 
 .. code-block:: python
 
     from diffpy.utils.parsers.loaddata import loadData
     from diffpy.utils.diffraction_objects import DiffractionObject
 
-    filepath = "../example_data/zro2_mo.xy"
+    filepath = "../example-data/zro2_mo.xy"
     xarray, yarray = loadData(filepath, unpack=True)
     input_pattern = DiffractionObject(
         xarray=xarray,
@@ -28,7 +28,8 @@ For example, if you want to load data from ``zro2_mo.xy`` in the ``example_data`
         metadata={"beamline": "28ID-2"},
     )
 
-For the full tutorial, please refer to https://www.diffpy.org/diffpy.utils/examples/diffraction_objects_example.html.
+For the full tutorial on working with diffraction objects,
+please refer to https://www.diffpy.org/diffpy.utils/examples/diffraction_objects_example.html.
 
 2. Assume you have created your ``input_pattern`` and specified mu*D value as ``muD`` (e.g., ``muD=2``).
 You can now compute the absorption correction (cve) for the given mu*D using the ``compute_cve`` function,
@@ -55,7 +56,7 @@ by plotting the original and corrected diffraction patterns.
     import matplotlib.pyplot as plt
     plt.plot(input_pattern.xarray, input_pattern.yarray, label="Original Intensity")
     plt.plot(corrected_pattern.xarray, corrected_pattern.yarray, label="Corrected Intensity")
-    plt.xlabel("tth (degrees)")
+    plt.xlabel("tth (degree)")
     plt.ylabel("Intensity")
     plt.legend()
     plt.title("Original vs. Corrected Intensity")
@@ -70,5 +71,5 @@ for better accuracy, but keep in mind that this will increase computation time.
 For optimal results, we recommend setting it to an even number.
 
 Currently, the interpolation coefficients were computed using ``N_POINTS_ON_DIAMETER=2000``,
-which ensures good accuracy within the mu*D range of 0.5 to 6.
-This value also provides flexibility if we decide to extend the interpolation range in the future.
+which ensures good accuracy within the muD range of 0.5 to 7.
+This resolution also provides flexibility for extending the interpolation range in the future.
