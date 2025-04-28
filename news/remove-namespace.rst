@@ -12,7 +12,7 @@
 
 **Removed:**
 
-* <news item>
+* Remove the import of extend_path from pkgutil in diffpy/__init__.py since we are not strictly following the Python namespace package convention.
 
 **Fixed:**
 
