@@ -1,6 +1,6 @@
 **Added:**
 
-* Functionalities to estimate sample mass density or capillary diameter from muD and related chemical info.
+* Functionalities to estimate sample mass density or capillary diameter from target muD and related chemical info.
 
 **Changed:**
 

@@ -5,8 +5,8 @@ from diffpy.utils.tools import compute_mu_using_xraydb
 
 
 def estimate_mass_density(mud, diameter, sample_composition, energy):
-    """Estimate sample mass density (g/cm^3) from mu*D
-    using capillary diameter, sample composition, and energy.
+    """Estimate sample mass density (g/cm^3) from
+    muD, capillary diameter, sample composition, and energy.
 
     Parameters
     ----------
@@ -46,7 +46,8 @@ def estimate_diameter(
     sample_mass_density=None,
     packing_fraction=None,
 ):
-    """Estimate capillary diameter (mm) from mu*D and mu.
+    """Estimate capillary diameter (mm) from
+    muD, sample composition, energy, and mass density/packing fraction.
 
     Parameters
     ----------

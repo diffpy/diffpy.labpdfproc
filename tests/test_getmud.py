@@ -11,9 +11,9 @@ from diffpy.labpdfproc.getmud import estimate_diameter, estimate_mass_density
                 "mud": 2.0,
                 "diameter": 1.5,
                 "sample_composition": "ZrO2",
-                "energy": 20,
+                "energy": 17.45,  # Mo K_alpha source
             },
-            0.25,
+            1.0751,
         ),
     ],
 )
@@ -36,16 +36,16 @@ def test_estimate_mass_density(inputs, expected_mass_density):
             {
                 "mud": 2.0,
                 "sample_composition": "ZrO2",
-                "energy": 20,
-                "sample_mass_density": 0.25,
+                "energy": 17.45,
+                "sample_mass_density": 1.20,
             },
-            1.5,
+            1.3439,
         ),
         # (   # C2: user specifies a packing fraction
         #     {
         #         "mud": 2.0,
         #         "sample_composition": "ZrO2",
-        #         "energy": 20,
+        #         "energy": 17.45,
         #         "packing_fraction": 0.3
         #     },
         #     1.5
