@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from gooey import Gooey, GooeyParser
 
 from diffpy.labpdfproc.functions import CVE_METHODS, apply_corr, compute_cve
+from diffpy.labpdfproc.getmud import compute_diameter
 from diffpy.labpdfproc.tools import (
     known_sources,
     load_metadata,
@@ -207,7 +208,43 @@ def _add_mud_selection_group(p, is_gui=False):
     return p
 
 
+def _add_subparsers(p):
+    """Add subcommands for getmud module."""
+    subparsers = p.add_subparsers(dest="subcommand")
+    get_d_parser = subparsers.add_parser(
+        "get-diameter", help="Compute capillary diameter."
+    )
+    get_d_parser.add_argument(
+        "mud", type=float, help="The target muD of the sample."
+    )
+    get_d_parser.add_argument(
+        "composition",
+        help="The chemical formula of the material (e.g., ZrO2).",
+    )
+    get_d_parser.add_argument(
+        "energy", type=float, help="The X-ray energy in keV."
+    )
+    get_d_parser.add_argument(
+        "mass_density",
+        type=float,
+        help="The sample mass density in g/cm^3.",
+        default=None,
+    )
+    get_d_parser.set_defaults(func=compute_diameter)
+    return p
+
+
 def get_args(override_cli_inputs=None):
+    """Parse CLI arguments for main processing or subcommand mode."""
+    # User enters one of the subcommands
+    cli_args = override_cli_inputs or sys.argv[1:]
+    p = ArgumentParser()
+    p = _add_subparsers(p)
+    subcommands = ["get-diameter"]
+    if cli_args and cli_args[0] in subcommands:
+        return p.parse_args(override_cli_inputs)
+
+    # User does not enter subcommands
     p = ArgumentParser()
     p = _add_mud_selection_group(p, is_gui=False)
     for arg in _define_arguments():
@@ -238,6 +275,16 @@ def main():
         if len(sys.argv) == 1 or "--gui" in sys.argv
         else get_args()
     )
+    if getattr(args, "subcommand", None) == "get-diameter":
+        diameter = args.func(
+            mud=args.mud,
+            sample_composition=args.composition,
+            xray_energy=args.energy,
+            sample_mass_density=args.mass_density,
+        )
+        print(f"Capillary Diameter: {diameter:.2f} mm")
+        return
+
     args = preprocessing_args(args)
 
     for filepath in args.input_paths:
