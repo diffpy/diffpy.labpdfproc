@@ -1,12 +1,14 @@
 import pytest
 
-from diffpy.labpdfproc.getmud import compute_diameter
+from diffpy.labpdfproc.getmud import get_diameter
 
 
 @pytest.mark.parametrize(
     "inputs, expected_diameter",
     [
-        (
+        (  # C1: User specifies target mud,
+            # sample composition, energy, and mass density
+            # expect to return diameter
             {
                 "mud": 2.0,
                 "sample_composition": "ZrO2",
@@ -18,7 +20,7 @@ from diffpy.labpdfproc.getmud import compute_diameter
     ],
 )
 def test_compute_diameter(inputs, expected_diameter):
-    actual_diameter = compute_diameter(**inputs)
+    actual_diameter = get_diameter(**inputs)
     assert actual_diameter == pytest.approx(
         expected_diameter, rel=0.01, abs=0.1
     )

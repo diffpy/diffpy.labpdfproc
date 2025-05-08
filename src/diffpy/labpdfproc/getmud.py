@@ -1,7 +1,7 @@
 from diffpy.utils.tools import compute_mu_using_xraydb
 
 
-def compute_diameter(
+def get_diameter(
     mud,
     sample_composition,
     xray_energy,
@@ -30,10 +30,9 @@ def compute_diameter(
     diameter : float
         Computed capillary diameter in mm.
     """
-    mu = compute_mu_using_xraydb(
+    return mud / compute_mu_using_xraydb(
         sample_composition,
         xray_energy,
         sample_mass_density,
         packing_fraction,
     )
-    return mud / mu
