@@ -131,7 +131,9 @@ You may consult our `online documentation <https://diffpy.github.io/diffpy.labpd
 Support and Contribute
 ----------------------
 
-If you see a bug or want to request a feature, please `report it as an issue <https://github.com/diffpy/diffpy.labpdfproc/issues>`_ and/or `submit a fix as a PR <https://github.com/diffpy/diffpy.labpdfproc/pulls>`_.
+`Diffpy user group <https://groups.google.com/g/diffpy-users>`_ is the discussion forum for general questions and discussions about the use of diffpy.labpdfproc. Please join the diffpy.labpdfproc users community by joining the Google group. The diffpy.labpdfproc project welcomes your expertise and enthusiasm!
+
+If you see a bug or want to request a feature, please `report it as an issue <https://github.com/diffpy/diffpy.labpdfproc/issues>`_ and/or `submit a fix as a PR <https://github.com/diffpy/diffpy.labpdfproc/pulls>`_. You can also post it to the `Diffpy user group <https://groups.google.com/g/diffpy-users>`_.
 
 Feel free to fork the project and contribute. To install diffpy.labpdfproc
 in a development mode, with its sources being directly used by Python
@@ -159,4 +161,4 @@ Before contributing, please read our `Code of Conduct <https://github.com/diffpy
 Contact
 -------
 
-For more information on diffpy.labpdfproc please visit the project `web-page <https://diffpy.github.io/>`_ or email Simon Billinge at sb2896@columbia.edu.
+For more information on diffpy.labpdfproc please visit the project `web-page <https://diffpy.github.io/>`_ or email Prof. Simon Billinge at sb2896@columbia.edu.
