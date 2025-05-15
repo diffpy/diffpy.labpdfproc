@@ -48,17 +48,15 @@ which is the most common geometry for lab PDF measurements.
 
 The theory is described in the following paper:
 
-An Absorption Correction for Reliable
-Pair-Distribution Functions from Low Energy x-ray Sources,
-Yucong Chen, Till Schertenleib, Andrew Yang, Pascal Schouwink,
-Wendy L. Queen and Simon J. L. Billinge, in preparation.
+Chen, Y., Schertenleib, T., Yang, A., Schouwink, P., Queen, W.L. and Billinge, S.J.L.,
+An Absorption Correction for Reliable Pair-Distribution Functions from Low Energy x-ray Sources.
+Arxiv.org. https://doi.org/10.48550/arXiv.2504.12499
 
 The related experimental data acquisition protocols are described in the following paper:
 
-Testing Protocols for Obtaining Reliable PDFs from Laboratory
-x-ray Sources Using PDFgetX3,
-Till Schertenleib, Daniel Schmuckler, Yucong Chen, Geng Bang Jin,
-Wendy L. Queen and Simon J. L. Billinge, in preparation.
+Schertenleib, T., Schmuckler, D., Chen, Y., Jin, G.B., Queen, W.L. and Billinge, S.J.L. (2025),
+Testing Protocols for Obtaining Reliable Pair Distribution Functions from Laboratory X-Ray Sources Using PDFgetX3.
+Chem. Methods 2500001. https://doi.org/10.1002/cmtd.202500001
 
 For more information about the diffpy.labpdfproc library, please consult our `online documentation <https://diffpy.github.io/diffpy.labpdfproc>`_.
 
