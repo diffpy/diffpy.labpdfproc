@@ -1,6 +1,6 @@
 **Added:**
 
-* <news item>
+* no news added - corrected mu vs muD usage, removed packing fraction option for estimating muD, updated docs
 
 **Changed:**
 

@@ -19,10 +19,8 @@ You can do this in one of the following four ways:
     args = Namespace(mud=2)
     # Option 2: From a z-scan file
     args = Namespace(z_scan_file="zscan.xy")
-    # Option 3: Using sample mass density
-    args = Namespace(theoretical_from_density="ZrO2,17.45,1.2")
-    # Option 4: Using packing fraction
-    args = Namespace(theoretical_from_packing="ZrO2,17.45,0.3")
+    # Option 3: Theoretical estimation
+    args = Namespace(theoretical_estimation="ZrO2,17.45,1.2,1.0")
     # Set and view the computed mu*D value
     args = set_mud(args)
     print(args.mud)

@@ -59,20 +59,16 @@ We will now continue using ``zro2_mo.xy`` as the example input throughout the re
     labpdfproc zro2_mo.xy --mud 2.5
     # Option 2: From a z-scan file
     labpdfproc zro2_mo.xy -z zscan.xy
-    # Option 3: Using sample mass density
-    labpdfproc zro2_mo.xy -d ZrO2,17.45,1.2
-    # Option 4: Using packing fraction
-    labpdfproc zro2_mo.xy -p ZrO2,17.45,0.2
+    # Option 3: Theoretical estimation
+    labpdfproc zro2_mo.xy -t ZrO2,17.45,1.2,1.0
 
 Note that you can only use one method at a time. The following examples are not allowed:
 
 .. code-block:: python
 
     labpdfproc zro2_mo.xy --mud 2.5 -z zscan.xy
-    labpdfproc zro2_mo.xy --mud 2.5 -d ZrO2,17.45,1.2
+    labpdfproc zro2_mo.xy --mud 2.5 -t ZrO2,17.45,1.2,1.0
 
-If the packing fraction option is not supported at the moment, you can approximate the sample mass density as:
-``mass density = packing fraction * material density``, where the material density can be looked up manually.
 
 
 5. You can specify the wavelength in two ways:
