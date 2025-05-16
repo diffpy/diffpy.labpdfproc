@@ -39,7 +39,6 @@ jobs:
           pip install gooey
           python -m pip install . --no-deps
 
-
       - name: Validate diffpy.labpdfproc
         run: |
           pytest --cov
