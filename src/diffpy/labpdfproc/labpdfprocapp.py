@@ -12,13 +12,6 @@ from diffpy.labpdfproc.tools import (
 from diffpy.utils.diffraction_objects import XQUANTITIES, DiffractionObject
 from diffpy.utils.parsers.loaddata import loadData
 
-theoretical_mud_hmsg_suffix = (
-    "in that exact order, "
-    "separated by commas (e.g., ZrO2,17.45,0.5). "
-    "If you add whitespaces, "
-    "enclose it in quotes (e.g., 'ZrO2, 17.45, 0.5'). "
-)
-
 
 def _define_arguments():
     args = [
@@ -163,45 +156,38 @@ def _add_mud_selection_group(p, is_gui=False):
     1. Manually enter muD (`--mud`).
     2. Estimate from a z-scan file (`-z` or `--z-scan-file`).
     3. Estimate theoretically based on sample mass density
-    (`-d` or `--theoretical-from-density`).
-    4. Estimate theoretically based on packing fraction
-    (`-p` or `--theoretical-from-packing`).
+    (`-t` or `--theoretical-estimation`).
     """
-    g = p.add_argument_group("Options for setting mu*D value (Required)")
+    g = p.add_argument_group("Options for setting muD value (Required)")
     g = g.add_mutually_exclusive_group(required=True)
     g.add_argument(
         "--mud",
         type=float,
-        help="Enter the mu*D value manually.",
+        help="Enter the muD value manually.",
         **({"widget": "DecimalField"} if is_gui else {}),
     )
     g.add_argument(
         "-z",
         "--z-scan-file",
         help=(
-            "Estimate mu*D experimentally from a z-scan file. "
+            "Estimate muD experimentally from a z-scan file. "
             "Specify the path to the file "
             "used to compute the mu*D value."
         ),
         **({"widget": "FileChooser"} if is_gui else {}),
     )
     g.add_argument(
-        "-d",
-        "--theoretical-from-density",
+        "-t",
+        "--theoretical-estimation",
         help=(
-            "Estimate mu*D theoretically using sample mass density. "
+            "Estimate muD theoretically. "
             "Specify the chemical formula, incident x-ray energy (in keV), "
-            "and sample mass density (in g/cm^3), "
-            + theoretical_mud_hmsg_suffix
-        ),
-    )
-    g.add_argument(
-        "-p",
-        "--theoretical-from-packing",
-        help=(
-            "Estimate mu*D theoretically using packing fraction. "
-            "Specify the chemical formula, incident x-ray energy (in keV), "
-            "and packing fraction (0 to 1), " + theoretical_mud_hmsg_suffix
+            "sample mass density (in g/cm^3), "
+            "and capillary diameter (in mm) "
+            "in that exact order, "
+            "separated by commas (e.g., ZrO2,17.45,0.5,1.0). "
+            "If you add whitespaces, "
+            "enclose it in quotes (e.g., 'ZrO2, 17.45, 0.5, 1.0'). "
         ),
     )
     return p
