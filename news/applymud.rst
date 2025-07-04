@@ -4,7 +4,7 @@
 
 **Changed:**
 
-* <news item>
+* GitHub workflows for renamed test file.
 
 **Deprecated:**
 
