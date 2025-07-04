@@ -115,7 +115,7 @@ def test_set_input_lists(inputs, expected, user_filesystem):
         base_dir.resolve() / expected_path for expected_path in expected
     ]
 
-    cli_inputs = inputs + ["--mud", "2.5"]
+    cli_inputs = ["applymud"] + inputs + ["--mud", "2.5"]
     actual_args = get_args(cli_inputs)
     actual_args = set_input_lists(actual_args)
     assert sorted(actual_args.input_paths) == sorted(expected_paths)
@@ -161,7 +161,7 @@ def test_set_input_lists(inputs, expected, user_filesystem):
 def test_set_input_files_bad(inputs, expected_error_msg, user_filesystem):
     base_dir = Path(user_filesystem)
     os.chdir(base_dir)
-    cli_inputs = inputs + ["--mud", "2.5"]
+    cli_inputs = ["applymud"] + inputs + ["--mud", "2.5"]
     actual_args = get_args(cli_inputs)
     with pytest.raises(FileNotFoundError, match=re.escape(expected_error_msg)):
         actual_args = set_input_lists(actual_args)
@@ -179,7 +179,7 @@ def test_set_input_files_bad(inputs, expected_error_msg, user_filesystem):
 def test_set_output_directory(inputs, expected, user_filesystem):
     os.chdir(user_filesystem)
     expected_output_directory = Path(user_filesystem) / expected[0]
-    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
+    cli_inputs = ["applymud", "data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_output_directory(actual_args)
     assert actual_args.output_directory == expected_output_directory
@@ -190,6 +190,7 @@ def test_set_output_directory(inputs, expected, user_filesystem):
 def test_set_output_directory_bad(user_filesystem):
     os.chdir(user_filesystem)
     cli_inputs = [
+        "applymud",
         "data.xy",
         "--mud",
         "2.5",
@@ -235,7 +236,7 @@ def test_load_wavelength_from_config_file_with_home_conf_file(
     mocker.patch("pathlib.Path.home", lambda _: home_dir)
     os.chdir(cwd)
 
-    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
+    cli_inputs = ["applymud", "data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = load_wavelength_from_config_file(actual_args)
     assert actual_args.wavelength == expected["wavelength"]
@@ -278,7 +279,7 @@ def test_load_wavelength_from_config_file_with_local_conf_file(
     with open(cwd / "diffpyconfig.json", "w") as f:
         json.dump(local_config_data, f)
 
-    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
+    cli_inputs = ["applymud", "data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = load_wavelength_from_config_file(actual_args)
     assert actual_args.wavelength == expected["wavelength"]
@@ -321,7 +322,7 @@ def test_load_wavelength_from_config_file_without_conf_files(
     confile = home_dir / "diffpyconfig.json"
     os.remove(confile)
 
-    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
+    cli_inputs = ["applymud", "data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = load_wavelength_from_config_file(actual_args)
     assert actual_args.wavelength == expected["wavelength"]
@@ -380,7 +381,7 @@ def test_load_wavelength_from_config_file_without_conf_files(
     ],
 )
 def test_set_wavelength(inputs, expected):
-    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
+    cli_inputs = ["applymud", "data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_wavelength(actual_args)
     assert actual_args.wavelength == expected["wavelength"]
@@ -419,7 +420,7 @@ def test_set_wavelength(inputs, expected):
     ],
 )
 def test_set_wavelength_bad(inputs, expected_error_msg):
-    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
+    cli_inputs = ["applymud", "data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=re.escape(expected_error_msg)):
         actual_args = set_wavelength(actual_args)
@@ -435,14 +436,14 @@ def test_set_wavelength_bad(inputs, expected_error_msg):
     ],
 )
 def test_set_xtype(inputs, expected_xtype):
-    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
+    cli_inputs = ["applymud", "data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_xtype(actual_args)
     assert actual_args.xtype == expected_xtype
 
 
 def test_set_xtype_bad():
-    cli_inputs = ["data.xy", "--mud", "2.5", "--xtype", "invalid"]
+    cli_inputs = ["applymud", "data.xy", "--mud", "2.5", "--xtype", "invalid"]
     actual_args = get_args(cli_inputs)
     with pytest.raises(
         ValueError,
@@ -474,7 +475,7 @@ def test_set_xtype_bad():
 def test_set_mud(user_filesystem, inputs, expected_mud):
     cwd = Path(user_filesystem)
     os.chdir(cwd)
-    cli_inputs = ["data.xy"] + inputs
+    cli_inputs = ["applymud", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = set_mud(actual_args)
     assert actual_args.mud == pytest.approx(expected_mud, rel=1e-4, abs=0.1)
@@ -550,7 +551,7 @@ def test_set_mud_bad(user_filesystem, inputs, expected):
     expected_error, expected_error_msg = expected
     cwd = Path(user_filesystem)
     os.chdir(cwd)
-    cli_inputs = ["data.xy"] + inputs
+    cli_inputs = ["applymud", "data.xy"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(expected_error, match=re.escape(expected_error_msg)):
         actual_args = set_mud(actual_args)
@@ -577,12 +578,12 @@ def test_set_mud_bad(user_filesystem, inputs, expected):
     ],
 )
 def test_load_user_metadata(inputs, expected):
-    expected_args = get_args(["data.xy", "--mud", "2.5"])
+    expected_args = get_args(["applymud", "data.xy", "--mud", "2.5"])
     for expected_pair in expected:
         setattr(expected_args, expected_pair[0], expected_pair[1])
     delattr(expected_args, "user_metadata")
 
-    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
+    cli_inputs = ["applymud", "data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     actual_args = load_user_metadata(actual_args)
     assert actual_args == expected_args
@@ -618,7 +619,7 @@ def test_load_user_metadata(inputs, expected):
     ],
 )
 def test_load_user_metadata_bad(inputs, expected_error_msg):
-    cli_inputs = ["data.xy", "--mud", "2.5"] + inputs
+    cli_inputs = ["applymud", "data.xy", "--mud", "2.5"] + inputs
     actual_args = get_args(cli_inputs)
     with pytest.raises(ValueError, match=re.escape(expected_error_msg)):
         actual_args = load_user_metadata(actual_args)
@@ -681,6 +682,7 @@ def test_load_user_info(monkeypatch, inputs, expected, user_filesystem):
     os.chdir(cwd)
 
     cli_inputs = [
+        "applymud",
         "data.xy",
         "--mud",
         "2.5",
@@ -705,7 +707,7 @@ def test_load_package_info(mocker):
             "3.3.0" if package_name == "diffpy.utils" else "1.2.3"
         ),
     )
-    cli_inputs = ["data.xy", "--mud", "2.5"]
+    cli_inputs = ["applymud", "data.xy", "--mud", "2.5"]
     actual_args = get_args(cli_inputs)
     actual_args = load_package_info(actual_args)
     assert actual_args.package_info == {
@@ -731,6 +733,7 @@ def test_load_metadata(mocker, user_filesystem):
         ),
     )
     cli_inputs = [
+        "applymud",
         ".",
         "--mud",
         "2.5",
