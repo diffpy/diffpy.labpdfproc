@@ -73,6 +73,7 @@ def _define_arguments():
                 "If the specified directory doesn't exist it will be created."
             ),
             "default": None,
+            "widget": "DirChooser",
         },
         {
             "name": ["-x", "--xtype"],
@@ -158,7 +159,7 @@ def _define_arguments():
     return args
 
 
-def _add_mud_selection_group(p, is_gui=False):
+def _add_mud_selection_group(p, use_gui=False):
     """Current Options:
     1. Manually enter muD (`--mud`).
     2. Estimate from a z-scan file (`-z` or `--z-scan-file`).
@@ -173,7 +174,7 @@ def _add_mud_selection_group(p, is_gui=False):
         "--mud",
         type=float,
         help="Enter the mu*D value manually.",
-        **({"widget": "DecimalField"} if is_gui else {}),
+        **({"widget": "DecimalField"} if use_gui else {}),
     )
     g.add_argument(
         "-z",
@@ -183,7 +184,7 @@ def _add_mud_selection_group(p, is_gui=False):
             "Specify the path to the file "
             "used to compute the mu*D value."
         ),
-        **({"widget": "FileChooser"} if is_gui else {}),
+        **({"widget": "FileChooser"} if use_gui else {}),
     )
     g.add_argument(
         "-d",
@@ -207,39 +208,50 @@ def _add_mud_selection_group(p, is_gui=False):
     return p
 
 
-def get_args(override_cli_inputs=None):
-    p = ArgumentParser()
-    p = _add_mud_selection_group(p, is_gui=False)
+def _register_applymud_subparser(subp, use_gui=False):
+    applymudp = subp.add_parser(
+        "applymud", help="Apply absorption correction."
+    )
+    _add_mud_selection_group(applymudp, use_gui=use_gui)
     for arg in _define_arguments():
-        kwargs = {
-            key: value
-            for key, value in arg.items()
-            if key != "name" and key != "widget"
-        }
-        p.add_argument(*arg["name"], **kwargs)
-    args = p.parse_args(override_cli_inputs)
-    return args
+        names = arg["name"]
+        options = {k: v for k, v in arg.items() if k != "name"}
+        if not use_gui and "widget" in options:
+            options.pop("widget")
+        applymudp.add_argument(*names, **options)
 
 
-@Gooey(required_cols=1, optional_cols=2, program_name="labpdfproc GUI")
-def gooey_parser():
-    p = GooeyParser()
-    p = _add_mud_selection_group(p, is_gui=True)
-    for arg in _define_arguments():
-        kwargs = {key: value for key, value in arg.items() if key != "name"}
-        p.add_argument(*arg["name"], **kwargs)
+def create_parser(use_gui=False):
+    p = GooeyParser() if use_gui else ArgumentParser()
+    subp = p.add_subparsers(title="subcommand", dest="subcommand")
+    _register_applymud_subparser(subp, use_gui)
+    return p
+
+
+@Gooey(
+    required_cols=1,
+    optional_cols=1,
+    show_sidebar=True,
+    program_name="labpdfproc GUI",
+)
+def _get_args_gui():
+    p = create_parser(use_gui=True)
     args = p.parse_args()
     return args
 
 
-def main():
-    args = (
-        gooey_parser()
-        if len(sys.argv) == 1 or "--gui" in sys.argv
-        else get_args()
-    )
-    args = preprocessing_args(args)
+def _get_args_cli(override_cli_inputs=None):
+    p = create_parser(use_gui=False)
+    args = p.parse_args(override_cli_inputs)
+    return args
 
+
+def get_args(override_cli_inputs=None, use_gui=False):
+    return _get_args_gui() if use_gui else _get_args_cli(override_cli_inputs)
+
+
+def applymud(args):
+    args = preprocessing_args(args)
     for filepath in args.input_paths:
         outfilestem = filepath.stem + "_corrected"
         corrfilestem = filepath.stem + "_cve"
@@ -284,6 +296,19 @@ def main():
 
         if args.output_correction:
             absorption_correction.dump(f"{corrfile}", xtype=args.xtype)
+
+
+def run_subcommand(args):
+    if args.subcommand == "applymud":
+        return applymud(args)
+    else:
+        raise ValueError(f"Unknown subcommand: {args.subcommand}")
+
+
+def main():
+    use_gui = len(sys.argv) == 1 or "--gui" in sys.argv
+    args = get_args(use_gui=use_gui)
+    return run_subcommand(args)
 
 
 if __name__ == "__main__":
