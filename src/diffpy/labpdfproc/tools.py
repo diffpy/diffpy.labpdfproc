@@ -45,6 +45,7 @@ METADATA_KEYS_TO_EXCLUDE = [
     "wavelength",
     "theoretical_from_density",
     "theoretical_from_packing",
+    "subcommand",
 ]
 
 
