@@ -79,7 +79,8 @@ def set_output_directory(args):
 
 
 def _expand_user_input(args):
-    """Expand the list of inputs by adding files from file lists and wildcards.
+    """Expand the list of inputs by adding files from file lists and
+    wildcards.
 
     Parameters
     ----------
@@ -115,9 +116,9 @@ def _expand_user_input(args):
 
 
 def set_input_lists(args):
-    """Set input directory and files. It takes cli inputs, checks if they are
-    files or directories and creates a list of files to be processed which is
-    stored in the args Namespace.
+    """Set input directory and files. It takes cli inputs, checks if
+    they are files or directories and creates a list of files to be
+    processed which is stored in the args Namespace.
 
     Parameters
     ----------
@@ -278,8 +279,8 @@ def set_wavelength(args):
 
 
 def set_xtype(args):
-    """Set the xtype based on the given input arguments, raise an error if
-    xtype is not one of {*XQUANTITIES, }.
+    """Set the xtype based on the given input arguments, raise an error
+    if xtype is not one of {*XQUANTITIES, }.
 
     Parameters
     ----------
@@ -334,8 +335,8 @@ def _parse_theoretical_input(input_str):
 
 
 def _set_theoretical_mud_from_density(args):
-    """Theoretical estimation of mu*D from sample composition, energy, and
-    sample mass density."""
+    """Theoretical estimation of mu*D from sample composition, energy,
+    and sample mass density."""
     sample_composition, energy, sample_mass_density = _parse_theoretical_input(
         args.theoretical_from_density
     )
@@ -351,8 +352,8 @@ def _set_theoretical_mud_from_density(args):
 
 
 def _set_theoretical_mud_from_packing(args):
-    """Theoretical estimation of mu*D from sample composition, energy, and
-    packing fraction."""
+    """Theoretical estimation of mu*D from sample composition, energy,
+    and packing fraction."""
     sample_composition, energy, packing_fraction = _parse_theoretical_input(
         args.theoretical_from_packing
     )
@@ -404,8 +405,8 @@ def _load_key_value_pair(s):
 
 
 def load_user_metadata(args):
-    """Load user metadata into args, raise ValueError if it is in incorrect
-    format.
+    """Load user metadata into args, raise ValueError if it is in
+    incorrect format.
 
     Parameters
     ----------
@@ -445,8 +446,9 @@ def load_user_metadata(args):
 
 def load_user_info(args):
     """Load user info into args. If none is provided, call
-    check_and_build_global_config function from diffpy.utils to prompt the user
-    for inputs. Otherwise, call get_user_info with the provided arguments.
+    check_and_build_global_config function from diffpy.utils to prompt
+    the user for inputs. Otherwise, call get_user_info with the provided
+    arguments.
 
     Parameters
     ----------
@@ -493,9 +495,9 @@ def load_package_info(args):
 
 
 def preprocessing_args(args):
-    """Perform preprocessing on the provided args. The process includes loading
-    package and user information, setting input, output, wavelength, anode
-    type, xtype, mu*D, and loading user metadata.
+    """Perform preprocessing on the provided args. The process includes
+    loading package and user information, setting input, output,
+    wavelength, anode type, xtype, mu*D, and loading user metadata.
 
     Parameters
     ----------
@@ -519,8 +521,8 @@ def preprocessing_args(args):
 
 
 def load_metadata(args, filepath):
-    """Load the relevant metadata from args to write into the header of the
-    output files.
+    """Load the relevant metadata from args to write into the header of
+    the output files.
 
     Parameters
     ----------

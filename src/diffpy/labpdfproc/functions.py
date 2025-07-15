@@ -40,8 +40,8 @@ class Gridded_circle:
         self._get_grid_points()
 
     def _get_grid_points(self):
-        """Given a radius and a grid size, return a grid of points to uniformly
-        sample that circle."""
+        """Given a radius and a grid size, return a grid of points to
+        uniformly sample that circle."""
         xs = np.linspace(-self.radius, self.radius, self.npoints)
         ys = np.linspace(-self.radius, self.radius, self.npoints)
         self.grid = {
@@ -50,8 +50,8 @@ class Gridded_circle:
         self.total_points_in_grid = len(self.grid)
 
     def _get_entry_exit_coordinates(self, coordinate, angle):
-        """Get the coordinates where the beam enters and leaves the circle for
-        a given angle and grid point.
+        """Get the coordinates where the beam enters and leaves the
+        circle for a given angle and grid point.
 
         It is calculated in the following way:
         For the entry coordinate,
@@ -108,8 +108,9 @@ class Gridded_circle:
         return entry_point, exit_point
 
     def _get_path_length(self, grid_point, angle):
-        """Return the path length of a horizontal line entering the circle at
-        the same height to the grid point then exiting at angle.
+        """Return the path length of a horizontal line entering the
+        circle at the same height to the grid point then exiting at
+        angle.
 
         Parameters
         ----------
@@ -136,8 +137,8 @@ class Gridded_circle:
         return total_distance, primary_distance, secondary_distance
 
     def set_distances_at_angle(self, angle):
-        """Given an angle, set the distances from the grid points to the entry
-        and exit coordinates.
+        """Given an angle, set the distances from the grid points to the
+        entry and exit coordinates.
 
         Parameters
         ----------
@@ -170,8 +171,8 @@ class Gridded_circle:
 
 
 def _cve_brute_force(input_pattern, mud):
-    """Compute cve for the given mud on a global grid using the brute-force
-    method.
+    """Compute cve for the given mud on a global grid using the brute-
+    force method.
 
     Assume mu=mud/2, given that the same mu*D yields the same cve and
     D/2=1.
@@ -202,8 +203,8 @@ def _cve_brute_force(input_pattern, mud):
 
 
 def _cve_polynomial_interpolation(input_pattern, mud):
-    """Compute cve using polynomial interpolation method, default to brute-
-    force computation if mu*D is out of the range (0.5 to 7)."""
+    """Compute cve using polynomial interpolation method, default to
+    brute- force computation if mu*D is out of the range (0.5 to 7)."""
     if mud > 7 or mud < 0.5:
         warnings.warn(
             f"Input mu*D = {mud} is out of the acceptable range "
@@ -286,8 +287,8 @@ def compute_cve(
 
 
 def apply_corr(input_pattern, absorption_correction):
-    """Apply absorption correction to the given diffraction object with the
-    correction diffraction object.
+    """Apply absorption correction to the given diffraction object with
+    the correction diffraction object.
 
     Parameters
     ----------
