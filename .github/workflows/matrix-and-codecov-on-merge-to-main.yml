@@ -12,51 +12,10 @@ on:
 
 jobs:
   matrix-coverage:
-    defaults:
-      run:
-        shell: bash -l {0}
-
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-        python-version: ["3.11", "3.12", "3.13"]
-    env:
-      LATEST_PYTHON_VERSION: "3.13"
-    steps:
-      - name: Check out diffpy.labpdfproc
-        uses: actions/checkout@v4
-
-      - name: Initialize miniconda
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          activate-environment: test
-          auto-update-conda: true
-          environment-file: environment.yml
-          auto-activate-base: false
-          python-version: ${{ matrix.python-version }}
-
-      - name: Conda config
-        run: >-
-          conda config --set always_yes yes
-          --set changeps1 no
-
-      - name: Install diffpy.labpdfproc and requirements
-        run: |
-          conda install --file requirements/tests.txt
-          conda install --file requirements/conda.txt
-          pip install gooey
-          python -m pip install . --no-deps
-
-      - name: Validate diffpy.labpdfproc
-        run: |
-          pytest --cov
-          coverage report -m
-          codecov
-
-      - name: Upload coverage to Codecov
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == env.LATEST_PYTHON_VERSION
-        uses: codecov/codecov-action@v4
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    uses: scikit-package/release-scripts/.github/workflows/_matrix-and-codecov-on-merge-to-main.yml@v0
+    with:
+      project: diffpy.my-labpdfproc
+      c_extension: false
+      headless: false
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

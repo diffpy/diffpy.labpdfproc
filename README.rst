@@ -1,71 +1,53 @@
 |Icon| |title|_
 ===============
 
-.. |title| replace:: diffpy.labpdfproc
-.. _title: https://diffpy.github.io/diffpy.labpdfproc
+.. |title| replace:: diffpy.my-labpdfproc
+.. _title: https://diffpy.github.io/diffpy.my-labpdfproc
 
 .. |Icon| image:: https://avatars.githubusercontent.com/diffpy
-        :target: https://diffpy.github.io/diffpy.labpdfproc
+        :target: https://diffpy.github.io/diffpy.my-labpdfproc
         :height: 100px
 
-|PyPi| |Forge| |PythonVersion| |PR|
+|PyPI| |Forge| |PythonVersion| |PR|
 
 |CI| |Codecov| |Black| |Tracking|
 
 .. |Black| image:: https://img.shields.io/badge/code_style-black-black
         :target: https://github.com/psf/black
 
-.. |CI| image:: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/matrix-and-codecov-on-merge-to-main.yml/badge.svg
-        :target: https://github.com/diffpy/diffpy.labpdfproc/actions/workflows/matrix-and-codecov-on-merge-to-main.yml
+.. |CI| image:: https://github.com/diffpy/diffpy.my-labpdfproc/actions/workflows/matrix-and-codecov-on-merge-to-main.yml/badge.svg
+        :target: https://github.com/diffpy/diffpy.my-labpdfproc/actions/workflows/matrix-and-codecov-on-merge-to-main.yml
 
-.. |Codecov| image:: https://codecov.io/gh/diffpy/diffpy.labpdfproc/branch/main/graph/badge.svg
-        :target: https://codecov.io/gh/diffpy/diffpy.labpdfproc
+.. |Codecov| image:: https://codecov.io/gh/diffpy/diffpy.my-labpdfproc/branch/main/graph/badge.svg
+        :target: https://codecov.io/gh/diffpy/diffpy.my-labpdfproc
 
-.. |Forge| image:: https://img.shields.io/conda/vn/conda-forge/diffpy.labpdfproc
-        :target: https://anaconda.org/conda-forge/diffpy.labpdfproc
+.. |Forge| image:: https://img.shields.io/conda/vn/conda-forge/diffpy.my-labpdfproc
+        :target: https://anaconda.org/conda-forge/diffpy.my-labpdfproc
 
 .. |PR| image:: https://img.shields.io/badge/PR-Welcome-29ab47ff
+        :target: https://github.com/diffpy/diffpy.my-labpdfproc/pulls
 
-.. |PyPi| image:: https://img.shields.io/pypi/v/diffpy.labpdfproc
-        :target: https://pypi.org/project/diffpy.labpdfproc/
+.. |PyPI| image:: https://img.shields.io/pypi/v/diffpy.my-labpdfproc
+        :target: https://pypi.org/project/diffpy.my-labpdfproc/
 
-.. |PythonVersion| image:: https://img.shields.io/pypi/pyversions/diffpy.labpdfproc
-        :target: https://pypi.org/project/diffpy.labpdfproc/
+.. |PythonVersion| image:: https://img.shields.io/pypi/pyversions/diffpy.my-labpdfproc
+        :target: https://pypi.org/project/diffpy.my-labpdfproc/
 
 .. |Tracking| image:: https://img.shields.io/badge/issue_tracking-github-blue
-        :target: https://github.com/diffpy/diffpy.labpdfproc/issues
+        :target: https://github.com/diffpy/diffpy.my-labpdfproc/issues
 
-Tools for processing x-ray powder diffraction data from laboratory sources.
+Python package for doing science.
 
-PDFgetX3 has revolutionized how PDF methods can be applied to solve nanostructure problems.
-However, the program was designed for use with Rapid Acquisition PDF (RAPDF) data from synchrotron sources.
-A key approximation inherent in the use of PDFgetX3 for RAPDF data is that absorption effects are negligible.
-This is typically not the case for laboratory x-ray diffractometers, where absorption effects can be significant.
+* LONGER DESCRIPTION HERE
 
-This app is designed to preprocess data from laboratory x-ray diffractometers before using PDFgetX3 to obtain PDFs.
-The app currently carries out an absorption correction assuming a parallel beam capillary geometry
-which is the most common geometry for lab PDF measurements.
-
-The theory is described in the following paper:
-
-Chen, Y., Schertenleib, T., Yang, A., Schouwink, P., Queen, W.L. and Billinge, S.J.L.,
-An Absorption Correction for Reliable Pair-Distribution Functions from Low Energy x-ray Sources.
-Arxiv.org. https://doi.org/10.48550/arXiv.2504.12499
-
-The related experimental data acquisition protocols are described in the following paper:
-
-Schertenleib, T., Schmuckler, D., Chen, Y., Jin, G.B., Queen, W.L. and Billinge, S.J.L. (2025),
-Testing Protocols for Obtaining Reliable Pair Distribution Functions from Laboratory X-Ray Sources Using PDFgetX3.
-Chem. Methods 2500001. https://doi.org/10.1002/cmtd.202500001
-
-For more information about the diffpy.labpdfproc library, please consult our `online documentation <https://diffpy.github.io/diffpy.labpdfproc>`_.
+For more information about the diffpy.my-labpdfproc library, please consult our `online documentation <https://diffpy.github.io/diffpy.my-labpdfproc>`_.
 
 Citation
 --------
 
-If you use diffpy.labpdfproc in a scientific publication, we would like you to cite this package as
+If you use diffpy.my-labpdfproc in a scientific publication, we would like you to cite this package as
 
-        diffpy.labpdfproc Package, https://github.com/diffpy/diffpy.labpdfproc
+        diffpy.my-labpdfproc Package, https://github.com/diffpy/diffpy.my-labpdfproc
 
 Installation
 ------------
@@ -79,63 +61,40 @@ To add "conda-forge" to the conda channels, run the following in a terminal. ::
         conda config --add channels conda-forge
 
 We want to install our packages in a suitable conda environment.
-The following creates and activates a new environment named ``diffpy.labpdfproc_env`` ::
+The following creates and activates a new environment named ``diffpy.my-labpdfproc_env`` ::
 
-        conda create -n diffpy.labpdfproc_env diffpy.labpdfproc
-        conda activate diffpy.labpdfproc_env
+        conda create -n diffpy.my-labpdfproc_env diffpy.my-labpdfproc
+        conda activate diffpy.my-labpdfproc_env
 
 To confirm that the installation was successful, type ::
 
-        python -c "import diffpy.labpdfproc; print(diffpy.labpdfproc.__version__)"
+        python -c "import diffpy.my_labpdfproc; print(diffpy.my_labpdfproc.__version__)"
 
 The output should print the latest version displayed on the badges above.
 
 If the above does not work, you can use ``pip`` to download and install the latest release from
 `Python Package Index <https://pypi.python.org>`_.
-To install using ``pip`` into your ``diffpy.labpdfproc_env`` environment, type ::
+To install using ``pip`` into your ``diffpy.my-labpdfproc_env`` environment, type ::
 
-        pip install diffpy.labpdfproc
+        pip install diffpy.my-labpdfproc
 
 If you prefer to install from sources, after installing the dependencies, obtain the source archive from
-`GitHub <https://github.com/diffpy/diffpy.labpdfproc/>`_. Once installed, ``cd`` into your ``diffpy.labpdfproc`` directory
+`GitHub <https://github.com/diffpy/diffpy.my-labpdfproc/>`_. Once installed, ``cd`` into your ``diffpy.my-labpdfproc`` directory
 and run the following ::
 
         pip install .
 
-Example
--------
-
-Navigate to the directory that contains 1D diffraction patterns that you would like to process.
-Activate the conda environment (`conda activate diffpy.labpdfproc_env`) that contains the package and run the following command ::
-
-        labpdfproc <path/to/inputfile.txt> --mud <muD>
-
-Here replace <muD> with the value of muD for your sample
-and <path/to/inputfile.txt> with the path and filename of your input file.
-For example, if the uncorrected data case is called zro2_mo.xy and is in the current directory
-and it has a muD of 2.5 then the command would be ::
-
-        labpdfproc zro2_mo.xy --mud 2.5
-
-Please type ::
-
-        labpdfproc --help
-
-for more information on the available options.
-
 Getting Started
 ---------------
 
-You may consult our `online documentation <https://diffpy.github.io/diffpy.labpdfproc>`_ for tutorials and API references.
+You may consult our `online documentation <https://diffpy.github.io/diffpy.my-labpdfproc>`_ for tutorials and API references.
 
 Support and Contribute
 ----------------------
 
-`Diffpy user group <https://groups.google.com/g/diffpy-users>`_ is the discussion forum for general questions and discussions about the use of diffpy.labpdfproc. Please join the diffpy.labpdfproc users community by joining the Google group. The diffpy.labpdfproc project welcomes your expertise and enthusiasm!
+If you see a bug or want to request a feature, please `report it as an issue <https://github.com/diffpy/diffpy.my-labpdfproc/issues>`_ and/or `submit a fix as a PR <https://github.com/diffpy/diffpy.my-labpdfproc/pulls>`_.
 
-If you see a bug or want to request a feature, please `report it as an issue <https://github.com/diffpy/diffpy.labpdfproc/issues>`_ and/or `submit a fix as a PR <https://github.com/diffpy/diffpy.labpdfproc/pulls>`_. You can also post it to the `Diffpy user group <https://groups.google.com/g/diffpy-users>`_.
-
-Feel free to fork the project and contribute. To install diffpy.labpdfproc
+Feel free to fork the project and contribute. To install diffpy.my-labpdfproc
 in a development mode, with its sources being directly used by Python
 rather than copied to a package directory, use the following in the root
 directory ::
@@ -156,9 +115,14 @@ trying to commit again.
 
 Improvements and fixes are always appreciated.
 
-Before contributing, please read our `Code of Conduct <https://github.com/diffpy/diffpy.labpdfproc/blob/main/CODE_OF_CONDUCT.rst>`_.
+Before contributing, please read our `Code of Conduct <https://github.com/diffpy/diffpy.my-labpdfproc/blob/main/CODE_OF_CONDUCT.rst>`_.
 
 Contact
 -------
 
-For more information on diffpy.labpdfproc please visit the project `web-page <https://diffpy.github.io/>`_ or email Prof. Simon Billinge at sb2896@columbia.edu.
+For more information on diffpy.my-labpdfproc please visit the project `web-page <https://diffpy.github.io/>`_ or email Simon Billinge at sb2896@columbia.edu.
+
+Acknowledgements
+----------------
+
+``diffpy.my-labpdfproc`` is built and maintained with `scikit-package <https://scikit-package.github.io/scikit-package/>`_.

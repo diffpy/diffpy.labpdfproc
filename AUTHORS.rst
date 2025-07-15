@@ -1,10 +1,10 @@
 Authors
 =======
 
-Billinge Group and community contributors.
+Sangjoon Lee, Simon Billinge, Billinge Group members
 
 Contributors
 ------------
 
 For a list of contributors, visit
-https://github.com/diffpy/diffpy.labpdfproc/graphs/contributors
+https://github.com/diffpy/diffpy.my-labpdfproc/graphs/contributors

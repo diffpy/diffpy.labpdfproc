@@ -3,16 +3,16 @@ requires = ["setuptools>=62.0", "setuptools-git-versioning>=2.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "diffpy.labpdfproc"
+name = "diffpy.my-labpdfproc"
 dynamic=['version', 'dependencies']
 authors = [
-  { name="Simon J.L. Billinge group", email="simon.billinge@gmail.com" },
+  { name="Simon Billinge", email="sb2896@columbia.edu" },
 ]
 maintainers = [
-  { name="Simon J.L. Billinge group", email="simon.billinge@gmail.com" },
+  { name="Simon Billinge", email="sb2896@columbia.edu" },
 ]
-description = "Tools for processing x-ray powder diffraction data from laboratory sources."
-keywords = ['powder xrd', 'absorption correction', 'pdf', 'diffpy']
+description = "Python package for doing science."
+keywords = ['diffraction', 'PDF', 'X-ray', 'neutron']
 readme = "README.rst"
 requires-python = ">=3.11, <3.14"
 classifiers = [
@@ -33,8 +33,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/diffpy/diffpy.labpdfproc/"
-Issues = "https://github.com/diffpy/diffpy.labpdfproc/issues/"
+Homepage = "https://github.com/diffpy/diffpy.my-labpdfproc/"
+Issues = "https://github.com/diffpy/diffpy.my-labpdfproc/issues/"
 
 [tool.setuptools-git-versioning]
 enabled = true
@@ -42,14 +42,14 @@ template = "{tag}"
 dev_template = "{tag}"
 dirty_template = "{tag}"
 
-[project.scripts]
-labpdfproc = "diffpy.labpdfproc.labpdfprocapp:main"
-
 [tool.setuptools.packages.find]
 where = ["src"]  # list of folders that contain the packages (["."] by default)
 include = ["*"]  # package names should match these glob patterns (["*"] by default)
-exclude = ["diffpy.labpdfproc.tests*"]  # exclude packages matching these glob patterns (empty by default)
+exclude = []  # exclude packages matching these glob patterns (empty by default)
 namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+
+[project.scripts]
+diffpy-my-labpdfproc = "diffpy.my_labpdfproc.app:main"
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements/pip.txt"]}
@@ -57,7 +57,12 @@ dependencies = {file = ["requirements/pip.txt"]}
 [tool.codespell]
 exclude-file = ".codespell/ignore_lines.txt"
 ignore-words = ".codespell/ignore_words.txt"
-skip = "*.cif"
+skip = "*.cif,*.dat"
+
+[tool.docformatter]
+recursive = true
+wrap-summaries = 72
+wrap-descriptions = 72
 
 [tool.black]
 line-length = 79

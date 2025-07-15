@@ -5,8 +5,8 @@ on:
 
 jobs:
   docs:
-    uses: Billingegroup/release-scripts/.github/workflows/_publish-docs-on-release.yml@v0
+    uses: scikit-package/release-scripts/.github/workflows/_publish-docs-on-release.yml@v0
     with:
-      project: diffpy.labpdfproc
+      project: diffpy.my-labpdfproc
       c_extension: false
       headless: false
