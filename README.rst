@@ -70,7 +70,7 @@ Citation
 
 If you use diffpy.labpdfproc in a scientific publication, we would like you to cite this package as
 
-        Chen, Y., Schertenleib, T., Yang, A., Schouwink, P., Queen, W. L., and Billinge, S. J. L.
+        Chen, Y., Schertenleib, T., Yang, A., Schouwink, P., Queen, W. L., and Billinge, S. J. L.,
         *Absorption Correction for Reliable Pair Distribution Functions from Low Energy X-ray Sources*.
         Crystal Growth & Design, 2026, 26 (3), 1036–1047.
         https://doi.org/10.1021/acs.cgd.5c00551
