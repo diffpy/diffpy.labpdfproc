@@ -49,15 +49,19 @@ which is the most common geometry for lab PDF measurements.
 
 The theory is described in the following paper:
 
-Chen, Y., Schertenleib, T., Yang, A., Schouwink, P., Queen, W.L. and Billinge, S.J.L.,
-An Absorption Correction for Reliable Pair-Distribution Functions from Low Energy x-ray Sources.
-Arxiv.org. https://doi.org/10.48550/arXiv.2504.12499
+        Chen, Y., Schertenleib, T., Yang, A., Schouwink, P., Queen, W. L., and Billinge, S. J. L.,
+        *Absorption Correction for Reliable Pair Distribution Functions from Low Energy X-ray Sources*.
+        Crystal Growth & Design, 2026, 26 (3), 1036–1047.
+        https://doi.org/10.1021/acs.cgd.5c00551
+
 
 The related experimental data acquisition protocols are described in the following paper:
 
-Schertenleib, T., Schmuckler, D., Chen, Y., Jin, G.B., Queen, W.L. and Billinge, S.J.L. (2025),
-Testing Protocols for Obtaining Reliable Pair Distribution Functions from Laboratory X-Ray Sources Using PDFgetX3.
-Chem. Methods 2500001. https://doi.org/10.1002/cmtd.202500001
+        Schertenleib, T., Schmuckler, D., Chen, Y., Jin, G. B., Queen, W. L., and Billinge, S. J. L. (2025).
+        *Testing Protocols for Obtaining Reliable Pair Distribution Functions from Laboratory X-Ray Sources Using PDFgetX3*.
+        Chem. Methods, 2500001.
+        https://doi.org/10.1002/cmtd.202500001
+
 
 For more information about the diffpy.labpdfproc library, please consult our `online documentation <https://diffpy.github.io/diffpy.labpdfproc>`_.
 
@@ -66,7 +70,10 @@ Citation
 
 If you use diffpy.labpdfproc in a scientific publication, we would like you to cite this package as
 
-        diffpy.labpdfproc Package, https://github.com/diffpy/diffpy.labpdfproc
+        Chen, Y., Schertenleib, T., Yang, A., Schouwink, P., Queen, W. L., and Billinge, S. J. L.,
+        *Absorption Correction for Reliable Pair Distribution Functions from Low Energy X-ray Sources*.
+        Crystal Growth & Design, 2026, 26 (3), 1036–1047.
+        https://doi.org/10.1021/acs.cgd.5c00551
 
 Installation
 ------------
