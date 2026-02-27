@@ -1,3 +1,4 @@
+.. _labpdfprocapp Example:
 
 :tocdepth: -1
 
