@@ -224,12 +224,28 @@ def load_wavelength_from_config_file(args):
     args : argparse.Namespace
         The updated arguments with the updated wavelength and anode type.
     """
-    global_config = _load_config(Path().home() / "diffpyconfig.json")
-    local_config = _load_config(Path().cwd() / "diffpyconfig.json")
-    local_has_data = local_config and "wavelength" in local_config
-    global_has_data = global_config and "wavelength" in global_config
-    if not local_has_data and not global_has_data:
-        print(
+
+    if args.wavelength is not None:
+        return normalize_wavelength(args)
+
+    global_config_file = _load_config(Path().home() / "diffpyconfig.json")
+    local_config_file = _load_config(Path().cwd() / "diffpyconfig.json")
+    config_file = None
+    if (
+        isinstance(local_config_file, dict)
+        and "wavelength" in local_config_file
+    ):
+        config_file = local_config_file
+    elif (
+        isinstance(global_config_file, dict)
+        and "wavelength" in global_config_file
+    ):
+        config_file = global_config_file
+    if config_file is not None:
+        args.wavelength = config_file.get("wavelength")
+        return normalize_wavelength(args)
+    else:
+        raise ValueError(
             "No configuration file was found containing information "
             "about the wavelength or anode type. \n"
             "You can add the wavelength or anode type "
@@ -240,13 +256,6 @@ def load_wavelength_from_config_file(args):
             "For more information, please refer to www.diffpy.org/"
             "diffpy.labpdfproc/examples/toolsexample.html"
         )
-    if args.wavelength is not None:
-        return normalize_wavelength(args)
-    config = local_config if local_has_data else global_config
-    if config:
-        args.wavelength = config.get("wavelength")
-        return normalize_wavelength(args)
-    return args
 
 
 def set_wavelength(args):
