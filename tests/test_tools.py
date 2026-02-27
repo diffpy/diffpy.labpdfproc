@@ -312,14 +312,80 @@ def test_load_wavelength_from_config_file_with_local_conf_file(
 
 
 @pytest.mark.parametrize(
+    "local_config, home_config",
+    [
+        # C1: no config files exist
+        # expected: raise ValueError
+        (None, None),
+        # C2: local config is empty, no home config
+        # expected: raise ValueError
+        ({}, None),
+        # C3: no local config, home config is empty
+        # expected: raise ValueError
+        (None, {}),
+        # C4: both config files are empty
+        # expected: raise ValueError
+        ({}, {}),
+    ],
+)
+def test_load_wavelength_from_config_file_without_conf_files_bad(
+    mocker,
+    user_filesystem,
+    local_config,
+    home_config,
+):
+    # User tries to correct data without specifying wavelength and
+    # no config files
+    # with wavelength exist -- expected to raise ValueError
+    cwd = Path(user_filesystem)
+    home_dir = cwd / "home_dir"
+    mocker.patch("pathlib.Path.home", return_value=home_dir)
+    os.chdir(cwd)
+
+    local_config_file = cwd / "diffpyconfig.json"
+    if local_config_file.exists():
+        local_config_file.unlink()
+    home_config_file = home_dir / "diffpyconfig.json"
+    if home_config_file.exists():
+        home_config_file.unlink()
+
+    if local_config is not None:
+        with open(local_config_file, "w") as f:
+            json.dump(local_config, f)
+    if home_config is not None:
+        with open(home_config_file, "w") as f:
+            json.dump(home_config, f)
+
+    cli_inputs = ["mud", "data.xy", "2.5"]
+    actual_args = get_args_cli(cli_inputs)
+
+    msg = re.escape(
+        "\nThe wavelength was not specified and no "
+        "configuration file 'diffpyconfig.json' containing "
+        "the wavelength or X-ray source was found in either the "
+        "local or home directories. Either specify the wavelength "
+        "or source using the -w/--wavelength option or "
+        "create a configuration file.\n\n"
+        "You can add the wavelength or anode type to a "
+        "configuration file on this computer. Once created, it "
+        "will be automatically used for subsequent diffpy data "
+        "by default, and you will only need to do this once.\n\n"
+        "For detailed instructions on creating the configuration "
+        "file, please refer to:\n"
+        "https://www.diffpy.org/diffpy.labpdfproc/examples/"
+        "toolsexample.html"
+    )
+    with pytest.raises(ValueError, match=msg):
+        load_wavelength_from_config_file(actual_args)
+
+
+@pytest.mark.parametrize(
     "inputs, expected",
     [
         # Test when no config files exist,
         # expect to return args without modification.
         # This test only checks loading behavior,
         # not value validation (which is handled by `set_wavelength`).
-        # C1: no args
-        ([], {"wavelength": None}),
         # C1: wavelength provided
         (["--wavelength", "0.25"], {"wavelength": 0.25}),
         # C2: anode type provided

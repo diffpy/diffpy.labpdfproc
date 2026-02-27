@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 
 from gooey import Gooey, GooeyParser
@@ -13,6 +14,17 @@ from diffpy.labpdfproc.tools import (
 )
 from diffpy.utils.diffraction_objects import XQUANTITIES, DiffractionObject
 from diffpy.utils.parsers import load_data
+
+
+def _running_in_gui():
+    """Determine if the application is running in a GUI environment.
+
+    This function checks if the standard output (sys.stdout) is
+    connected to a terminal. If not, it assumes the application is
+    running in a GUI environment, such as when launched by Gooey. This
+    is used to prevent ANSI escape sequences from rendering in the GUI.
+    """
+    return not sys.stdout.isatty()
 
 
 def _add_common_args(parser, use_gui=False):
@@ -172,6 +184,13 @@ def apply_absorption_correction(args):
 
 def create_parser(use_gui=False):
     Parser = GooeyParser if use_gui else argparse.ArgumentParser
+
+    # Force no colors when gui is running to avoid ANSI escape codes
+    # in Gooey output
+    if use_gui or _running_in_gui():
+        os.environ["NO_COLOR"] = "1"
+        os.environ["CLICOLOR"] = "0"
+
     parser = Parser(
         prog="labpdfproc",
         description=(

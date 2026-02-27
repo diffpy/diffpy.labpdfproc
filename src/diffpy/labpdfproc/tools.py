@@ -224,29 +224,43 @@ def load_wavelength_from_config_file(args):
     args : argparse.Namespace
         The updated arguments with the updated wavelength and anode type.
     """
-    global_config = _load_config(Path().home() / "diffpyconfig.json")
-    local_config = _load_config(Path().cwd() / "diffpyconfig.json")
-    local_has_data = local_config and "wavelength" in local_config
-    global_has_data = global_config and "wavelength" in global_config
-    if not local_has_data and not global_has_data:
-        print(
-            "No configuration file was found containing information "
-            "about the wavelength or anode type. \n"
-            "You can add the wavelength or anode type "
-            "to a configuration file on the current computer "
-            "and it will be automatically associated with "
-            "subsequent diffpy data by default. \n"
-            "You will only have to do that once. \n"
-            "For more information, please refer to www.diffpy.org/"
-            "diffpy.labpdfproc/examples/toolsexample.html"
-        )
+
     if args.wavelength is not None:
         return normalize_wavelength(args)
-    config = local_config if local_has_data else global_config
-    if config:
-        args.wavelength = config.get("wavelength")
+
+    global_config_file = _load_config(Path().home() / "diffpyconfig.json")
+    local_config_file = _load_config(Path().cwd() / "diffpyconfig.json")
+    config_file = None
+    if (
+        isinstance(local_config_file, dict)
+        and "wavelength" in local_config_file
+    ):
+        config_file = local_config_file
+    elif (
+        isinstance(global_config_file, dict)
+        and "wavelength" in global_config_file
+    ):
+        config_file = global_config_file
+    if config_file is not None:
+        args.wavelength = config_file.get("wavelength")
         return normalize_wavelength(args)
-    return args
+    else:
+        raise ValueError(
+            "\nThe wavelength was not specified and no "
+            "configuration file 'diffpyconfig.json' containing "
+            "the wavelength or X-ray source was found in either the "
+            "local or home directories. Either specify the wavelength "
+            "or source using the -w/--wavelength option or "
+            "create a configuration file.\n\n"
+            "You can add the wavelength or anode type to a "
+            "configuration file on this computer. Once created, it "
+            "will be automatically used for subsequent diffpy data "
+            "by default, and you will only need to do this once.\n\n"
+            "For detailed instructions on creating the configuration "
+            "file, please refer to:\n"
+            "https://www.diffpy.org/diffpy.labpdfproc/examples/"
+            "toolsexample.html"
+        )
 
 
 def set_wavelength(args):

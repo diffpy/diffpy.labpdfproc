@@ -20,15 +20,13 @@ You can do this in one of the following four ways:
     # Option 2: From a z-scan file
     args = Namespace(z_scan_file="zscan.xy")
     # Option 3: Using sample mass density
-    args = Namespace(theoretical_from_density="ZrO2,17.45,1.2")
-    # Option 4: Using packing fraction
-    args = Namespace(theoretical_from_packing="ZrO2,17.45,0.3")
+    args = Namespace(sample_composition="ZrO2", sample_mass_density="17.45", diameter="1.2")
     # Set and view the computed mu*D value
     args = set_mud(args)
     print(args.mud)
 
 
-2. Next, we load the input files for correction using ``set_input_lists(args)``:
+1. Next, we load the input files for correction using ``set_input_lists(args)``:
 
 .. code-block:: python
 
@@ -59,24 +57,13 @@ If no output directory is specified, it defaults to the current working director
     # Option 1: Specify wavelength directly
     args = Namespace(wavelength=0.7)
     # Option 2: Use a valid anode type
-    args = Namespace(anode_type="Mo")
+    args = Namespace(wavelength="Mo")
     args = set_wavelength(args)
 
 Note that you should specify either a wavelength or an anode type, not both, to avoid conflicts.
 If you provide an anode type, the corresponding wavelength will be retrieved from global parameters.
 You may use ``labpdfproc --help`` to view a list of valid anode types.
 If neither is given, it's only acceptable if the input diffraction data is already on a two-theta grid.
-To simplify workflows and avoid re-entering it every time,
-we recommend saving the wavelength or anode type to a diffpy config file. For example:
-
-.. code-block:: python
-
-    from pathlib import Path
-    import json
-    home_dir = Path.home()
-    wavelength_data = {"wavelength": 0.3}
-    with open(home_dir / "diffpyconfig.json", "w") as f:
-        json.dump(wavelength_data, f)
 
 To set the x-axis type (xtype) for your diffraction data:
 
@@ -88,7 +75,7 @@ To set the x-axis type (xtype) for your diffraction data:
 This sets the xtype to ``tth``. Other valid options including ``q`` and ``d`` spacing.
 
 
-5. Finally, we load user metadata, user information, and package information into ``args``.
+1. Finally, we load user metadata, user information, and package information into ``args``.
 To load metadata, pass key-value pairs as a list:
 
 .. code-block:: python
@@ -137,3 +124,19 @@ Using the function ``load_metadata(args, filepath)``
 requires both the ``argument.Namespace`` and the current input file path.
 For more details about working with diffraction objects and how they are written to output files, see
 https://www.diffpy.org/diffpy.utils/examples/diffraction_objects_example.html.
+
+
+Creating ``diffpyconfig.json`` file
+-----------------------------------
+
+To simplify workflows and avoid re-entering it every time,
+we recommend saving the wavelength or anode type to a diffpy config file. For example,
+
+.. code-block:: python
+
+    from pathlib import Path
+    import json
+    home_dir = Path.home()
+    wavelength_data = {"wavelength": 0.3}
+    with open(home_dir / "diffpyconfig.json", "w") as f:
+        json.dump(wavelength_data, f)
