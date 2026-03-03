@@ -1,6 +1,6 @@
 import math
 import warnings
-from pathlib import Path
+from importlib.resources import files
 
 import numpy as np
 import pandas as pd
@@ -17,11 +17,11 @@ TTH_GRID[-1] = 180.00
 CVE_METHODS = ["brute_force", "polynomial_interpolation"]
 
 # Pre-computed datasets for polynomial interpolation (fast calculation)
+data_dir = files("diffpy.labpdfproc") / "data"
 MUD_LIST = np.array([0.5, 1, 2, 3, 4, 5, 6, 7])
-CWD = Path(__file__).parent.resolve()
-MULS = np.loadtxt(CWD / "data" / "inverse_cve.xy")
+MULS = np.loadtxt(data_dir / "inverse_cve.xy")
 COEFFICIENT_LIST = np.array(
-    pd.read_csv(CWD / "data" / "coefficient_list.csv", header=None)
+    pd.read_csv(data_dir / "coefficient_list.csv", header=None)
 )
 INTERPOLATION_FUNCTIONS = [
     interp1d(MUD_LIST, coeffs, kind="quadratic") for coeffs in COEFFICIENT_LIST
