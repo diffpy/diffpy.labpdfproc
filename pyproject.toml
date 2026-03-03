@@ -54,6 +54,9 @@ include = ["*"]  # package names should match these glob patterns (["*"] by defa
 exclude = ["diffpy.labpdfproc.tests*"]  # exclude packages matching these glob patterns (empty by default)
 namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
+[tool.setuptools.package-data]
+"diffpy.labpdfproc" = ["data/*"]
+
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements/pip.txt"]}
 
