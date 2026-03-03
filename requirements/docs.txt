@@ -3,3 +3,4 @@ sphinx_rtd_theme
 sphinx-copybutton
 doctr
 m2r2
+diffpy.utils
