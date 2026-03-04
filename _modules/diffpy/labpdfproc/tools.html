@@ -1,0 +1,725 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>diffpy.labpdfproc.tools &mdash; diffpy.labpdfproc 0.3.0rc1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=1ad4c97d"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=cca77546"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            diffpy.labpdfproc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utilities/utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/diffpy.labpdfproc.html">Package API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">diffpy.labpdfproc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">diffpy.labpdfproc.tools</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for diffpy.labpdfproc.tools</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">diffpy.utils.diffraction_objects</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ANGLEQUANTITIES</span><span class="p">,</span>
+    <span class="n">QQUANTITIES</span><span class="p">,</span>
+    <span class="n">XQUANTITIES</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">diffpy.utils.tools</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_load_config</span><span class="p">,</span>
+    <span class="n">check_and_build_global_config</span><span class="p">,</span>
+    <span class="n">compute_mu_using_xraydb</span><span class="p">,</span>
+    <span class="n">compute_mud</span><span class="p">,</span>
+    <span class="n">get_package_info</span><span class="p">,</span>
+    <span class="n">get_user_info</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Reference values are taken from</span>
+<span class="c1"># https://x-server.gmca.aps.anl.gov/cgi/www_dbli.exe?x0hdb=waves</span>
+<span class="c1"># Ka1Ka2 values are calculated as: (Ka1 * 2 + Ka2) / 3</span>
+<span class="c1"># For CuKa1Ka2: (1.54056 * 2 + 1.544398) / 3 = 1.54184</span>
+<span class="n">WAVELENGTHS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Mo&quot;</span><span class="p">:</span> <span class="mf">0.71073</span><span class="p">,</span>
+    <span class="s2">&quot;MoKa1&quot;</span><span class="p">:</span> <span class="mf">0.70930</span><span class="p">,</span>
+    <span class="s2">&quot;MoKa1Ka2&quot;</span><span class="p">:</span> <span class="mf">0.71073</span><span class="p">,</span>
+    <span class="s2">&quot;Ag&quot;</span><span class="p">:</span> <span class="mf">0.56087</span><span class="p">,</span>
+    <span class="s2">&quot;AgKa1&quot;</span><span class="p">:</span> <span class="mf">0.55941</span><span class="p">,</span>
+    <span class="s2">&quot;AgKa1Ka2&quot;</span><span class="p">:</span> <span class="mf">0.56087</span><span class="p">,</span>
+    <span class="s2">&quot;Cu&quot;</span><span class="p">:</span> <span class="mf">1.54184</span><span class="p">,</span>
+    <span class="s2">&quot;CuKa1&quot;</span><span class="p">:</span> <span class="mf">1.54056</span><span class="p">,</span>
+    <span class="s2">&quot;CuKa1Ka2&quot;</span><span class="p">:</span> <span class="mf">1.54184</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">known_sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">WAVELENGTHS</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+
+<span class="c1"># Exclude wavelength to avoid duplication,</span>
+<span class="c1"># as it&#39;s written explicitly by diffpy.utils dump function.</span>
+<span class="c1"># Exclude &quot;theoretical_from_density&quot; and &quot;theoretical_from_packing&quot;</span>
+<span class="c1"># as they are only used for theoretical mu*D estimation</span>
+<span class="c1"># and will be written into separate arguments for clarity.</span>
+<span class="n">METADATA_KEYS_TO_EXCLUDE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;output_correction&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;input&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;input_paths&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;force&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;energy&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="set_output_directory">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.set_output_directory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_output_directory</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the output directory based on the given input arguments.</span>
+
+<span class="sd">    It is determined as follows:</span>
+<span class="sd">    If user provides an output directory, use it.</span>
+<span class="sd">    Otherwise, we set it to the current directory if nothing is provided.</span>
+<span class="sd">    We then create the directory if it does not exist.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments from the parser.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The updated arguments,</span>
+<span class="sd">        with output_directory as the full path to the output file directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output_dir</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output_directory</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">output_directory</span>
+        <span class="k">else</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">output_directory</span> <span class="o">=</span> <span class="n">output_dir</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_expand_user_input</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expand the list of inputs by adding files from file lists and</span>
+<span class="sd">    wildcards.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments from the parser.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The updated arguments with the modified input list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_list_inputs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">input_name</span> <span class="k">for</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">input</span> <span class="k">if</span> <span class="s2">&quot;file_list&quot;</span> <span class="ow">in</span> <span class="n">input_name</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">file_list_input</span> <span class="ow">in</span> <span class="n">file_list_inputs</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_list_input</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">file_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()]</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">file_inputs</span><span class="p">)</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file_list_input</span><span class="p">)</span>
+    <span class="n">wildcard_inputs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">input_name</span> <span class="k">for</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">input</span> <span class="k">if</span> <span class="s2">&quot;*&quot;</span> <span class="ow">in</span> <span class="n">input_name</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">wildcard_input</span> <span class="ow">in</span> <span class="n">wildcard_inputs</span><span class="p">:</span>
+        <span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">wildcard_input</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;file_list&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span>
+            <span class="ow">and</span> <span class="s2">&quot;diffpyconfig.json&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">]</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">wildcard_input</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span>
+
+
+<div class="viewcode-block" id="set_input_lists">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.set_input_lists">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_input_lists</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set input directory and files. It takes cli inputs, checks if</span>
+<span class="sd">    they are files or directories and creates a list of files to be</span>
+<span class="sd">    processed which is stored in the args Namespace.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments from the parser.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    FileNotFoundError</span>
+<span class="sd">        Raised when an input is invalid.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The updated arguments with the modified input list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">_expand_user_input</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">:</span>
+        <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_name</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">input_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">input_path</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="n">input_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">input_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                <span class="n">input_files</span> <span class="o">=</span> <span class="n">input_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+                <span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">input_files</span>
+                    <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+                    <span class="ow">and</span> <span class="s2">&quot;file_list&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span>
+                    <span class="ow">and</span> <span class="s2">&quot;diffpyconfig.json&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span>
+                <span class="p">]</span>
+                <span class="n">input_paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Cannot find </span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Please specify valid input file(s) or directories.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot find </span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Please specify valid input file(s) or directories.&quot;</span>
+            <span class="p">)</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;input_paths&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">input_paths</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<div class="viewcode-block" id="normalize_wavelength">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.normalize_wavelength">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_wavelength</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize args.wavelength to a float.</span>
+
+<span class="sd">    If args.wavelength is:</span>
+<span class="sd">    - None: return args unchanged</span>
+<span class="sd">    - float-like: convert to float</span>
+<span class="sd">    - string: look up corresponding value in WAVELENGTHS (case-insensitive)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments from the parser.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The updated arguments with args.wavelength.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If a string wavelength is not a known source.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">args</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">wavelength</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">args</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">wavelength</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">matched</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">WAVELENGTHS</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()),</span>
+        <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">matched</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Anode type &#39;</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">wavelength</span><span class="si">}</span><span class="s2">&#39; not recognized. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Please rerun specifying an anode type from </span><span class="si">{</span><span class="o">*</span><span class="n">known_sources</span><span class="p">,</span><span class="w"> </span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">WAVELENGTHS</span><span class="p">[</span><span class="n">matched</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<div class="viewcode-block" id="load_wavelength_from_config_file">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.load_wavelength_from_config_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_wavelength_from_config_file</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load wavelength from config files.</span>
+
+<span class="sd">    It prioritizes values in the following order:</span>
+<span class="sd">    1. cli inputs, 2. local config file, 3. global config file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments from the parser.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The updated arguments with the updated wavelength and anode type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">normalize_wavelength</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="n">global_config_file</span> <span class="o">=</span> <span class="n">_load_config</span><span class="p">(</span><span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;diffpyconfig.json&quot;</span><span class="p">)</span>
+    <span class="n">local_config_file</span> <span class="o">=</span> <span class="n">_load_config</span><span class="p">(</span><span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;diffpyconfig.json&quot;</span><span class="p">)</span>
+    <span class="n">config_file</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">local_config_file</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="s2">&quot;wavelength&quot;</span> <span class="ow">in</span> <span class="n">local_config_file</span>
+    <span class="p">):</span>
+        <span class="n">config_file</span> <span class="o">=</span> <span class="n">local_config_file</span>
+    <span class="k">elif</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">global_config_file</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="s2">&quot;wavelength&quot;</span> <span class="ow">in</span> <span class="n">global_config_file</span>
+    <span class="p">):</span>
+        <span class="n">config_file</span> <span class="o">=</span> <span class="n">global_config_file</span>
+    <span class="k">if</span> <span class="n">config_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">config_file</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;wavelength&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">normalize_wavelength</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The wavelength was not specified and no &quot;</span>
+            <span class="s2">&quot;configuration file &#39;diffpyconfig.json&#39; containing &quot;</span>
+            <span class="s2">&quot;the wavelength or X-ray source was found in either the &quot;</span>
+            <span class="s2">&quot;local or home directories. Either specify the wavelength &quot;</span>
+            <span class="s2">&quot;or source using the -w/--wavelength option or &quot;</span>
+            <span class="s2">&quot;create a configuration file.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;You can add the wavelength or anode type to a &quot;</span>
+            <span class="s2">&quot;configuration file on this computer. Once created, it &quot;</span>
+            <span class="s2">&quot;will be automatically used for subsequent diffpy data &quot;</span>
+            <span class="s2">&quot;by default, and you will only need to do this once.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;For detailed instructions on creating the configuration &quot;</span>
+            <span class="s2">&quot;file, please refer to:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;https://www.diffpy.org/diffpy.labpdfproc/examples/&quot;</span>
+            <span class="s2">&quot;toolsexample.html&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="set_wavelength">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.set_wavelength">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_wavelength</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the wavelength based on args.wavelength.</span>
+
+<span class="sd">    args.wavelength may be:</span>
+<span class="sd">    - None</span>
+<span class="sd">    - a number (explicit wavelength in Å)</span>
+<span class="sd">    - a string (X-ray source name)</span>
+
+<span class="sd">    If a string is provided, it must match a key in WAVELENGTHS.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If wavelength is required but missing,</span>
+<span class="sd">        if a string wavelength is not a known source,</span>
+<span class="sd">        or if a numeric wavelength is non-positive.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        Updated arguments with args.wavelength as a float.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">normalize_wavelength</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">xtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ANGLEQUANTITIES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Please provide a wavelength or anode type &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;because the independent variable axis is not on two-theta. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Allowed anode types are </span><span class="si">{</span><span class="o">*</span><span class="n">known_sources</span><span class="p">,</span><span class="w"> </span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">args</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Wavelength = </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">wavelength</span><span class="si">}</span><span class="s2"> is not valid. &quot;</span>
+            <span class="s2">&quot;Please rerun specifying a known anode type &quot;</span>
+            <span class="s2">&quot;or a positive wavelength.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<div class="viewcode-block" id="set_xtype">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.set_xtype">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_xtype</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the xtype based on the given input arguments, raise an error</span>
+<span class="sd">    if xtype is not one of {*XQUANTITIES, }.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments from the parser.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The updated arguments with the xtype as one of q, tth, or d.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">xtype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">XQUANTITIES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown xtype: </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">xtype</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Allowed xtypes are </span><span class="si">{</span><span class="o">*</span><span class="n">XQUANTITIES</span><span class="p">,</span><span class="w"> </span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">xtype</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;q&quot;</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">xtype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">QQUANTITIES</span>
+        <span class="k">else</span> <span class="s2">&quot;tth&quot;</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">xtype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ANGLEQUANTITIES</span> <span class="k">else</span> <span class="s2">&quot;d&quot;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_set_mud_from_zscan</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Experimental estimation of mu*D from a z-scan file.&quot;&quot;&quot;</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">z_scan_file</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">filepath</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Cannot find </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">z_scan_file</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Please specify a valid file path.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">z_scan_file</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">mud</span> <span class="o">=</span> <span class="n">compute_mud</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_theoretical_input</span><span class="p">(</span><span class="n">input_str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function to parse and validate the input string.&quot;&quot;&quot;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">input_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid mu*D input &#39;</span><span class="si">{</span><span class="n">input_str</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+            <span class="s2">&quot;Expected format is &#39;sample composition, energy, &quot;</span>
+            <span class="s2">&quot;sample mass density or packing fraction&#39; &quot;</span>
+            <span class="s2">&quot;(e.g., &#39;ZrO2,17.45,0.5&#39;).&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">sample_composition</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">energy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">mass_density_or_packing_fraction</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">sample_composition</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">mass_density_or_packing_fraction</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_set_theoretical_mud_from_density</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Theoretical estimation of mu*D from sample composition, energy,</span>
+<span class="sd">    and sample mass density.&quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">normalize_wavelength</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">load_wavelength_from_config_file</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">energy</span> <span class="o">=</span> <span class="mf">12.398</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">energy</span> <span class="o">=</span> <span class="n">energy</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">mud</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">compute_mu_using_xraydb</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">sample_composition</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span>
+            <span class="n">sample_mass_density</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">sample_mass_density</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="o">*</span> <span class="n">args</span><span class="o">.</span><span class="n">diameter</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_set_theoretical_mud_from_packing</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Theoretical estimation of mu*D from sample composition, energy,</span>
+<span class="sd">    and packing fraction.&quot;&quot;&quot;</span>
+    <span class="n">sample_composition</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">packing_fraction</span> <span class="o">=</span> <span class="n">_parse_theoretical_input</span><span class="p">(</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">theoretical_from_packing</span>
+    <span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">sample_composition</span> <span class="o">=</span> <span class="n">sample_composition</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">energy</span> <span class="o">=</span> <span class="n">energy</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">packing_fraction</span> <span class="o">=</span> <span class="n">packing_fraction</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">mud</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">compute_mu_using_xraydb</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">sample_composition</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span>
+            <span class="n">packing_fraction</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">packing_fraction</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="o">*</span> <span class="n">args</span><span class="o">.</span><span class="n">diameter</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span>
+
+
+<div class="viewcode-block" id="set_mud">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.set_mud">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_mud</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute and set mu*D based on the selected method.</span>
+
+<span class="sd">    Options include:</span>
+<span class="sd">    1. Manually entering a value.</span>
+<span class="sd">    2. Estimating from a z-scan file.</span>
+<span class="sd">    3. Estimating theoretically based on sample mass density.</span>
+<span class="sd">    4. Estimating theoretically based on packing fraction.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments from the parser.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The updated arguments with mu*D.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;mud&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">args</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;zscan&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_set_mud_from_zscan</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_set_theoretical_mud_from_density</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_key_value_pair</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;=&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+
+
+<div class="viewcode-block" id="load_user_metadata">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.load_user_metadata">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_user_metadata</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load user metadata into args, raise ValueError if it is in</span>
+<span class="sd">    incorrect format.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments from the parser.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The updated argparse Namespace</span>
+<span class="sd">        with user metadata inserted as key-value pairs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">reserved_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">user_metadata</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">user_metadata</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;=&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Please provide key-value pairs in the format key=value. &quot;</span>
+                    <span class="s2">&quot;For more information, use `labpdfproc --help.`&quot;</span>
+                <span class="p">)</span>
+            <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">_load_key_value_pair</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">reserved_keys</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is a reserved name. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Please rerun using a different key name.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Please do not specify repeated keys: &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="nb">delattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;user_metadata&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<div class="viewcode-block" id="load_user_info">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.load_user_info">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_user_info</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load user info into args. If none is provided, call</span>
+<span class="sd">    check_and_build_global_config function from diffpy.utils to prompt</span>
+<span class="sd">    the user for inputs. Otherwise, call get_user_info with the provided</span>
+<span class="sd">    arguments.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments from the parser.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The updated argparse Namespace</span>
+<span class="sd">        with username, email, and orcid inserted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">username</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">args</span><span class="o">.</span><span class="n">email</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_and_build_global_config</span><span class="p">()</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">get_user_info</span><span class="p">(</span>
+        <span class="n">owner_name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+        <span class="n">owner_email</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+        <span class="n">owner_orcid</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">orcid</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;owner_name&quot;</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;owner_email&quot;</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">orcid</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;owner_orcid&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<div class="viewcode-block" id="load_package_info">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.load_package_info">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_package_info</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load diffpy.labpdfproc package name and version into args using</span>
+<span class="sd">    get_package_info function from diffpy.utils.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments from the parser.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The updated argparse Namespace</span>
+<span class="sd">        with diffpy.labpdfproc name and version inserted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">get_package_info</span><span class="p">(</span><span class="s2">&quot;diffpy.labpdfproc&quot;</span><span class="p">)</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;package_info&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;package_info&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<div class="viewcode-block" id="preprocessing_args">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.preprocessing_args">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocessing_args</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform preprocessing on the provided args. The process includes</span>
+<span class="sd">    loading package and user information, setting input, output,</span>
+<span class="sd">    wavelength, anode type, xtype, mu*D, and loading user metadata.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments from the parser.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The updated argparse Namespace with arguments preprocessed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">load_wavelength_from_config_file</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">set_mud</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">set_input_lists</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">set_output_directory</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">set_wavelength</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">set_xtype</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">load_user_metadata</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">load_user_info</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">load_package_info</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<span class="c1"># Update load_metadata to use &#39;input_directory&#39; consistently:</span>
+<div class="viewcode-block" id="load_metadata">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.tools.load_metadata">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_metadata</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the relevant metadata from args to write into the header of</span>
+<span class="sd">    the output files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments from the parser.</span>
+
+<span class="sd">    filepath : Path</span>
+<span class="sd">        The filepath of the current input file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    metadata : dict</span>
+<span class="sd">        The dictionary with relevant arguments from the parser.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">METADATA_KEYS_TO_EXCLUDE</span><span class="p">:</span>
+        <span class="n">metadata</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;mud&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;mud&quot;</span><span class="p">]),</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;input_directory&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;output_directory&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;output_directory&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">metadata</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, The Trustees of Columbia University in the City of New York.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

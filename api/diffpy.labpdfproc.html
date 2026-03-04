@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>diffpy.labpdfproc package &mdash; diffpy.labpdfproc 0.3.0rc0 documentation</title>
+  <title>diffpy.labpdfproc package &mdash; diffpy.labpdfproc 0.3.0rc1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=b394bd1b"></script>
+      <script src="../_static/documentation_options.js?v=1ad4c97d"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -94,11 +94,320 @@ sources.</p>
 </section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
-<section id="diffpy-labpdfproc-functions-module">
-<h3>diffpy.labpdfproc.functions module<a class="headerlink" href="#diffpy-labpdfproc-functions-module" title="Link to this heading"></a></h3>
+<section id="module-diffpy.labpdfproc.functions">
+<span id="diffpy-labpdfproc-functions-module"></span><h3>diffpy.labpdfproc.functions module<a class="headerlink" href="#module-diffpy.labpdfproc.functions" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.functions.Gridded_circle">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.functions.</span></span><span class="sig-name descname"><span class="pre">Gridded_circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points_on_diameter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/functions.html#Gridded_circle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.functions.Gridded_circle" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.functions.Gridded_circle.set_distances_at_angle">
+<span class="sig-name descname"><span class="pre">set_distances_at_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/functions.html#Gridded_circle.set_distances_at_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.functions.Gridded_circle.set_distances_at_angle" title="Link to this definition"></a></dt>
+<dd><p>Given an angle, set the distances from the grid points to the
+entry and exit coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>angle</strong> (<em>float</em>) – The angle of the output beam in degrees.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.functions.Gridded_circle.set_muls_at_angle">
+<span class="sig-name descname"><span class="pre">set_muls_at_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/functions.html#Gridded_circle.set_muls_at_angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.functions.Gridded_circle.set_muls_at_angle" title="Link to this definition"></a></dt>
+<dd><p>Compute muls = exp(-mu*distance) for a given angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>angle</strong> (<em>float</em>) – The angle of the output beam in degrees.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.functions.apply_corr">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.functions.</span></span><span class="sig-name descname"><span class="pre">apply_corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absorption_correction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/functions.html#apply_corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.functions.apply_corr" title="Link to this definition"></a></dt>
+<dd><p>Apply absorption correction to the given diffraction object with
+the correction diffraction object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_pattern</strong> (<em>DiffractionObject</em>) – The input diffraction object to which the cve will be applied.</p></li>
+<li><p><strong>absorption_correction</strong> (<em>DiffractionObject</em>) – The diffraction object that contains the cve to be applied.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>corrected_pattern</strong> – The corrected diffraction object
+with the correction applied through multiplication.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DiffractionObject</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.functions.compute_cve">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.functions.</span></span><span class="sig-name descname"><span class="pre">compute_cve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mud</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'polynomial_interpolation'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tth'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/functions.html#compute_cve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.functions.compute_cve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="diffpy-labpdfproc-tools-module">
-<h3>diffpy.labpdfproc.tools module<a class="headerlink" href="#diffpy-labpdfproc-tools-module" title="Link to this heading"></a></h3>
+<section id="module-diffpy.labpdfproc.tools">
+<span id="diffpy-labpdfproc-tools-module"></span><h3>diffpy.labpdfproc.tools module<a class="headerlink" href="#module-diffpy.labpdfproc.tools" title="Link to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.tools.load_metadata">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.tools.</span></span><span class="sig-name descname"><span class="pre">load_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/tools.html#load_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.tools.load_metadata" title="Link to this definition"></a></dt>
+<dd><p>Load the relevant metadata from args to write into the header of
+the output files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<em>argparse.Namespace</em>) – The arguments from the parser.</p></li>
+<li><p><strong>filepath</strong> (<em>Path</em>) – The filepath of the current input file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>metadata</strong> – The dictionary with relevant arguments from the parser.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.tools.load_package_info">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.tools.</span></span><span class="sig-name descname"><span class="pre">load_package_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/tools.html#load_package_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.tools.load_package_info" title="Link to this definition"></a></dt>
+<dd><p>Load diffpy.labpdfproc package name and version into args using
+get_package_info function from diffpy.utils.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>argparse.Namespace</em>) – The arguments from the parser.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>args</strong> – The updated argparse Namespace
+with diffpy.labpdfproc name and version inserted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>argparse.Namespace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.tools.load_user_info">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.tools.</span></span><span class="sig-name descname"><span class="pre">load_user_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/tools.html#load_user_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.tools.load_user_info" title="Link to this definition"></a></dt>
+<dd><p>Load user info into args. If none is provided, call
+check_and_build_global_config function from diffpy.utils to prompt
+the user for inputs. Otherwise, call get_user_info with the provided
+arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>argparse.Namespace</em>) – The arguments from the parser.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>args</strong> – The updated argparse Namespace
+with username, email, and orcid inserted.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>argparse.Namespace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.tools.load_user_metadata">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.tools.</span></span><span class="sig-name descname"><span class="pre">load_user_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/tools.html#load_user_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.tools.load_user_metadata" title="Link to this definition"></a></dt>
+<dd><p>Load user metadata into args, raise ValueError if it is in
+incorrect format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>argparse.Namespace</em>) – The arguments from the parser.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>args</strong> – The updated argparse Namespace
+with user metadata inserted as key-value pairs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>argparse.Namespace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.tools.load_wavelength_from_config_file">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.tools.</span></span><span class="sig-name descname"><span class="pre">load_wavelength_from_config_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/tools.html#load_wavelength_from_config_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.tools.load_wavelength_from_config_file" title="Link to this definition"></a></dt>
+<dd><p>Load wavelength from config files.</p>
+<p>It prioritizes values in the following order:
+1. cli inputs, 2. local config file, 3. global config file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>argparse.Namespace</em>) – The arguments from the parser.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>args</strong> – The updated arguments with the updated wavelength and anode type.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>argparse.Namespace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.tools.normalize_wavelength">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.tools.</span></span><span class="sig-name descname"><span class="pre">normalize_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/tools.html#normalize_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.tools.normalize_wavelength" title="Link to this definition"></a></dt>
+<dd><p>Normalize args.wavelength to a float.</p>
+<p>If args.wavelength is:
+- None: return args unchanged
+- float-like: convert to float
+- string: look up corresponding value in WAVELENGTHS (case-insensitive)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>argparse.Namespace</em>) – The arguments from the parser.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>args</strong> – The updated arguments with args.wavelength.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>argparse.Namespace</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If a string wavelength is not a known source.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.tools.preprocessing_args">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.tools.</span></span><span class="sig-name descname"><span class="pre">preprocessing_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/tools.html#preprocessing_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.tools.preprocessing_args" title="Link to this definition"></a></dt>
+<dd><p>Perform preprocessing on the provided args. The process includes
+loading package and user information, setting input, output,
+wavelength, anode type, xtype, mu*D, and loading user metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>argparse.Namespace</em>) – The arguments from the parser.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>args</strong> – The updated argparse Namespace with arguments preprocessed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>argparse.Namespace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.tools.set_input_lists">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.tools.</span></span><span class="sig-name descname"><span class="pre">set_input_lists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/tools.html#set_input_lists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.tools.set_input_lists" title="Link to this definition"></a></dt>
+<dd><p>Set input directory and files. It takes cli inputs, checks if
+they are files or directories and creates a list of files to be
+processed which is stored in the args Namespace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>argparse.Namespace</em>) – The arguments from the parser.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FileNotFoundError</strong> – Raised when an input is invalid.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> – The updated arguments with the modified input list.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>argparse.Namespace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.tools.set_mud">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.tools.</span></span><span class="sig-name descname"><span class="pre">set_mud</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/tools.html#set_mud"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.tools.set_mud" title="Link to this definition"></a></dt>
+<dd><p>Compute and set mu*D based on the selected method.</p>
+<p>Options include:
+1. Manually entering a value.
+2. Estimating from a z-scan file.
+3. Estimating theoretically based on sample mass density.
+4. Estimating theoretically based on packing fraction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>argparse.Namespace</em>) – The arguments from the parser.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>args</strong> – The updated arguments with mu*D.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>argparse.Namespace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.tools.set_output_directory">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.tools.</span></span><span class="sig-name descname"><span class="pre">set_output_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/tools.html#set_output_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.tools.set_output_directory" title="Link to this definition"></a></dt>
+<dd><p>Set the output directory based on the given input arguments.</p>
+<p>It is determined as follows:
+If user provides an output directory, use it.
+Otherwise, we set it to the current directory if nothing is provided.
+We then create the directory if it does not exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>argparse.Namespace</em>) – The arguments from the parser.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>args</strong> – The updated arguments,
+with output_directory as the full path to the output file directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>argparse.Namespace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.tools.set_wavelength">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.tools.</span></span><span class="sig-name descname"><span class="pre">set_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/tools.html#set_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.tools.set_wavelength" title="Link to this definition"></a></dt>
+<dd><p>Set the wavelength based on args.wavelength.</p>
+<p>args.wavelength may be:
+- None
+- a number (explicit wavelength in Å)
+- a string (X-ray source name)</p>
+<p>If a string is provided, it must match a key in WAVELENGTHS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>argparse.Namespace</em>)</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If wavelength is required but missing,
+    if a string wavelength is not a known source,
+    or if a numeric wavelength is non-positive.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> – Updated arguments with args.wavelength as a float.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>argparse.Namespace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="diffpy.labpdfproc.tools.set_xtype">
+<span class="sig-prename descclassname"><span class="pre">diffpy.labpdfproc.tools.</span></span><span class="sig-name descname"><span class="pre">set_xtype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/diffpy/labpdfproc/tools.html#set_xtype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffpy.labpdfproc.tools.set_xtype" title="Link to this definition"></a></dt>
+<dd><p>Set the xtype based on the given input arguments, raise an error
+if xtype is not one of {<a href="#id1"><span class="problematic" id="id2">*</span></a>XQUANTITIES, }.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>argparse.Namespace</em>) – The arguments from the parser.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>args</strong> – The updated arguments with the xtype as one of q, tth, or d.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>argparse.Namespace</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="diffpy-labpdfproc-labpdfprocapp-module">
 <h3>diffpy.labpdfproc.labpdfprocapp module<a class="headerlink" href="#diffpy-labpdfproc-labpdfprocapp-module" title="Link to this heading"></a></h3>
