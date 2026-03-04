@@ -108,6 +108,9 @@ copybutton_prompt_is_regexp = True
 # directories to ignore when looking for source files.
 exclude_patterns = ["build"]
 
+# Mock imports so API docs render without installing dependencies.
+autodoc_mock_imports = ["diffpy.utils"]
+
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
 # default_role = None
