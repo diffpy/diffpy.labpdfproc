@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>labpdfprocapp Example &mdash; diffpy.labpdfproc 0.3.0rc0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b394bd1b"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=cca77546"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Functions Example" href="functions-example.html" />
+    <link rel="prev" title="Examples" href="examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            diffpy.labpdfproc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities/utilities.html">Utilities</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">labpdfprocapp Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions-example.html">Functions Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools-example.html">Tools Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/diffpy.labpdfproc.html">Package API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">diffpy.labpdfproc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="examples.html">Examples</a></li>
+      <li class="breadcrumb-item active">labpdfprocapp Example</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/diffpy/diffpy.labpdfproc/blob/main/docs/source/examples/labpdfprocapp-example.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>labpdfprocapp Example<a class="headerlink" href="#id1" title="Link to this heading"></a></h1>
+<p>This example provides a quick-start tutorial for using <code class="docutils literal notranslate"><span class="pre">diffpy.labpdfproc</span></code>
+to apply absorption correction to your 1D diffraction data using the command-line (CLI).
+Check <code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">--help</span></code> for more information.
+A graphical user interface (GUI) is also available and is designed to be intuitive and easy to use.</p>
+<p>There are three ways to correct dirraction data within <code class="docutils literal notranslate"><span class="pre">diffpy.labpdfproc</span></code>, these are,</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">mud</span></code>: Provide the diffraction data file(s) and muD value directly.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">zscan</span></code>: Provide the diffraction data file(s) and a z-scan file, which will be used to calculate the muD value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">sample</span></code>: Provide the diffraction data file(s) and information about the sample to calculate the theoretical muD value.</p></li>
+</ol>
+<p>We will go through all three methods in this tutorial.</p>
+<div class="admonition-example-data admonition">
+<p class="admonition-title">Example Data</p>
+<p>Example data for these examples can be found at: <a class="reference external" href="https://github.com/diffpy/diffpy.labpdfproc/tree/main/docs/source/examples/example-data">https://github.com/diffpy/diffpy.labpdfproc/tree/main/docs/source/examples/example-data</a></p>
+</div>
+<section id="launching-the-graphical-user-interface-gui">
+<h2>Launching the Graphical User Interface (GUI)<a class="headerlink" href="#launching-the-graphical-user-interface-gui" title="Link to this heading"></a></h2>
+<p>To launch the GUI, run one of the following commands in your terminal,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc
+labpdfproc<span class="w"> </span>--gui
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that the GUI is currently not supported on Python&gt;=3.12.</p>
+</div>
+<p>This will open the GUI, which should look something like,</p>
+<img alt="../_images/labpdfproc-gui.jpeg" class="align-center" src="../_images/labpdfproc-gui.jpeg" />
+<p>Below we will go through all the commands using the CLI, but the same principles apply to the GUI.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The first time you run any of the below commands,
+you will be prompted to enter your name, email, and ORCID. This will be
+appended to metadata in the output file header for reproducibility and tracking purposes.</p>
+</div>
+</section>
+<section id="labpdfproc-mud-command">
+<h2><code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">mud</span></code> Command<a class="headerlink" href="#labpdfproc-mud-command" title="Link to this heading"></a></h2>
+<p>If you know the muD value for your sample, you can use the <code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">mud</span></code>
+command to apply absorption correction directly.</p>
+<p>To see all the options for this command, type,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>mud<span class="w"> </span>-h
+</pre></div>
+</div>
+<p>To run the correction, specify the path to your diffraction data file(s) and the muD value,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>mud<span class="w"> </span>&lt;diffraction-data-file.xy&gt;<span class="w"> </span>&lt;mud&gt;
+labpdfproc<span class="w"> </span>mud<span class="w"> </span>zro2_mo.xy<span class="w"> </span><span class="m">2</span>.5
+</pre></div>
+</div>
+<p>If the flag <code class="docutils literal notranslate"><span class="pre">--wavelength</span></code> is not specified, the program will attempt to fetch
+the wavelength from a configuration file.
+If the wavelength is not found in the configuration file, a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>
+will be raised, prompting you to provide the wavelength either through the CLI or the configuration file.</p>
+<p>To provide the wavelength through the CLI, you can use the <code class="docutils literal notranslate"><span class="pre">-w</span></code> or <code class="docutils literal notranslate"><span class="pre">--wavelength</span></code> flag followed by the wavelength value in angstroms or the X-ray source.
+For example,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>mud<span class="w"> </span>zro2_mo.xy<span class="w"> </span><span class="m">2</span>.5<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>.71303
+labpdfproc<span class="w"> </span>mud<span class="w"> </span>zro2_mo.xy<span class="w"> </span><span class="m">2</span>.5<span class="w"> </span>-w<span class="w"> </span>Mo
+</pre></div>
+</div>
+<p>This will then save the corrected file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">zro2_mo_corrected.chi</span></code>.</p>
+<p>To save the correction file, specify the <code class="docutils literal notranslate"><span class="pre">-c</span></code> or <code class="docutils literal notranslate"><span class="pre">--output-correction</span></code> flag,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>mud<span class="w"> </span>zro2_mo.xy<span class="w"> </span><span class="m">2</span>.5<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>.71303<span class="w"> </span>-c
+</pre></div>
+</div>
+<p>This will then save the correction file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">zro2_mo_cve.chi</span></code>.</p>
+</section>
+<section id="labpdfproc-zscan-command">
+<h2><code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">zscan</span></code> Command<a class="headerlink" href="#labpdfproc-zscan-command" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">zscan</span></code> command allows you to calculate the muD value from a z-scan file and apply absorption correction to your diffraction data.
+For more information on what a z-scan is, please see the “Examples –&gt; Linear Absorption Coefficient Examples”
+section in the <code class="docutils literal notranslate"><span class="pre">diffpy.utils</span></code> documentation: <a class="reference external" href="https://www.diffpy.org/diffpy.utils/examples/mu_calc_examples.html">https://www.diffpy.org/diffpy.utils/examples/mu_calc_examples.html</a>.</p>
+<p>To see the options for this command, type,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>zscan<span class="w"> </span>-h
+</pre></div>
+</div>
+<p>To run this command, provide the path to your diffraction data file(s) and the z-scan file,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>zscan<span class="w"> </span>&lt;diffraction-data-file.xy&gt;<span class="w"> </span>&lt;zscan-file.xy&gt;
+labpdfproc<span class="w"> </span>zscan<span class="w"> </span>CeO2_635um_accum_0.xy<span class="w"> </span>CeO2_635um_zscan.xy
+</pre></div>
+</div>
+<p>Like the <code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">mud</span></code> command, you can also specify the
+wavelength or source type using the <code class="docutils literal notranslate"><span class="pre">-w</span></code> flag if it’s not found in the configuration file,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>zscan<span class="w"> </span>CeO2_635um_accum_0.xy<span class="w"> </span>CeO2_635um_zscan.xy<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>.71303
+labpdfproc<span class="w"> </span>zscan<span class="w"> </span>CeO2_635um_accum_0.xy<span class="w"> </span>CeO2_635um_zscan.xy<span class="w"> </span>-w<span class="w"> </span>Mo
+</pre></div>
+</div>
+<p>This will save the corrected file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">CeO2_635um_accum_0.chi</span></code>.</p>
+<p>To save the correction file, specify the <code class="docutils literal notranslate"><span class="pre">-c</span></code> or <code class="docutils literal notranslate"><span class="pre">--output-correction</span></code> flag,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>zscan<span class="w"> </span>CeO2_635um_accum_0.xy<span class="w"> </span>CeO2_635um_zscan.xy<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>.71303<span class="w"> </span>-c
+</pre></div>
+</div>
+<p>This will then save the correction file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">CeO2_635um_accum_0_cve.chi</span></code>.</p>
+</section>
+<section id="labpdfproc-sample-command">
+<h2><code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">sample</span></code> Command<a class="headerlink" href="#labpdfproc-sample-command" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">sample</span></code> command allows you to calculate the muD value from information
+about your sample and apply absorption correction to your diffraction data.</p>
+<p>To see the options for this command, type,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>sample<span class="w"> </span>-h
+</pre></div>
+</div>
+<p>To run this command, provide the path to your diffraction data file(s) along with:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sample_composition</span></code>: The chemical formula of your sample.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sample_mass_density</span></code>: The mass density of your sample in g/cm^3. If you don’t know the mass density, a good approximation is typically ~1/3 of the theoretical packing fraction.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">diameter</span></code>: The outer diameter of your capillary.</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>sample<span class="w"> </span>&lt;diffraction-data-file.xy&gt;<span class="w"> </span>&lt;sample_composition&gt;<span class="w"> </span>&lt;sample_mass_density&gt;<span class="w"> </span>&lt;diameter&gt;
+labpdfproc<span class="w"> </span>sample<span class="w"> </span>zro2_mo.xy<span class="w"> </span>ZrO2<span class="w"> </span><span class="m">17</span>.45<span class="w"> </span><span class="m">1</span>.2
+</pre></div>
+</div>
+<p>Once again, you can specify the wavelength or source type using the <code class="docutils literal notranslate"><span class="pre">-w</span></code> flag if it’s not found in the configuration file,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>sample<span class="w"> </span>zro2_mo.xy<span class="w"> </span>ZrO2<span class="w"> </span><span class="m">17</span>.45<span class="w"> </span><span class="m">1</span>.2<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>.71303
+labpdfproc<span class="w"> </span>sample<span class="w"> </span>zro2_mo.xy<span class="w"> </span>ZrO2<span class="w"> </span><span class="m">17</span>.45<span class="w"> </span><span class="m">1</span>.2<span class="w"> </span>-w<span class="w"> </span>Mo
+</pre></div>
+</div>
+<p>This will save the corrected file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">zro2_mo.chi</span></code>.</p>
+<p>To save the correction file, specify the <code class="docutils literal notranslate"><span class="pre">-c</span></code> or <code class="docutils literal notranslate"><span class="pre">--output-correction</span></code> flag,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>sample<span class="w"> </span>zro2_mo.xy<span class="w"> </span>ZrO2<span class="w"> </span><span class="m">17</span>.45<span class="w"> </span><span class="m">1</span>.2<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>.71303<span class="w"> </span>-c
+</pre></div>
+</div>
+<p>This will then save the correction file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">zro2_mo_cve.chi</span></code>.</p>
+</section>
+<section id="additional-cli-options">
+<h2>Additional CLI options<a class="headerlink" href="#additional-cli-options" title="Link to this heading"></a></h2>
+<p>Below is a summary of all the additional flags that can be used with all three commands,</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">-h,</span> <span class="pre">--help</span></code>
+Show this help message and exit.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-w,</span> <span class="pre">--wavelength</span> <span class="pre">WAVELENGTH</span></code>
+X-ray wavelength in angstroms (numeric) or X-ray source name.
+Allowed: <code class="docutils literal notranslate"><span class="pre">Ag</span></code>, <code class="docutils literal notranslate"><span class="pre">AgKa1</span></code>, <code class="docutils literal notranslate"><span class="pre">AgKa1Ka2</span></code>, <code class="docutils literal notranslate"><span class="pre">Cu</span></code>, <code class="docutils literal notranslate"><span class="pre">CuKa1</span></code>, <code class="docutils literal notranslate"><span class="pre">CuKa1Ka2</span></code>, <code class="docutils literal notranslate"><span class="pre">Mo</span></code>, <code class="docutils literal notranslate"><span class="pre">MoKa1</span></code>, <code class="docutils literal notranslate"><span class="pre">MoKa1Ka2</span></code>.
+Will be loaded from config files if not specified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-x,</span> <span class="pre">--xtype</span> <span class="pre">XTYPE</span></code>
+X-axis type (default: <code class="docutils literal notranslate"><span class="pre">tth</span></code>). Allowed values: <code class="docutils literal notranslate"><span class="pre">angle</span></code>, <code class="docutils literal notranslate"><span class="pre">tth</span></code>, <code class="docutils literal notranslate"><span class="pre">twotheta</span></code>, <code class="docutils literal notranslate"><span class="pre">2theta</span></code>, <code class="docutils literal notranslate"><span class="pre">d</span></code>, <code class="docutils literal notranslate"><span class="pre">dspace</span></code>, <code class="docutils literal notranslate"><span class="pre">q</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-m,</span> <span class="pre">--method</span> <span class="pre">{brute_force,</span> <span class="pre">polynomial_interpolation}</span></code>
+Method for cylindrical volume element (CVE) calculation (default: <code class="docutils literal notranslate"><span class="pre">polynomial_interpolation</span></code>).
+Allowed methods: <code class="docutils literal notranslate"><span class="pre">brute_force</span></code>, <code class="docutils literal notranslate"><span class="pre">polynomial_interpolation</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output-directory</span> <span class="pre">OUTPUT_DIRECTORY</span></code>
+Directory to save corrected files (created if needed). Defaults to current directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--force</span></code>
+Overwrite existing files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-c,</span> <span class="pre">--output-correction</span></code>
+Also output the absorption correction to a separate file.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-u,</span> <span class="pre">--user-metadata</span> <span class="pre">KEY=VALUE</span> <span class="pre">[KEY=VALUE</span> <span class="pre">...]</span></code>
+Specify key-value pairs to be loaded into metadata. Format: <code class="docutils literal notranslate"><span class="pre">key=value</span></code>.
+- Separate multiple pairs with whitespace.
+- No spaces before or after <code class="docutils literal notranslate"><span class="pre">=</span></code>.
+- Avoid using <code class="docutils literal notranslate"><span class="pre">=</span></code> in keys. Only the first <code class="docutils literal notranslate"><span class="pre">=</span></code> separates key and value.
+- If a key or value contains whitespace, enclose it in quotes.</p>
+<blockquote>
+<div><p>Examples:
+<code class="docutils literal notranslate"><span class="pre">facility='NSLS</span> <span class="pre">II',</span> <span class="pre">beamline=28ID-2,</span> <span class="pre">'favorite</span> <span class="pre">color'=blue</span></code>.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--username</span> <span class="pre">USERNAME</span></code>
+Your name (optional, for dataset credit). Will be loaded from config files if not specified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--email</span> <span class="pre">EMAIL</span></code>
+Your email (optional, for dataset credit). Will be loaded from config files if not specified.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--orcid</span> <span class="pre">ORCID</span></code>
+Your ORCID ID (optional, for dataset credit). Will be loaded from config files if not specified.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="functions-example.html" class="btn btn-neutral float-right" title="Functions Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, The Trustees of Columbia University in the City of New York.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

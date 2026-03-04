@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>diffpy.labpdfproc package &mdash; diffpy.labpdfproc 0.3.0rc0 documentation</title>
+  <title>Functions Utility &mdash; diffpy.labpdfproc 0.3.0rc0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -21,9 +21,7 @@
       <script src="../_static/copybutton.js?v=cca77546"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="diffpy.labpdfproc.data package" href="diffpy.labpdfproc.data.html" />
-    <link rel="prev" title="Tools Example" href="../examples/tools-example.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,15 +43,12 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release.html">Release notes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../utilities/utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples/examples.html">Examples</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Package API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="diffpy.labpdfproc.data.html">diffpy.labpdfproc.data package</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/diffpy.labpdfproc.html">Package API</a></li>
 </ul>
 
         </div>
@@ -70,9 +65,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">diffpy.labpdfproc package</li>
+      <li class="breadcrumb-item active">Functions Utility</li>
       <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/diffpy/diffpy.labpdfproc/blob/main/docs/source/api/diffpy.labpdfproc.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/diffpy/diffpy.labpdfproc/blob/main/docs/source/utilities/functions-utility.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -80,39 +75,31 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-diffpy.labpdfproc">
-<span id="diffpy-labpdfproc-package"></span><h1>diffpy.labpdfproc package<a class="headerlink" href="#module-diffpy.labpdfproc" title="Link to this heading"></a></h1>
-<p>Tools for processing x-ray powder diffraction data from laboratory
-sources.</p>
-<section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="diffpy.labpdfproc.data.html">diffpy.labpdfproc.data package</a></li>
+  <section id="functions-utility">
+<span id="id1"></span><h1>Functions Utility<a class="headerlink" href="#functions-utility" title="Link to this heading"></a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">diffpy.labpdfproc.functions</span></code> module provides tools
+for computing and applying absorption correction (cve) to 1D diffraction patterns.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Gridded_circle</span></code>: This class supports absorption correction by
+creating a uniform grid of points within a circle for a given radius and linear absorption coefficient mu,
+and computing the path length and effective volume for each grid point at a given angle.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compute_cve</span></code>: This function computes the absorption correction curve for a given muD value
+(the product of mu and capillary diameter D).
+For brute-force computation, it averages the effective volume across all grid points
+and computes the cve values as the reciprocal of this average.
+Alternatively, for fast calculation,
+it uses polynomial interpolation with pre-computed coefficients to estimate cve values for a given muD.
+Polynomial interpolation is available for muD values between 0.5-7.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">apply_corr</span></code>: This function applies the computed absorption correction to the input diffraction pattern
+by multiplying it with the corresponding cve, resulting in a corrected diffraction pattern.</p></li>
 </ul>
-</div>
-</section>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
-<section id="diffpy-labpdfproc-functions-module">
-<h3>diffpy.labpdfproc.functions module<a class="headerlink" href="#diffpy-labpdfproc-functions-module" title="Link to this heading"></a></h3>
-</section>
-<section id="diffpy-labpdfproc-tools-module">
-<h3>diffpy.labpdfproc.tools module<a class="headerlink" href="#diffpy-labpdfproc-tools-module" title="Link to this heading"></a></h3>
-</section>
-<section id="diffpy-labpdfproc-labpdfprocapp-module">
-<h3>diffpy.labpdfproc.labpdfprocapp module<a class="headerlink" href="#diffpy-labpdfproc-labpdfprocapp-module" title="Link to this heading"></a></h3>
-</section>
-</section>
+<p>For a more in-depth tutorial for how to use these tools, click <a class="reference internal" href="../examples/functions-example.html#functions-example"><span class="std std-ref">here</span></a>.</p>
 </section>
 
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../examples/tools-example.html" class="btn btn-neutral float-left" title="Tools Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="diffpy.labpdfproc.data.html" class="btn btn-neutral float-right" title="diffpy.labpdfproc.data package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

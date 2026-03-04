@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tools Example &mdash; diffpy.labpdfproc 0.3.0rc0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b394bd1b"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=cca77546"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="diffpy.labpdfproc package" href="../api/diffpy.labpdfproc.html" />
+    <link rel="prev" title="Functions Example" href="functions-example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            diffpy.labpdfproc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities/utilities.html">Utilities</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="labpdfprocapp-example.html">labpdfprocapp Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions-example.html">Functions Example</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tools Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/diffpy.labpdfproc.html">Package API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">diffpy.labpdfproc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="examples.html">Examples</a></li>
+      <li class="breadcrumb-item active">Tools Example</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/diffpy/diffpy.labpdfproc/blob/main/docs/source/examples/tools-example.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>Tools Example<a class="headerlink" href="#id1" title="Link to this heading"></a></h1>
+<p>This example will demonstrate how to use <code class="docutils literal notranslate"><span class="pre">diffpy.labpdfproc.tools</span></code> module
+to preprocess diffraction data using an <code class="docutils literal notranslate"><span class="pre">argparse.Namespace</span></code> called <code class="docutils literal notranslate"><span class="pre">args</span></code>.
+These functions help set up inputs, metadata, and parameters before applying absorption correction.</p>
+<p>1. We begin by estimating the mu*D value used for absorption correction using <code class="docutils literal notranslate"><span class="pre">set_mud(args)</span></code>.
+You can do this in one of the following four ways:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
+<span class="c1"># Option 1: Manual value</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">mud</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># Option 2: From a z-scan file</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">z_scan_file</span><span class="o">=</span><span class="s2">&quot;zscan.xy&quot;</span><span class="p">)</span>
+<span class="c1"># Option 3: Using sample mass density</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">sample_composition</span><span class="o">=</span><span class="s2">&quot;ZrO2&quot;</span><span class="p">,</span> <span class="n">sample_mass_density</span><span class="o">=</span><span class="s2">&quot;17.45&quot;</span><span class="p">,</span> <span class="n">diameter</span><span class="o">=</span><span class="s2">&quot;1.2&quot;</span><span class="p">)</span>
+<span class="c1"># Set and view the computed mu*D value</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">set_mud</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mud</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>Next, we load the input files for correction using <code class="docutils literal notranslate"><span class="pre">set_input_lists(args)</span></code>:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="s2">&quot;file1.xy file2.xy&quot;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">set_input_lists</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input_paths</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This function resolves the input filenames into full file paths.
+For details on supported input formats, check <code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">--help</span></code>.</p>
+<ol class="arabic simple" start="3">
+<li><p>We now set the output directory where the cve and corrected files will be saved:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">output_directory</span><span class="o">=</span><span class="s2">&quot;output&quot;</span><span class="p">)</span> <span class="c1"># creates &quot;output/&quot; directory if it doesn&#39;t exist</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">set_output_directory</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output_directory</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If a filename is provided instead of a directory, an error will be raised.
+If no output directory is specified, it defaults to the current working directory.</p>
+<ol class="arabic simple" start="4">
+<li><p>We then set wavelength and xtype, both of which are necessary for absorption correction:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Option 1: Specify wavelength directly</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="c1"># Option 2: Use a valid anode type</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="s2">&quot;Mo&quot;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">set_wavelength</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that you should specify either a wavelength or an anode type, not both, to avoid conflicts.
+If you provide an anode type, the corresponding wavelength will be retrieved from global parameters.
+You may use <code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">--help</span></code> to view a list of valid anode types.
+If neither is given, it’s only acceptable if the input diffraction data is already on a two-theta grid.</p>
+<p>To set the x-axis type (xtype) for your diffraction data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">xtype</span><span class="o">=</span><span class="s2">&quot;tth&quot;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">set_xtype</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This sets the xtype to <code class="docutils literal notranslate"><span class="pre">tth</span></code>. Other valid options including <code class="docutils literal notranslate"><span class="pre">q</span></code> and <code class="docutils literal notranslate"><span class="pre">d</span></code> spacing.</p>
+<p>1. Finally, we load user metadata, user information, and package information into <code class="docutils literal notranslate"><span class="pre">args</span></code>.
+To load metadata, pass key-value pairs as a list:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span>
+    <span class="n">user_metadata</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;facility=NSLS II&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;beamline=28ID-2&quot;</span><span class="p">,</span>
+<span class="p">])</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">load_user_metadata</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This ensures all key-value pairs are parsed and added as attributes.</p>
+<p>To load your user information (username, email, and orcid), you can manually add it through <code class="docutils literal notranslate"><span class="pre">args</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s2">&quot;Joe&quot;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s2">&quot;joe@example.com&quot;</span><span class="p">,</span> <span class="n">orcid</span><span class="o">=</span><span class="s2">&quot;0000-0000-0000-0000&quot;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">load_user_info</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">orcid</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Alternatively, this can be saved in a config file
+(see <a class="reference external" href="https://www.diffpy.org/diffpy.utils/examples/tools_example.html">https://www.diffpy.org/diffpy.utils/examples/tools_example.html</a>).
+If nothing is found, you will be prompted to create one.
+Note that it is not recommended to store personal information on a public or shared computer.</p>
+<p>Furthermore, the function <code class="docutils literal notranslate"><span class="pre">load_package_info(args)</span></code> is used to attach package name and version info for reproducibility.
+This is typically run automatically but can be called explicitly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">load_package_info</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">package_info</span><span class="p">)</span> <span class="c1"># Output example: {&quot;diffpy.labpdfproc&quot;: &quot;0.0.1&quot;, &quot;diffpy.utils&quot;: &quot;3.0.0&quot;}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li><p>We also provide a convenient function to run all steps above at once:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">preprocessing_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>7. The final step is converting your <code class="docutils literal notranslate"><span class="pre">args</span></code> to a metadata dictionary
+so that it can be attached to the diffraction object’s header during output writing.
+Using the function <code class="docutils literal notranslate"><span class="pre">load_metadata(args,</span> <span class="pre">filepath)</span></code>
+requires both the <code class="docutils literal notranslate"><span class="pre">argument.Namespace</span></code> and the current input file path.
+For more details about working with diffraction objects and how they are written to output files, see
+<a class="reference external" href="https://www.diffpy.org/diffpy.utils/examples/diffraction_objects_example.html">https://www.diffpy.org/diffpy.utils/examples/diffraction_objects_example.html</a>.</p>
+<section id="creating-diffpyconfig-json-file">
+<h2>Creating <code class="docutils literal notranslate"><span class="pre">diffpyconfig.json</span></code> file<a class="headerlink" href="#creating-diffpyconfig-json-file" title="Link to this heading"></a></h2>
+<p>To simplify workflows and avoid re-entering it every time,
+we recommend saving the wavelength or anode type to a diffpy config file. For example,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="n">home_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span>
+<span class="n">wavelength_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;wavelength&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">}</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">home_dir</span> <span class="o">/</span> <span class="s2">&quot;diffpyconfig.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">wavelength_data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="functions-example.html" class="btn btn-neutral float-left" title="Functions Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/diffpy.labpdfproc.html" class="btn btn-neutral float-right" title="diffpy.labpdfproc package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, The Trustees of Columbia University in the City of New York.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

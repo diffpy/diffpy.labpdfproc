@@ -6,16 +6,19 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>diffpy.labpdfproc documentation &mdash; diffpy.labpdfproc 0.2.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=7ab3649f" />
+  <title>diffpy.labpdfproc documentation &mdash; diffpy.labpdfproc 0.3.0rc0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=95e61db4"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/documentation_options.js?v=b394bd1b"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=cca77546"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -43,7 +46,9 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities/utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/diffpy.labpdfproc.html">Package API</a></li>
 </ul>
 
@@ -63,7 +68,7 @@
       <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">diffpy.labpdfproc documentation</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+              <a href="https://github.com/diffpy/diffpy.labpdfproc/blob/main/docs/source/index.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -73,16 +78,14 @@
              
   <section id="title">
 <h1>diffpy.labpdfproc documentation<a class="headerlink" href="#title" title="Link to this heading"></a></h1>
-<p>diffpy.labpdfproc - Tools for processing x-ray powder diffraction data from laboratory sources.</p>
+<p><code class="docutils literal notranslate"><span class="pre">diffpy.labpdfproc</span></code> - Tools for processing x-ray powder diffraction data from laboratory sources.</p>
 <div class="line-block">
-<div class="line">Software version 0.2.0.</div>
-<div class="line">Last updated October 26, 2024.</div>
+<div class="line">Software version 0.3.0rc0</div>
+<div class="line">Last updated March 04, 2026.</div>
 </div>
 <section id="authors">
 <h2>Authors<a class="headerlink" href="#authors" title="Link to this heading"></a></h2>
-<p>diffpy.labpdfproc is developed by Billinge Group
-and its community contributors.</p>
-<p>For a detailed list of contributors see
+<p><code class="docutils literal notranslate"><span class="pre">diffpy.labpdfproc</span></code> is developed by Yucong Chen, Till Schertenleib, Caden Myers, Billinge Group members. This project is maintained by Simon Billinge. For a detailed list of contributors see
 <a class="reference external" href="https://github.com/diffpy/diffpy.labpdfproc/graphs/contributors">https://github.com/diffpy/diffpy.labpdfproc/graphs/contributors</a>.</p>
 </section>
 <section id="installation">
@@ -90,12 +93,23 @@ and its community contributors.</p>
 <p>See the <a class="reference external" href="https://github.com/diffpy/diffpy.labpdfproc#installation">README</a>
 file included with the distribution.</p>
 </section>
+<section id="acknowledgements">
+<h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">diffpy.labpdfproc</span></code> is built and maintained with <a class="reference external" href="https://scikit-package.github.io/scikit-package/">scikit-package</a>.</p>
+</section>
 <section id="table-of-contents">
 <h2>Table of contents<a class="headerlink" href="#table-of-contents" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="release.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities/utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/labpdfprocapp-example.html">labpdfprocapp Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/functions-example.html">Functions Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/tools-example.html">Tools Example</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api/diffpy.labpdfproc.html">Package API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/diffpy.labpdfproc.data.html">diffpy.labpdfproc.data package</a></li>
 </ul>
@@ -122,7 +136,7 @@ file included with the distribution.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, The Trustees of Columbia University in the City of New York.</p>
+    <p>&#169; Copyright 2026, The Trustees of Columbia University in the City of New York.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
