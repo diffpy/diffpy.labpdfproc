@@ -1,0 +1,23 @@
+**Added:**
+
+* Add back support for Python 3.10 and 3.11.
+
+**Changed:**
+
+* <news item>
+
+**Deprecated:**
+
+* <news item>
+
+**Removed:**
+
+* <news item>
+
+**Fixed:**
+
+* <news item>
+
+**Security:**
+
+* <news item>
