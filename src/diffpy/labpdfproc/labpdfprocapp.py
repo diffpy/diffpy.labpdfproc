@@ -132,9 +132,6 @@ def _add_credit_args(parser, use_gui=False):
 
 def _save_corrected(corrected, input_path, args):
     outfile = args.output_directory / (input_path.stem + "_corrected.chi")
-    if outfile.exists() and not args.force:
-        print(f"WARNING: {outfile} exists. Use --force to overwrite.")
-        return
     corrected.metadata = corrected.metadata or {}
     corrected.dump(str(outfile), xtype=args.xtype)
     print(f"Saved corrected data to {outfile}")
@@ -142,9 +139,6 @@ def _save_corrected(corrected, input_path, args):
 
 def _save_correction(correction, input_path, args):
     corrfile = args.output_directory / (input_path.stem + "_cve.chi")
-    if corrfile.exists() and not args.force:
-        print(f"WARNING: {corrfile} exists. Use --force to overwrite.")
-        return
     correction.metadata = correction.metadata or {}
     correction.dump(str(corrfile), xtype=args.xtype)
     print(f"Saved correction data to {corrfile}")
@@ -310,9 +304,37 @@ def get_args_gui():
     return parser.parse_args()
 
 
+# def get_args_cli(override=None):
+#     parser = create_parser(use_gui=False)
+#     return parser.parse_args(override)
+
+
 def get_args_cli(override=None):
     parser = create_parser(use_gui=False)
-    return parser.parse_args(override)
+    argv = override if override is not None else sys.argv[1:]
+    argv = [arg for arg in argv if arg != "--ignore-gooey"]
+    return parser.parse_args(argv)
+
+
+def _check_saved_file_exists(args):
+    """Check if the output files already exist based on the input paths
+    and output directory."""
+    existing_files = []
+    for path in args.input_paths:
+        outfile = args.output_directory / (path.stem + "_corrected.chi")
+        if outfile.exists() and not args.force:
+            existing_files.append(outfile)
+        if args.output_correction:
+            corrfile = args.output_directory / (path.stem + "_cve.chi")
+            if corrfile.exists() and not args.force:
+                existing_files.append(corrfile)
+    if existing_files:
+        existing_files_str = "\n".join(str(f) for f in existing_files)
+        raise FileExistsError(
+            "The following output files already exist:"
+            f"\n{existing_files_str}\n"
+            "Use --force to overwrite them."
+        )
 
 
 def main():
@@ -320,6 +342,7 @@ def main():
     args = get_args_gui() if use_gui else get_args_cli()
     args = _handle_old_api_conversion(args)
     args = preprocessing_args(args)
+    _check_saved_file_exists(args)
     apply_absorption_correction(args)
 
 
