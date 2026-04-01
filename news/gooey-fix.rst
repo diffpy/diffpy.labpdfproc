@@ -1,6 +1,6 @@
 **Added:**
 
-* No news needed: updates for new gooey.
+* <news item>
 
 **Changed:**
 
@@ -12,7 +12,7 @@
 
 **Removed:**
 
-* <news item>
+* Removed support for Python 3.10 and 3.11.
 
 **Fixed:**
 
