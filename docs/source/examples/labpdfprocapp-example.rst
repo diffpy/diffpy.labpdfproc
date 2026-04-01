@@ -33,8 +33,6 @@ To launch the GUI, run one of the following commands in your terminal,
    labpdfproc
    labpdfproc --gui
 
-.. note:: Note that the GUI is currently not supported on Python>=3.12.
-
 This will open the GUI, which should look something like,
 
 .. image:: ../img/labpdfproc-gui.jpeg
