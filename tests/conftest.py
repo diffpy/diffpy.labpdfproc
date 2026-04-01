@@ -13,7 +13,8 @@ def user_filesystem(tmp_path):
     home_dir.mkdir(parents=True, exist_ok=True)
     test_dir = base_dir / "test_dir"
     test_dir.mkdir(parents=True, exist_ok=True)
-
+    output_dir = base_dir / "output_dir"
+    output_dir.mkdir(parents=True, exist_ok=True)
     chi_data = (
         "dataformat = twotheta\n mode = "
         "xray\n # chi_Q chi_I\n 1 2\n 3 4\n 5 6\n 7 8\n"
@@ -24,10 +25,6 @@ def user_filesystem(tmp_path):
     )
     binary_data = b"\x00\x01\x02\x03\x04"
 
-    with open(base_dir / "data.chi", "w") as f:
-        f.write(chi_data)
-    with open(base_dir / "data_corrected.chi", "w") as f:
-        f.write(chi_data)
     with open(base_dir / "good_data.chi", "w") as f:
         f.write(chi_data)
     with open(base_dir / "good_data.xy", "w") as f:
@@ -63,6 +60,10 @@ def user_filesystem(tmp_path):
         f.write("good_data.xy \n")
         f.write(f"{str(input_dir.resolve() / 'good_data.txt')}\n")
 
+    with open(output_dir / "good_data_corrected.chi", "w") as f:
+        f.write(chi_data)
+    with open(output_dir / "good_data_cve.chi", "w") as f:
+        f.write(chi_data)
     home_config_data = {
         "wavelength": 0.3,
         "owner_name": "home_username",

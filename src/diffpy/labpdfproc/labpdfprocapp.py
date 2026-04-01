@@ -316,33 +316,11 @@ def get_args_cli(override=None):
     return parser.parse_args(argv)
 
 
-def _check_saved_file_exists(args):
-    """Check if the output files already exist based on the input paths
-    and output directory."""
-    existing_files = []
-    for path in args.input_paths:
-        outfile = args.output_directory / (path.stem + "_corrected.chi")
-        if outfile.exists() and not args.force:
-            existing_files.append(outfile)
-        if args.output_correction:
-            corrfile = args.output_directory / (path.stem + "_cve.chi")
-            if corrfile.exists() and not args.force:
-                existing_files.append(corrfile)
-    if existing_files:
-        existing_files_str = "\n".join(str(f) for f in existing_files)
-        raise FileExistsError(
-            "The following output files already exist:"
-            f"\n{existing_files_str}\n"
-            "Use --force to overwrite them."
-        )
-
-
 def main():
     use_gui = len(sys.argv) == 1 or "--gui" in sys.argv
     args = get_args_gui() if use_gui else get_args_cli()
     args = _handle_old_api_conversion(args)
     args = preprocessing_args(args)
-    _check_saved_file_exists(args)
     apply_absorption_correction(args)
 
 
