@@ -24,6 +24,10 @@ def user_filesystem(tmp_path):
     )
     binary_data = b"\x00\x01\x02\x03\x04"
 
+    with open(base_dir / "data.chi", "w") as f:
+        f.write(chi_data)
+    with open(base_dir / "data_corrected.chi", "w") as f:
+        f.write(chi_data)
     with open(base_dir / "good_data.chi", "w") as f:
         f.write(chi_data)
     with open(base_dir / "good_data.xy", "w") as f:
