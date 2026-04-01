@@ -60,7 +60,7 @@ def user_filesystem(tmp_path):
         f.write("good_data.xy \n")
         f.write(f"{str(input_dir.resolve() / 'good_data.txt')}\n")
 
-    with open(output_dir / "good_data_corrected.chi", "w") as f:
+    with open(output_dir / "good_data-mud-corrected.chi", "w") as f:
         f.write(chi_data)
     with open(output_dir / "good_data_cve.chi", "w") as f:
         f.write(chi_data)

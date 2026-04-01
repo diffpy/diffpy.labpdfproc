@@ -533,7 +533,7 @@ def _check_saved_file_exists(args):
     and output directory."""
     existing_files = []
     for path in args.input_paths:
-        outfile = args.output_directory / (path.stem + "_corrected.chi")
+        outfile = args.output_directory / (path.stem + "-mud-corrected.chi")
         if outfile.exists() and not args.force:
             existing_files.append(outfile)
         if args.output_correction:

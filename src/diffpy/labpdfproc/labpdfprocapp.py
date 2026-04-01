@@ -131,7 +131,7 @@ def _add_credit_args(parser, use_gui=False):
 
 
 def _save_corrected(corrected, input_path, args):
-    outfile = args.output_directory / (input_path.stem + "_corrected.chi")
+    outfile = args.output_directory / (input_path.stem + "-mud-corrected.chi")
     corrected.metadata = corrected.metadata or {}
     corrected.dump(str(outfile), xtype=args.xtype)
     print(f"Saved corrected data to {outfile}")

@@ -851,11 +851,11 @@ def test_load_metadata(mocker, user_filesystem, inputs, expected):
 
 def test_preprocess_args_bad(user_filesystem):
     # Case: user tries to run absorption correction, but the output
-    # filenames already for *_corrected.chi and *_cve.chi exists.
+    # filenames already for *-mud-corrected.chi and *_cve.chi exists.
     # expected: preprocess_args catches this early and raises an Error
     input_data_file = str(user_filesystem / "good_data.chi")
     existing_corrected_file = str(
-        user_filesystem / "output_dir" / "good_data_corrected.chi"
+        user_filesystem / "output_dir" / "good_data-mud-corrected.chi"
     )
     existing_corrected_cve_file = str(
         user_filesystem / "output_dir" / "good_data_cve.chi"

@@ -79,7 +79,7 @@ For example,
     labpdfproc mud zro2_mo.xy 2.5 -w 0.71303
     labpdfproc mud zro2_mo.xy 2.5 -w Mo
 
-This will then save the corrected file in the same directory as the input file with the name ``zro2_mo_corrected.chi``.
+This will then save the corrected file in the same directory as the input file with the name ``zro2_mo-mud-corrected.chi``.
 
 To save the correction file, specify the ``-c`` or ``--output-correction`` flag,
 
