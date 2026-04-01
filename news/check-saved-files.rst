@@ -5,6 +5,7 @@
 **Changed:**
 
 * Changed output file behavior to raise an error early if the saved file exists.
+* Changed saved file name from ``_corrected.chi`` to ``-mud-corrected.chi``.
 
 **Deprecated:**
 
