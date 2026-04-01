@@ -304,11 +304,6 @@ def get_args_gui():
     return parser.parse_args()
 
 
-# def get_args_cli(override=None):
-#     parser = create_parser(use_gui=False)
-#     return parser.parse_args(override)
-
-
 def get_args_cli(override=None):
     parser = create_parser(use_gui=False)
     argv = override if override is not None else sys.argv[1:]
