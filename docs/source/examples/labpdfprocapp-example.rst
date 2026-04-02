@@ -87,7 +87,7 @@ To save the correction file, specify the ``-c`` or ``--output-correction`` flag,
 
     labpdfproc mud zro2_mo.xy 2.5 -w 0.71303 -c
 
-This will then save the correction file in the same directory as the input file with the name ``zro2_mo_cve.chi``.
+This will then save the correction file in the same directory as the input file with the name ``zro2_mo-cve.chi``.
 
 ``labpdfproc zscan`` Command
 ----------------------------
@@ -125,7 +125,7 @@ To save the correction file, specify the ``-c`` or ``--output-correction`` flag,
 
     labpdfproc zscan CeO2_635um_accum_0.xy CeO2_635um_zscan.xy -w 0.71303 -c
 
-This will then save the correction file in the same directory as the input file with the name ``CeO2_635um_accum_0_cve.chi``.
+This will then save the correction file in the same directory as the input file with the name ``CeO2_635um_accum_0-cve.chi``.
 
 ``labpdfproc sample`` Command
 -----------------------------
@@ -165,7 +165,7 @@ To save the correction file, specify the ``-c`` or ``--output-correction`` flag,
 
     labpdfproc sample zro2_mo.xy ZrO2 17.45 1.2 -w 0.71303 -c
 
-This will then save the correction file in the same directory as the input file with the name ``zro2_mo_cve.chi``.
+This will then save the correction file in the same directory as the input file with the name ``zro2_mo-cve.chi``.
 
 Additional CLI options
 ----------------------

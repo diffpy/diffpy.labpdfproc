@@ -537,7 +537,7 @@ def _check_saved_file_exists(args):
         if outfile.exists() and not args.force:
             existing_files.append(outfile)
         if args.output_correction:
-            corrfile = args.output_directory / (path.stem + "_cve.chi")
+            corrfile = args.output_directory / (path.stem + "-cve.chi")
             if corrfile.exists() and not args.force:
                 existing_files.append(corrfile)
     if existing_files:

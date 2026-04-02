@@ -62,7 +62,7 @@ def user_filesystem(tmp_path):
 
     with open(output_dir / "good_data-mud-corrected.chi", "w") as f:
         f.write(chi_data)
-    with open(output_dir / "good_data_cve.chi", "w") as f:
+    with open(output_dir / "good_data-cve.chi", "w") as f:
         f.write(chi_data)
     home_config_data = {
         "wavelength": 0.3,

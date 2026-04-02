@@ -138,7 +138,7 @@ def _save_corrected(corrected, input_path, args):
 
 
 def _save_correction(correction, input_path, args):
-    corrfile = args.output_directory / (input_path.stem + "_cve.chi")
+    corrfile = args.output_directory / (input_path.stem + "-cve.chi")
     correction.metadata = correction.metadata or {}
     correction.dump(str(corrfile), xtype=args.xtype)
     print(f"Saved correction data to {corrfile}")
