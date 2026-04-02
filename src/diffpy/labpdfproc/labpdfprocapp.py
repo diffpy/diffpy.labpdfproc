@@ -131,20 +131,14 @@ def _add_credit_args(parser, use_gui=False):
 
 
 def _save_corrected(corrected, input_path, args):
-    outfile = args.output_directory / (input_path.stem + "_corrected.chi")
-    if outfile.exists() and not args.force:
-        print(f"WARNING: {outfile} exists. Use --force to overwrite.")
-        return
+    outfile = args.output_directory / (f"{input_path.stem}-mud-corrected.chi")
     corrected.metadata = corrected.metadata or {}
     corrected.dump(str(outfile), xtype=args.xtype)
     print(f"Saved corrected data to {outfile}")
 
 
 def _save_correction(correction, input_path, args):
-    corrfile = args.output_directory / (input_path.stem + "_cve.chi")
-    if corrfile.exists() and not args.force:
-        print(f"WARNING: {corrfile} exists. Use --force to overwrite.")
-        return
+    corrfile = args.output_directory / (f"{input_path.stem}-cve.chi")
     correction.metadata = correction.metadata or {}
     correction.dump(str(corrfile), xtype=args.xtype)
     print(f"Saved correction data to {corrfile}")
@@ -312,7 +306,9 @@ def get_args_gui():
 
 def get_args_cli(override=None):
     parser = create_parser(use_gui=False)
-    return parser.parse_args(override)
+    argv = override if override is not None else sys.argv[1:]
+    argv = [arg for arg in argv if arg != "--ignore-gooey"]
+    return parser.parse_args(argv)
 
 
 def main():

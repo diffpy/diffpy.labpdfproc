@@ -847,3 +847,38 @@ def test_load_metadata(mocker, user_filesystem, inputs, expected):
             **expected,
         }
         assert actual_metadata == expected_metadata
+
+
+def test_preprocess_args_bad(user_filesystem, monkeypatch):
+    # Case: user tries to run absorption correction, but the output
+    # filenames already for *-mud-corrected.chi and *-cve.chi exists.
+    # expected: preprocess_args catches this early and raises an Error
+    cwd = Path(user_filesystem)
+    home_dir = cwd / "home_dir"
+    # set cwd so program can find diffpyconfig.json
+    monkeypatch.setattr("pathlib.Path.home", lambda _: home_dir)
+    input_data_file = str(user_filesystem / "good_data.chi")
+    existing_corrected_file = str(
+        user_filesystem / "output_dir" / "good_data-mud-corrected.chi"
+    )
+    existing_corrected_cve_file = str(
+        user_filesystem / "output_dir" / "good_data-cve.chi"
+    )
+    cli_inputs = [
+        "mud",
+        input_data_file,
+        "2.5",
+        "-o",
+        str(user_filesystem / "output_dir"),
+        "-c",  # -c flag saves the cve file
+    ]
+    args = get_args_cli(cli_inputs)
+    args = set_input_lists(args)
+    msg = (
+        "The following output files already exist:"
+        f"\n{existing_corrected_file}\n"
+        f"{existing_corrected_cve_file}\n"
+        "Use --force to overwrite them."
+    )
+    with pytest.raises(FileExistsError, match=re.escape(msg)):
+        preprocessing_args(args)

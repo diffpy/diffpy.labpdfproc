@@ -528,6 +528,27 @@ def load_package_info(args):
     return args
 
 
+def _check_saved_file_exists(args):
+    """Check if the output files already exist based on the input paths
+    and output directory."""
+    existing_files = []
+    for path in args.input_paths:
+        outfile = args.output_directory / (f"{path.stem}-mud-corrected.chi")
+        if outfile.exists() and not args.force:
+            existing_files.append(outfile)
+        if args.output_correction:
+            corrfile = args.output_directory / (f"{path.stem}-cve.chi")
+            if corrfile.exists() and not args.force:
+                existing_files.append(corrfile)
+    if existing_files:
+        existing_files_str = "\n".join(str(f) for f in existing_files)
+        raise FileExistsError(
+            "The following output files already exist:"
+            f"\n{existing_files_str}\n"
+            "Use --force to overwrite them."
+        )
+
+
 def preprocessing_args(args):
     """Perform preprocessing on the provided args. The process includes
     loading package and user information, setting input, output,
@@ -542,6 +563,11 @@ def preprocessing_args(args):
     -------
     args : argparse.Namespace
         The updated argparse Namespace with arguments preprocessed.
+
+    Raises
+    ------
+    FileExistsError
+        If the output files already exist and --force is not used.
     """
     args = load_wavelength_from_config_file(args)
     args = set_mud(args)
@@ -552,6 +578,7 @@ def preprocessing_args(args):
     args = load_user_metadata(args)
     args = load_user_info(args)
     args = load_package_info(args)
+    _check_saved_file_exists(args)
     return args
 
 
