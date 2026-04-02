@@ -17,7 +17,7 @@ maintainers = [
 description = "Tools for processing x-ray powder diffraction data from laboratory sources."
 keywords = ['powder XRD', 'absorption correction', 'PDF', 'diffpy']
 readme = "README.rst"
-requires-python = ">=3.10, <3.15"
+requires-python = ">=3.12, <3.15"
 classifiers = [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
@@ -28,8 +28,6 @@ classifiers = [
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
         'Operating System :: Unix',
-        'Programming Language :: Python :: 3.10',
-        'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
         'Programming Language :: Python :: 3.13',
         'Programming Language :: Python :: 3.14',

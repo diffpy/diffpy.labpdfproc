@@ -11,6 +11,5 @@ jobs:
       project: diffpy.labpdfproc
       c_extension: false
       headless: false
-      run: pip install gooey
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
