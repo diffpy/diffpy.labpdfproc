@@ -113,8 +113,10 @@ def _expand_user_input(args):
 
 
 def set_input_lists(args):
-    """Set input directory and files. It takes cli inputs, checks if
-    they are files or directories and creates a list of files to be
+    """Set input directory and files.
+
+    It takes cli inputs, checks if they are files or directories
+    and creates a list of files to be
     processed which is stored in the args Namespace.
 
     Parameters
@@ -132,7 +134,6 @@ def set_input_lists(args):
     args : argparse.Namespace
         The updated arguments with the modified input list.
     """
-
     input_paths = []
     args = _expand_user_input(args)
     for input_name in args.input:
@@ -224,7 +225,6 @@ def load_wavelength_from_config_file(args):
     args : argparse.Namespace
         The updated arguments with the updated wavelength and anode type.
     """
-
     if args.wavelength is not None:
         return normalize_wavelength(args)
 
@@ -453,7 +453,6 @@ def load_user_metadata(args):
         The updated argparse Namespace
         with user metadata inserted as key-value pairs.
     """
-
     reserved_keys = set(vars(args).keys())
 
     if args.user_metadata:
@@ -479,10 +478,12 @@ def load_user_metadata(args):
 
 
 def load_user_info(args):
-    """Load user info into args. If none is provided, call
-    check_and_build_global_config function from diffpy.utils to prompt
-    the user for inputs. Otherwise, call get_user_info with the provided
-    arguments.
+    """Load user info into args.
+
+    If none is provided, call check_and_build_global_config
+    function from diffpy.utils to prompt
+    the user for inputs. Otherwise, call get_user_info
+    with the provided arguments.
 
     Parameters
     ----------
@@ -550,9 +551,11 @@ def _check_saved_file_exists(args):
 
 
 def preprocessing_args(args):
-    """Perform preprocessing on the provided args. The process includes
-    loading package and user information, setting input, output,
-    wavelength, anode type, xtype, mu*D, and loading user metadata.
+    """Perform preprocessing on the provided args.
+
+    The process includes loading package and user information,
+    setting input, output, wavelength, anode type, xtype,
+    mu*D, and loading user metadata.
 
     Parameters
     ----------
