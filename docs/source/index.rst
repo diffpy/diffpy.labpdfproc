@@ -9,6 +9,14 @@
 | Software version |release|
 | Last updated |today|.
 
+===============
+Getting started
+===============
+
+Welcome to the ``diffpy.labpdfproc`` documentation!
+
+To get started, please visit the :ref:`Getting started <getting-started>` page.
+
 =======
 Authors
 =======
@@ -33,13 +41,12 @@ Acknowledgements
 Table of contents
 =================
 .. toctree::
-   :titlesonly:
+   :maxdepth: 2
 
-   license
-   release
-   Utilities <utilities/utilities>
-   Examples <examples/examples>
+   getting-started
    Package API <api/diffpy.labpdfproc>
+   release
+   license
 
 =======
 Indices

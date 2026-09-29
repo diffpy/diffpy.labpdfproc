@@ -1,9 +1,6 @@
 BSD 3-Clause License
 
-Copyright (c) 2025-2026, The Trustees of Columbia University in the City of New York.
-All rights reserved.
-
-Copyright (c) 2026-present, diffpy.labpdfproc developers and contributors.
+Copyright (c) 2026, The Trustees of Columbia University in the City of New York.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

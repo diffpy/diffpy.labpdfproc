@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# diffpy.labpdfproc documentation build configuration file, created by
+# diffpy.labpdfproc documentation build configuration file, created by  # noqa: E501
 # sphinx-quickstart on Thu Jan 30 15:49:41 2014.
 #
 # This file is execfile()d with the current directory set to its
@@ -22,14 +22,11 @@ from pathlib import Path
 try:
     fullversion = version("diffpy.labpdfproc")
 except Exception:
-    fullversion = (
-        "No version found. "
-        "The correct version will appear in the released version."
-    )
+    fullversion = "No version found. The correct version will appear in the released version."  # noqa: E501
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
-# documentation root, use Path().resolve() to make it absolute, like shown here
+# documentation root, use Path().resolve() to make it absolute, like shown here.  # noqa: E501
 # sys.path.insert(0, str(Path(".").resolve()))
 sys.path.insert(0, str(Path("../..").resolve()))
 sys.path.insert(0, str(Path("../../src").resolve()))
@@ -107,9 +104,6 @@ copybutton_prompt_is_regexp = True
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 exclude_patterns = ["build"]
-
-# Mock imports so API docs render without installing dependencies.
-autodoc_mock_imports = ["diffpy.utils"]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

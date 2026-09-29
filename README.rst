@@ -38,30 +38,7 @@
 
 Tools for processing x-ray powder diffraction data from laboratory sources.
 
-PDFgetX3 has revolutionized how PDF methods can be applied to solve nanostructure problems.
-However, the program was designed for use with Rapid Acquisition PDF (RAPDF) data from synchrotron sources.
-A key approximation inherent in the use of PDFgetX3 for RAPDF data is that absorption effects are negligible.
-This is typically not the case for laboratory x-ray diffractometers, where absorption effects can be significant.
-
-This app is designed to preprocess data from laboratory x-ray diffractometers before using PDFgetX3 to obtain PDFs.
-The app currently carries out an absorption correction assuming a parallel beam capillary geometry
-which is the most common geometry for lab PDF measurements.
-
-The theory is described in the following paper:
-
-        Chen, Y., Schertenleib, T., Yang, A., Schouwink, P., Queen, W. L., and Billinge, S. J. L.,
-        *Absorption Correction for Reliable Pair Distribution Functions from Low Energy X-ray Sources*.
-        Crystal Growth & Design, 2026, 26 (3), 1036–1047.
-        https://doi.org/10.1021/acs.cgd.5c00551
-
-
-The related experimental data acquisition protocols are described in the following paper:
-
-        Schertenleib, T., Schmuckler, D., Chen, Y., Jin, G. B., Queen, W. L., and Billinge, S. J. L. (2025).
-        *Testing Protocols for Obtaining Reliable Pair Distribution Functions from Laboratory X-Ray Sources Using PDFgetX3*.
-        Chem. Methods, 2500001.
-        https://doi.org/10.1002/cmtd.202500001
-
+* LONGER DESCRIPTION HERE
 
 For more information about the diffpy.labpdfproc library, please consult our `online documentation <https://diffpy.github.io/diffpy.labpdfproc>`_.
 
@@ -70,10 +47,7 @@ Citation
 
 If you use diffpy.labpdfproc in a scientific publication, we would like you to cite this package as
 
-        Chen, Y., Schertenleib, T., Yang, A., Schouwink, P., Queen, W. L., and Billinge, S. J. L.,
-        *Absorption Correction for Reliable Pair Distribution Functions from Low Energy X-ray Sources*.
-        Crystal Growth & Design, 2026, 26 (3), 1036–1047.
-        https://doi.org/10.1021/acs.cgd.5c00551
+        diffpy.labpdfproc Package, https://github.com/diffpy/diffpy.labpdfproc
 
 Installation
 ------------
@@ -108,7 +82,7 @@ and run the following ::
 
 This package also provides command-line utilities. To check the software has been installed correctly, type ::
 
-        labpdfproc --version
+        diffpy.labpdfproc --version
 
 You can also type the following command to verify the installation. ::
 
@@ -117,7 +91,7 @@ You can also type the following command to verify the installation. ::
 
 To view the basic usage and available commands, type ::
 
-        labpdfproc -h
+        diffpy.labpdfproc -h
 
 Getting Started
 ---------------
