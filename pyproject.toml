@@ -55,7 +55,7 @@ namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 "diffpy.labpdfproc" = ["data/*"]
 
 [project.scripts]
-diffpy-labpdfproc = "diffpy.labpdfproc.app:main"
+labpdfproc = "diffpy.labpdfproc.app:main"
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements/pip.txt"]}
