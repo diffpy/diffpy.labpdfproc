@@ -1,1 +1,6 @@
 numpy
+diffpy.utils
+pandas
+scipy
+wxpython
+gooey

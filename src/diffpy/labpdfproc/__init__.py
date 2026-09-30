@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 ##############################################################################
 #
-# (c) 2026 The Trustees of Columbia University in the City of New York.
+# (c) 2024-2025, The Trustees of Columbia University in the City of New York.
 # All rights reserved.
 #
-# File coded by: Yucong Chen, Till
-# Schertenleib, Caden Myers,
+# (c) 2026-present, diffpy.labpdfproc developers and contributors.
+# All rights reserved.
+#
+# File coded by: Yucong Chen, Till Schertenleib, Caden Myers,
 # Billinge Group members.
 #
 # See GitHub contributions for a more detailed list of contributors.
@@ -18,7 +20,7 @@
 sources."""
 
 # package version
-from diffpy.labpdfproc.version import __version__  # noqa
+from diffpy.labpdfproc.version import __version__
 
 # silence the pyflakes syntax checker
 assert __version__ or True
