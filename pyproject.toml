@@ -45,9 +45,6 @@ template = "{tag}"
 dev_template = "{tag}"
 dirty_template = "{tag}"
 
-[project.scripts]
-labpdfproc = "diffpy.labpdfproc.labpdfprocapp:main"
-
 [tool.setuptools.packages.find]
 where = ["src"]  # list of folders that contain the packages (["."] by default)
 include = ["*"]  # package names should match these glob patterns (["*"] by default)
@@ -56,6 +53,9 @@ namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [tool.setuptools.package-data]
 "diffpy.labpdfproc" = ["data/*"]
+
+[project.scripts]
+labpdfproc = "diffpy.labpdfproc.labpdfprocapp:main"
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements/pip.txt"]}
