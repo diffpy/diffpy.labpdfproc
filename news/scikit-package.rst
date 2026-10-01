@@ -1,6 +1,6 @@
 **Added:**
 
-* migrated `labpdfproc` to a latest scikit-package level
+* <news item>
 
 **Changed:**
 
@@ -16,7 +16,7 @@
 
 **Fixed:**
 
-* <news item>
+* migrated `labpdfproc` to a latest scikit-package level
 
 **Security:**
 
