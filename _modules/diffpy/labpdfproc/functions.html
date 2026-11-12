@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>diffpy.labpdfproc.functions &mdash; diffpy.labpdfproc 0.3.1 documentation</title>
+  <title>diffpy.labpdfproc.functions &mdash; diffpy.labpdfproc 0.4.0rc0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -13,7 +13,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=5869b996"></script>
+      <script src="../../../_static/documentation_options.js?v=2c570b0a"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -88,20 +88,20 @@
 <span class="n">RADIUS_MM</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">N_POINTS_ON_DIAMETER</span> <span class="o">=</span> <span class="mi">300</span>
 <span class="n">TTH_GRID</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">180.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
-<span class="c1"># Round down the last element if it&#39;s slightly above 180.00</span>
+<span class="c1"># Round down the last element if it's slightly above 180.00</span>
 <span class="c1"># due to floating point precision</span>
 <span class="n">TTH_GRID</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">180.00</span>
-<span class="n">CVE_METHODS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;brute_force&quot;</span><span class="p">,</span> <span class="s2">&quot;polynomial_interpolation&quot;</span><span class="p">]</span>
+<span class="n">CVE_METHODS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"brute_force"</span><span class="p">,</span> <span class="s2">"polynomial_interpolation"</span><span class="p">]</span>
 
 <span class="c1"># Pre-computed datasets for polynomial interpolation (fast calculation)</span>
-<span class="n">data_dir</span> <span class="o">=</span> <span class="n">files</span><span class="p">(</span><span class="s2">&quot;diffpy.labpdfproc&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+<span class="n">data_dir</span> <span class="o">=</span> <span class="n">files</span><span class="p">(</span><span class="s2">"diffpy.labpdfproc"</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"data"</span>
 <span class="n">MUD_LIST</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
-<span class="n">MULS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;inverse_cve.xy&quot;</span><span class="p">)</span>
+<span class="n">MULS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s2">"inverse_cve.xy"</span><span class="p">)</span>
 <span class="n">COEFFICIENT_LIST</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;coefficient_list.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s2">"coefficient_list.csv"</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 <span class="p">)</span>
 <span class="n">INTERPOLATION_FUNCTIONS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">interp1d</span><span class="p">(</span><span class="n">MUD_LIST</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;quadratic&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">coeffs</span> <span class="ow">in</span> <span class="n">COEFFICIENT_LIST</span>
+    <span class="n">interp1d</span><span class="p">(</span><span class="n">MUD_LIST</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"quadratic"</span><span class="p">)</span> <span class="k">for</span> <span class="n">coeffs</span> <span class="ow">in</span> <span class="n">COEFFICIENT_LIST</span>
 <span class="p">]</span>
 
 
@@ -119,8 +119,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_get_grid_points</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_grid_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a radius and a grid size, return a grid of points to</span>
-<span class="sd">        uniformly sample that circle.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Given a radius and a grid size, return a grid of points to</span>
+<span class="sd">        uniformly sample that circle."""</span>
         <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">)</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">npoints</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="p">{</span>
@@ -129,7 +129,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">total_points_in_grid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_entry_exit_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordinate</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the coordinates where the beam enters and leaves the</span>
+<span class="w">        </span><span class="sd">"""Get the coordinates where the beam enters and leaves the</span>
 <span class="sd">        circle for a given angle and grid point.</span>
 
 <span class="sd">        It is calculated in the following way:</span>
@@ -164,7 +164,7 @@
 <span class="sd">            (2) of the exit point of a beam entering horizontally</span>
 <span class="sd">            impinging on a coordinate point that lies in the circle</span>
 <span class="sd">            and then exiting at some angle, angle.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-7</span>  <span class="c1"># precision close to 90</span>
         <span class="n">angle</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
         <span class="n">xgrid</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -187,7 +187,7 @@
         <span class="k">return</span> <span class="n">entry_point</span><span class="p">,</span> <span class="n">exit_point</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_path_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_point</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the path length of a horizontal line entering the</span>
+<span class="w">        </span><span class="sd">"""Return the path length of a horizontal line entering the</span>
 <span class="sd">        circle at the same height to the grid point then exiting at</span>
 <span class="sd">        angle.</span>
 
@@ -203,7 +203,7 @@
 <span class="sd">        (total distance, primary distance, secondary distance): tuple of floats</span>
 <span class="sd">            The tuple containing three floats,</span>
 <span class="sd">            which are the total distance, entry distance and exit distance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># move angle a tad above zero if it is zero</span>
         <span class="c1"># to avoid it having the wrong sign due to some rounding error</span>
         <span class="n">angle_delta</span> <span class="o">=</span> <span class="mf">0.000001</span>
@@ -218,14 +218,14 @@
 <div class="viewcode-block" id="Gridded_circle.set_distances_at_angle">
 <a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.functions.Gridded_circle.set_distances_at_angle">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_distances_at_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given an angle, set the distances from the grid points to the</span>
+<span class="w">        </span><span class="sd">"""Given an angle, set the distances from the grid points to the</span>
 <span class="sd">        entry and exit coordinates.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        angle : float</span>
 <span class="sd">            The angle of the output beam in degrees.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">primary_distances</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">secondary_distances</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">distances</span> <span class="o">=</span> <span class="p">[]</span>
@@ -239,13 +239,13 @@
 <div class="viewcode-block" id="Gridded_circle.set_muls_at_angle">
 <a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.functions.Gridded_circle.set_muls_at_angle">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_muls_at_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute muls = exp(-mu*distance) for a given angle.</span>
+<span class="w">        </span><span class="sd">"""Compute muls = exp(-mu*distance) for a given angle.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        angle : float</span>
 <span class="sd">            The angle of the output beam in degrees.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">muls</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distances</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -257,12 +257,12 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_cve_brute_force</span><span class="p">(</span><span class="n">input_pattern</span><span class="p">,</span> <span class="n">mud</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute cve for the given mud on a global grid using the brute-</span>
+<span class="w">    </span><span class="sd">"""Compute cve for the given mud on a global grid using the brute-</span>
 <span class="sd">    force method.</span>
 
 <span class="sd">    Assume mu=mud/2, given that the same mu*D yields the same cve and</span>
 <span class="sd">    D/2=1.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">mu_sample_invmm</span> <span class="o">=</span> <span class="n">mud</span> <span class="o">/</span> <span class="mi">2</span>
     <span class="n">abs_correction</span> <span class="o">=</span> <span class="n">Gridded_circle</span><span class="p">(</span>
         <span class="n">n_points_on_diameter</span><span class="o">=</span><span class="n">N_POINTS_ON_DIAMETER</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu_sample_invmm</span>
@@ -279,24 +279,24 @@
     <span class="n">cve_do</span> <span class="o">=</span> <span class="n">DiffractionObject</span><span class="p">(</span>
         <span class="n">xarray</span><span class="o">=</span><span class="n">TTH_GRID</span><span class="p">,</span>
         <span class="n">yarray</span><span class="o">=</span><span class="n">cve</span><span class="p">,</span>
-        <span class="n">xtype</span><span class="o">=</span><span class="s2">&quot;tth&quot;</span><span class="p">,</span>
+        <span class="n">xtype</span><span class="o">=</span><span class="s2">"tth"</span><span class="p">,</span>
         <span class="n">wavelength</span><span class="o">=</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
-        <span class="n">scat_quantity</span><span class="o">=</span><span class="s2">&quot;cve&quot;</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;absorption correction, cve, for </span><span class="si">{</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">scat_quantity</span><span class="o">=</span><span class="s2">"cve"</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"absorption correction, cve, for </span><span class="si">{</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="n">metadata</span><span class="o">=</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">cve_do</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_cve_polynomial_interpolation</span><span class="p">(</span><span class="n">input_pattern</span><span class="p">,</span> <span class="n">mud</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute cve using polynomial interpolation method, default to</span>
-<span class="sd">    brute- force computation if mu*D is out of the range (0.5 to 7).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Compute cve using polynomial interpolation method, default to</span>
+<span class="sd">    brute- force computation if mu*D is out of the range (0.5 to 7)."""</span>
     <span class="k">if</span> <span class="n">mud</span> <span class="o">&gt;</span> <span class="mi">7</span> <span class="ow">or</span> <span class="n">mud</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Input mu*D = </span><span class="si">{</span><span class="n">mud</span><span class="si">}</span><span class="s2"> is out of the acceptable range &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">MUD_LIST</span><span class="p">)</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">MUD_LIST</span><span class="p">)</span><span class="si">}</span><span class="s2">) &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;for polynomial interpolation. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Proceeding with brute-force computation. &quot;</span>
+            <span class="sa">f</span><span class="s2">"Input mu*D = </span><span class="si">{</span><span class="n">mud</span><span class="si">}</span><span class="s2"> is out of the acceptable range "</span>
+            <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">MUD_LIST</span><span class="p">)</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">MUD_LIST</span><span class="p">)</span><span class="si">}</span><span class="s2">) "</span>
+            <span class="sa">f</span><span class="s2">"for polynomial interpolation. "</span>
+            <span class="sa">f</span><span class="s2">"Proceeding with brute-force computation. "</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">_cve_brute_force</span><span class="p">(</span><span class="n">input_pattern</span><span class="p">,</span> <span class="n">mud</span><span class="p">)</span>
 
@@ -306,25 +306,25 @@
     <span class="n">cve_do</span> <span class="o">=</span> <span class="n">DiffractionObject</span><span class="p">(</span>
         <span class="n">xarray</span><span class="o">=</span><span class="n">TTH_GRID</span><span class="p">,</span>
         <span class="n">yarray</span><span class="o">=</span><span class="n">cve</span><span class="p">,</span>
-        <span class="n">xtype</span><span class="o">=</span><span class="s2">&quot;tth&quot;</span><span class="p">,</span>
+        <span class="n">xtype</span><span class="o">=</span><span class="s2">"tth"</span><span class="p">,</span>
         <span class="n">wavelength</span><span class="o">=</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
-        <span class="n">scat_quantity</span><span class="o">=</span><span class="s2">&quot;cve&quot;</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;absorption correction, cve, for </span><span class="si">{</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">scat_quantity</span><span class="o">=</span><span class="s2">"cve"</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"absorption correction, cve, for </span><span class="si">{</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="n">metadata</span><span class="o">=</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">cve_do</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_cve_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the cve computation function for the given method.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Retrieve the cve computation function for the given method."""</span>
     <span class="n">methods</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;brute_force&quot;</span><span class="p">:</span> <span class="n">_cve_brute_force</span><span class="p">,</span>
-        <span class="s2">&quot;polynomial_interpolation&quot;</span><span class="p">:</span> <span class="n">_cve_polynomial_interpolation</span><span class="p">,</span>
+        <span class="s2">"brute_force"</span><span class="p">:</span> <span class="n">_cve_brute_force</span><span class="p">,</span>
+        <span class="s2">"polynomial_interpolation"</span><span class="p">:</span> <span class="n">_cve_polynomial_interpolation</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CVE_METHODS</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Unknown method: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Allowed methods are </span><span class="si">{</span><span class="o">*</span><span class="n">CVE_METHODS</span><span class="p">,</span><span class="w"> </span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Unknown method: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">. "</span>
+            <span class="sa">f</span><span class="s2">"Allowed methods are </span><span class="si">{</span><span class="o">*</span><span class="n">CVE_METHODS</span><span class="p">,</span><span class="w"> </span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">methods</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
 
@@ -332,9 +332,9 @@
 <div class="viewcode-block" id="compute_cve">
 <a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.functions.compute_cve">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_cve</span><span class="p">(</span>
-    <span class="n">input_pattern</span><span class="p">,</span> <span class="n">mud</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;polynomial_interpolation&quot;</span><span class="p">,</span> <span class="n">xtype</span><span class="o">=</span><span class="s2">&quot;tth&quot;</span>
+    <span class="n">input_pattern</span><span class="p">,</span> <span class="n">mud</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"polynomial_interpolation"</span><span class="p">,</span> <span class="n">xtype</span><span class="o">=</span><span class="s2">"tth"</span>
 <span class="p">):</span>
-    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Compute and interpolate the cylindrical volume effect (cve)</span>
+    <span class="sa">f</span><span class="s2">"""Compute and interpolate the cylindrical volume effect (cve)</span>
 <span class="s2">    for the given input diffraction data and mu*D</span>
 <span class="s2">    using the selected method.</span>
 
@@ -355,7 +355,7 @@
 <span class="s2">    -------</span>
 <span class="s2">    cve_do: DiffractionObject</span>
 <span class="s2">        The diffraction object that contains the cve to be applied.</span>
-<span class="s2">    &quot;&quot;&quot;</span>
+<span class="s2">    """</span>
     <span class="n">cve_function</span> <span class="o">=</span> <span class="n">_cve_method</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
     <span class="n">cve_do_on_global_grid</span> <span class="o">=</span> <span class="n">cve_function</span><span class="p">(</span><span class="n">input_pattern</span><span class="p">,</span> <span class="n">mud</span><span class="p">)</span>
     <span class="n">orig_grid</span> <span class="o">=</span> <span class="n">input_pattern</span><span class="o">.</span><span class="n">on_xtype</span><span class="p">(</span><span class="n">xtype</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -367,8 +367,8 @@
         <span class="n">yarray</span><span class="o">=</span><span class="n">newcve</span><span class="p">,</span>
         <span class="n">xtype</span><span class="o">=</span><span class="n">xtype</span><span class="p">,</span>
         <span class="n">wavelength</span><span class="o">=</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
-        <span class="n">scat_quantity</span><span class="o">=</span><span class="s2">&quot;cve&quot;</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;absorption correction, cve, for </span><span class="si">{</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">scat_quantity</span><span class="o">=</span><span class="s2">"cve"</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"absorption correction, cve, for </span><span class="si">{</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="n">metadata</span><span class="o">=</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">cve_do</span></div>
@@ -378,7 +378,7 @@
 <div class="viewcode-block" id="apply_corr">
 <a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.functions.apply_corr">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">apply_corr</span><span class="p">(</span><span class="n">input_pattern</span><span class="p">,</span> <span class="n">absorption_correction</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply absorption correction to the given diffraction object with</span>
+<span class="w">    </span><span class="sd">"""Apply absorption correction to the given diffraction object with</span>
 <span class="sd">    the correction diffraction object.</span>
 
 <span class="sd">    Parameters</span>
@@ -393,7 +393,7 @@
 <span class="sd">    corrected_pattern: DiffractionObject</span>
 <span class="sd">        The corrected diffraction object</span>
 <span class="sd">        with the correction applied through multiplication.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">corrected_pattern</span> <span class="o">=</span> <span class="n">input_pattern</span> <span class="o">*</span> <span class="n">absorption_correction</span>
     <span class="k">return</span> <span class="n">corrected_pattern</span></div>
 

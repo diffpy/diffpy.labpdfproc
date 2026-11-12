@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tools Example &mdash; diffpy.labpdfproc 0.3.1 documentation</title>
+  <title>Tools Example &mdash; diffpy.labpdfproc 0.4.0rc0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=5869b996"></script>
+      <script src="../_static/documentation_options.js?v=2c570b0a"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -94,9 +94,9 @@ You can do this in one of the following four ways:</p>
 <span class="c1"># Option 1: Manual value</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">mud</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="c1"># Option 2: From a z-scan file</span>
-<span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">z_scan_file</span><span class="o">=</span><span class="s2">&quot;zscan.xy&quot;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">z_scan_file</span><span class="o">=</span><span class="s2">"zscan.xy"</span><span class="p">)</span>
 <span class="c1"># Option 3: Using sample mass density</span>
-<span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">sample_composition</span><span class="o">=</span><span class="s2">&quot;ZrO2&quot;</span><span class="p">,</span> <span class="n">sample_mass_density</span><span class="o">=</span><span class="s2">&quot;17.45&quot;</span><span class="p">,</span> <span class="n">diameter</span><span class="o">=</span><span class="s2">&quot;1.2&quot;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">sample_composition</span><span class="o">=</span><span class="s2">"ZrO2"</span><span class="p">,</span> <span class="n">sample_mass_density</span><span class="o">=</span><span class="s2">"17.45"</span><span class="p">,</span> <span class="n">diameter</span><span class="o">=</span><span class="s2">"1.2"</span><span class="p">)</span>
 <span class="c1"># Set and view the computed mu*D value</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">set_mud</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mud</span><span class="p">)</span>
@@ -105,7 +105,7 @@ You can do this in one of the following four ways:</p>
 <ol class="arabic simple">
 <li><p>Next, we load the input files for correction using <code class="docutils literal notranslate"><span class="pre">set_input_lists(args)</span></code>:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="s2">&quot;file1.xy file2.xy&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="s2">"file1.xy file2.xy"</span><span class="p">)</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">set_input_lists</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input_paths</span><span class="p">)</span>
 </pre></div>
@@ -115,7 +115,7 @@ For details on supported input formats, check <code class="docutils literal notr
 <ol class="arabic simple" start="3">
 <li><p>We now set the output directory where the cve and corrected files will be saved:</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">output_directory</span><span class="o">=</span><span class="s2">&quot;output&quot;</span><span class="p">)</span> <span class="c1"># creates &quot;output/&quot; directory if it doesn&#39;t exist</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">output_directory</span><span class="o">=</span><span class="s2">"output"</span><span class="p">)</span> <span class="c1"># creates "output/" directory if it doesn't exist</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">set_output_directory</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output_directory</span><span class="p">)</span>
 </pre></div>
@@ -128,7 +128,7 @@ If no output directory is specified, it defaults to the current working director
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Option 1: Specify wavelength directly</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
 <span class="c1"># Option 2: Use a valid anode type</span>
-<span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="s2">&quot;Mo&quot;</span><span class="p">)</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="s2">"Mo"</span><span class="p">)</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">set_wavelength</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -137,7 +137,7 @@ If you provide an anode type, the corresponding wavelength will be retrieved fro
 You may use <code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">--help</span></code> to view a list of valid anode types.
 If neither is given, it’s only acceptable if the input diffraction data is already on a two-theta grid.</p>
 <p>To set the x-axis type (xtype) for your diffraction data:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">xtype</span><span class="o">=</span><span class="s2">&quot;tth&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">xtype</span><span class="o">=</span><span class="s2">"tth"</span><span class="p">)</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">set_xtype</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -146,15 +146,15 @@ If neither is given, it’s only acceptable if the input diffraction data is alr
 To load metadata, pass key-value pairs as a list:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span>
     <span class="n">user_metadata</span><span class="o">=</span><span class="p">[</span>
-        <span class="s2">&quot;facility=NSLS II&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;beamline=28ID-2&quot;</span><span class="p">,</span>
+        <span class="s2">"facility=NSLS II"</span><span class="p">,</span>
+        <span class="s2">"beamline=28ID-2"</span><span class="p">,</span>
 <span class="p">])</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">load_user_metadata</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This ensures all key-value pairs are parsed and added as attributes.</p>
 <p>To load your user information (username, email, and orcid), you can manually add it through <code class="docutils literal notranslate"><span class="pre">args</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s2">&quot;Joe&quot;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s2">&quot;joe@example.com&quot;</span><span class="p">,</span> <span class="n">orcid</span><span class="o">=</span><span class="s2">&quot;0000-0000-0000-0000&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s2">"Joe"</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s2">"joe@example.com"</span><span class="p">,</span> <span class="n">orcid</span><span class="o">=</span><span class="s2">"0000-0000-0000-0000"</span><span class="p">)</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">load_user_info</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">orcid</span><span class="p">)</span>
 </pre></div>
@@ -166,7 +166,7 @@ Note that it is not recommended to store personal information on a public or sha
 <p>Furthermore, the function <code class="docutils literal notranslate"><span class="pre">load_package_info(args)</span></code> is used to attach package name and version info for reproducibility.
 This is typically run automatically but can be called explicitly:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">load_package_info</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">package_info</span><span class="p">)</span> <span class="c1"># Output example: {&quot;diffpy.labpdfproc&quot;: &quot;0.0.1&quot;, &quot;diffpy.utils&quot;: &quot;3.0.0&quot;}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">package_info</span><span class="p">)</span> <span class="c1"># Output example: {"diffpy.labpdfproc": "0.0.1", "diffpy.utils": "3.0.0"}</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="6">
@@ -188,8 +188,8 @@ we recommend saving the wavelength or anode type to a diffpy config file. For ex
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="n">home_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span>
-<span class="n">wavelength_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;wavelength&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">}</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">home_dir</span> <span class="o">/</span> <span class="s2">&quot;diffpyconfig.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="n">wavelength_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"wavelength"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">}</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">home_dir</span> <span class="o">/</span> <span class="s2">"diffpyconfig.json"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">wavelength_data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 </pre></div>
 </div>

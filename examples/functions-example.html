@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Functions Example &mdash; diffpy.labpdfproc 0.3.1 documentation</title>
+  <title>Functions Example &mdash; diffpy.labpdfproc 0.4.0rc0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=5869b996"></script>
+      <script src="../_static/documentation_options.js?v=2c570b0a"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -92,16 +92,16 @@ For example, if you want to load data from <code class="docutils literal notrans
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">diffpy.utils.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_data</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">diffpy.utils.diffraction_objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiffractionObject</span>
 
-<span class="n">filepath</span> <span class="o">=</span> <span class="s2">&quot;../example-data/zro2_mo.xy&quot;</span>
+<span class="n">filepath</span> <span class="o">=</span> <span class="s2">"../example-data/zro2_mo.xy"</span>
 <span class="n">xarray</span><span class="p">,</span> <span class="n">yarray</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">input_pattern</span> <span class="o">=</span> <span class="n">DiffractionObject</span><span class="p">(</span>
     <span class="n">xarray</span><span class="o">=</span><span class="n">xarray</span><span class="p">,</span>
     <span class="n">yarray</span><span class="o">=</span><span class="n">yarray</span><span class="p">,</span>
-    <span class="n">xtype</span><span class="o">=</span><span class="s2">&quot;tth&quot;</span><span class="p">,</span>
+    <span class="n">xtype</span><span class="o">=</span><span class="s2">"tth"</span><span class="p">,</span>
     <span class="n">wavelength</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
-    <span class="n">scat_quantity</span><span class="o">=</span><span class="s2">&quot;x-ray&quot;</span><span class="p">,</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;input diffraction data&quot;</span><span class="p">,</span>
-    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;beamline&quot;</span><span class="p">:</span> <span class="s2">&quot;28ID-2&quot;</span><span class="p">},</span>
+    <span class="n">scat_quantity</span><span class="o">=</span><span class="s2">"x-ray"</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"input diffraction data"</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"beamline"</span><span class="p">:</span> <span class="s2">"28ID-2"</span><span class="p">},</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -111,24 +111,24 @@ please refer to <a class="reference external" href="https://www.diffpy.org/diffp
 You can now compute the absorption correction (cve) for the given mu*D using the <code class="docutils literal notranslate"><span class="pre">compute_cve</span></code> function,
 apply it to your input pattern, and save the corrected file.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">diffpy.labpdfproc.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">apply_corr</span><span class="p">,</span> <span class="n">compute_cve</span>
-<span class="n">absorption_correction</span> <span class="o">=</span> <span class="n">compute_cve</span><span class="p">(</span><span class="n">input_pattern</span><span class="p">,</span> <span class="n">muD</span><span class="p">)</span> <span class="c1"># compute cve, default method is &quot;polynomial_interpolation&quot;</span>
+<span class="n">absorption_correction</span> <span class="o">=</span> <span class="n">compute_cve</span><span class="p">(</span><span class="n">input_pattern</span><span class="p">,</span> <span class="n">muD</span><span class="p">)</span> <span class="c1"># compute cve, default method is "polynomial_interpolation"</span>
 <span class="n">corrected_pattern</span> <span class="o">=</span> <span class="n">apply_corr</span><span class="p">(</span><span class="n">input_pattern</span><span class="p">,</span> <span class="n">absorption_correction</span><span class="p">)</span> <span class="c1"># apply cve correction</span>
-<span class="n">corrected_data</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="s2">&quot;corrected pattern.chi&quot;</span><span class="p">,</span> <span class="n">xtype</span><span class="o">=</span><span class="s2">&quot;tth&quot;</span><span class="p">)</span> <span class="c1"># save the corrected pattern</span>
+<span class="n">corrected_data</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="s2">"corrected pattern.chi"</span><span class="p">,</span> <span class="n">xtype</span><span class="o">=</span><span class="s2">"tth"</span><span class="p">)</span> <span class="c1"># save the corrected pattern</span>
 </pre></div>
 </div>
 <p>If you want to use brute-force computation instead, you can replace the first line with:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">absorption_correction</span> <span class="o">=</span> <span class="n">compute_cve</span><span class="p">(</span><span class="n">input_pattern</span><span class="p">,</span> <span class="n">muD</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;brute_force&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">absorption_correction</span> <span class="o">=</span> <span class="n">compute_cve</span><span class="p">(</span><span class="n">input_pattern</span><span class="p">,</span> <span class="n">muD</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"brute_force"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>3. Now, you can visualize the effect of the absorption correction
 by plotting the original and corrected diffraction patterns.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">xarray</span><span class="p">,</span> <span class="n">input_pattern</span><span class="o">.</span><span class="n">yarray</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Original Intensity&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">corrected_pattern</span><span class="o">.</span><span class="n">xarray</span><span class="p">,</span> <span class="n">corrected_pattern</span><span class="o">.</span><span class="n">yarray</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Corrected Intensity&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;tth (degree)&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Intensity&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">input_pattern</span><span class="o">.</span><span class="n">xarray</span><span class="p">,</span> <span class="n">input_pattern</span><span class="o">.</span><span class="n">yarray</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Original Intensity"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">corrected_pattern</span><span class="o">.</span><span class="n">xarray</span><span class="p">,</span> <span class="n">corrected_pattern</span><span class="o">.</span><span class="n">yarray</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Corrected Intensity"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"tth (degree)"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Intensity"</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Original vs. Corrected Intensity&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Original vs. Corrected Intensity"</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>

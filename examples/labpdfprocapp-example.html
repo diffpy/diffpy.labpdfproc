@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>labpdfprocapp Example &mdash; diffpy.labpdfproc 0.3.1 documentation</title>
+  <title>labpdfprocapp Example &mdash; diffpy.labpdfproc 0.4.0rc0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=5869b996"></script>
+      <script src="../_static/documentation_options.js?v=2c570b0a"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -107,10 +107,6 @@ A graphical user interface (GUI) is also available and is designed to be intuiti
 labpdfproc<span class="w"> </span>--gui
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Note that the GUI is currently not supported on Python&gt;=3.12.</p>
-</div>
 <p>This will open the GUI, which should look something like,</p>
 <img alt="../_images/labpdfproc-gui.jpeg" class="align-center" src="../_images/labpdfproc-gui.jpeg" />
 <p>Below we will go through all the commands using the CLI, but the same principles apply to the GUI.</p>
@@ -144,12 +140,12 @@ For example,</p>
 labpdfproc<span class="w"> </span>mud<span class="w"> </span>zro2_mo.xy<span class="w"> </span><span class="m">2</span>.5<span class="w"> </span>-w<span class="w"> </span>Mo
 </pre></div>
 </div>
-<p>This will then save the corrected file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">zro2_mo_corrected.chi</span></code>.</p>
+<p>This will then save the corrected file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">zro2_mo-mud-corrected.chi</span></code>.</p>
 <p>To save the correction file, specify the <code class="docutils literal notranslate"><span class="pre">-c</span></code> or <code class="docutils literal notranslate"><span class="pre">--output-correction</span></code> flag,</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>mud<span class="w"> </span>zro2_mo.xy<span class="w"> </span><span class="m">2</span>.5<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>.71303<span class="w"> </span>-c
 </pre></div>
 </div>
-<p>This will then save the correction file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">zro2_mo_cve.chi</span></code>.</p>
+<p>This will then save the correction file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">zro2_mo-cve.chi</span></code>.</p>
 </section>
 <section id="labpdfproc-zscan-command">
 <h2><code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">zscan</span></code> Command<a class="headerlink" href="#labpdfproc-zscan-command" title="Link to this heading"></a></h2>
@@ -176,7 +172,7 @@ labpdfproc<span class="w"> </span>zscan<span class="w"> </span>CeO2_635um_accum_
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>zscan<span class="w"> </span>CeO2_635um_accum_0.xy<span class="w"> </span>CeO2_635um_zscan.xy<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>.71303<span class="w"> </span>-c
 </pre></div>
 </div>
-<p>This will then save the correction file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">CeO2_635um_accum_0_cve.chi</span></code>.</p>
+<p>This will then save the correction file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">CeO2_635um_accum_0-cve.chi</span></code>.</p>
 </section>
 <section id="labpdfproc-sample-command">
 <h2><code class="docutils literal notranslate"><span class="pre">labpdfproc</span> <span class="pre">sample</span></code> Command<a class="headerlink" href="#labpdfproc-sample-command" title="Link to this heading"></a></h2>
@@ -206,7 +202,7 @@ labpdfproc<span class="w"> </span>sample<span class="w"> </span>zro2_mo.xy<span 
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>labpdfproc<span class="w"> </span>sample<span class="w"> </span>zro2_mo.xy<span class="w"> </span>ZrO2<span class="w"> </span><span class="m">17</span>.45<span class="w"> </span><span class="m">1</span>.2<span class="w"> </span>-w<span class="w"> </span><span class="m">0</span>.71303<span class="w"> </span>-c
 </pre></div>
 </div>
-<p>This will then save the correction file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">zro2_mo_cve.chi</span></code>.</p>
+<p>This will then save the correction file in the same directory as the input file with the name <code class="docutils literal notranslate"><span class="pre">zro2_mo-cve.chi</span></code>.</p>
 </section>
 <section id="additional-cli-options">
 <h2>Additional CLI options<a class="headerlink" href="#additional-cli-options" title="Link to this heading"></a></h2>

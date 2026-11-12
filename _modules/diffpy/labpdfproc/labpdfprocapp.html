@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>diffpy.labpdfproc.labpdfprocapp &mdash; diffpy.labpdfproc 0.4.0rc0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2c570b0a"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=cca77546"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            diffpy.labpdfproc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utilities/utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/diffpy.labpdfproc.html">Package API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">diffpy.labpdfproc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">diffpy.labpdfproc.labpdfprocapp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for diffpy.labpdfproc.labpdfprocapp</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gooey</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gooey</span><span class="p">,</span> <span class="n">GooeyParser</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">diffpy.labpdfproc.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">CVE_METHODS</span><span class="p">,</span> <span class="n">apply_corr</span><span class="p">,</span> <span class="n">compute_cve</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">diffpy.labpdfproc.tools</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">WAVELENGTHS</span><span class="p">,</span>
+    <span class="n">load_metadata</span><span class="p">,</span>
+    <span class="n">load_wavelength_from_config_file</span><span class="p">,</span>
+    <span class="n">preprocessing_args</span><span class="p">,</span>
+    <span class="n">set_wavelength</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">diffpy.utils.diffraction_objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">XQUANTITIES</span><span class="p">,</span> <span class="n">DiffractionObject</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">diffpy.utils.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_data</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_running_in_gui</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Determine if the application is running in a GUI environment.</span>
+
+<span class="sd">    This function checks if the standard output (sys.stdout) is</span>
+<span class="sd">    connected to a terminal. If not, it assumes the application is</span>
+<span class="sd">    running in a GUI environment, such as when launched by Gooey. This</span>
+<span class="sd">    is used to prevent ANSI escape sequences from rendering in the GUI.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">isatty</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_common_args</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">use_gui</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"-w"</span><span class="p">,</span>
+        <span class="s2">"--wavelength"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"X-ray wavelength in angstroms (numeric) or X-ray source name "</span>
+            <span class="sa">f</span><span class="s2">"(allowed: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">WAVELENGTHS</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span><span class="si">}</span><span class="s2">). "</span>
+            <span class="s2">"Will be loaded from config files if not specified."</span>
+        <span class="p">),</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"-x"</span><span class="p">,</span>
+        <span class="s2">"--xtype"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"X-axis type (default: tth). Allowed values: "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">XQUANTITIES</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">),</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"tth"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"-m"</span><span class="p">,</span>
+        <span class="s2">"--method"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Method for cylindrical volume element (CVE) calculation "</span>
+            <span class="s2">"(default: polynomial_interpolation). Allowed methods: "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CVE_METHODS</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">),</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"polynomial_interpolation"</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">CVE_METHODS</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"-o"</span><span class="p">,</span>
+        <span class="s2">"--output-directory"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Directory to save corrected files (created if needed). "</span>
+            <span class="s2">"Defaults to current directory."</span>
+        <span class="p">),</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="p">({</span><span class="s2">"widget"</span><span class="p">:</span> <span class="s2">"DirChooser"</span><span class="p">}</span> <span class="k">if</span> <span class="n">use_gui</span> <span class="k">else</span> <span class="p">{}),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"-f"</span><span class="p">,</span> <span class="s2">"--force"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Overwrite existing files"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"-c"</span><span class="p">,</span>
+        <span class="s2">"--output-correction"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Also output the absorption correction to a separate file"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"-u"</span><span class="p">,</span>
+        <span class="s2">"--user-metadata"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Specify key-value pairs to be loaded into metadata "</span>
+            <span class="s2">"using the format key=value. "</span>
+            <span class="s2">"Separate pairs with whitespace, "</span>
+            <span class="s2">"and ensure no whitespaces before or after the = sign. "</span>
+            <span class="s2">"Avoid using = in keys. If multiple = signs are present, "</span>
+            <span class="s2">"only the first separates the key and value. "</span>
+            <span class="s2">"If a key or value contains whitespace, enclose it in quotes. "</span>
+            <span class="s2">"For example, facility='NSLS II', "</span>
+            <span class="s2">"'facility=NSLS II', beamline=28ID-2, "</span>
+            <span class="s2">"'beamline'='28ID-2', 'favorite color'=blue, "</span>
+            <span class="s2">"are all valid key=value items."</span>
+        <span class="p">),</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">"KEY=VALUE"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">_add_credit_args</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">use_gui</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_credit_args</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">use_gui</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--username"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Your name (optional, for dataset credit). "</span>
+            <span class="s2">"Will be loaded from config files if not specified."</span>
+        <span class="p">),</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="p">({</span><span class="s2">"widget"</span><span class="p">:</span> <span class="s2">"TextField"</span><span class="p">}</span> <span class="k">if</span> <span class="n">use_gui</span> <span class="k">else</span> <span class="p">{}),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--email"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Your email (optional, for dataset credit). "</span>
+            <span class="s2">"Will be loaded from config files if not specified."</span>
+        <span class="p">),</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="p">({</span><span class="s2">"widget"</span><span class="p">:</span> <span class="s2">"TextField"</span><span class="p">}</span> <span class="k">if</span> <span class="n">use_gui</span> <span class="k">else</span> <span class="p">{}),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--orcid"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Your ORCID ID (optional, for dataset credit). "</span>
+            <span class="s2">"Will be loaded from config files if not specified."</span>
+        <span class="p">),</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="p">({</span><span class="s2">"widget"</span><span class="p">:</span> <span class="s2">"TextField"</span><span class="p">}</span> <span class="k">if</span> <span class="n">use_gui</span> <span class="k">else</span> <span class="p">{}),</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_save_corrected</span><span class="p">(</span><span class="n">corrected</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="n">outfile</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">output_directory</span> <span class="o">/</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">input_path</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">-mud-corrected.chi"</span><span class="p">)</span>
+    <span class="n">corrected</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">corrected</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">corrected</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">outfile</span><span class="p">),</span> <span class="n">xtype</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">xtype</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Saved corrected data to </span><span class="si">{</span><span class="n">outfile</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_save_correction</span><span class="p">(</span><span class="n">correction</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="n">corrfile</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">output_directory</span> <span class="o">/</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">input_path</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">-cve.chi"</span><span class="p">)</span>
+    <span class="n">correction</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">correction</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">correction</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">corrfile</span><span class="p">),</span> <span class="n">xtype</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">xtype</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Saved correction data to </span><span class="si">{</span><span class="n">corrfile</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_pattern</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">xtype</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">DiffractionObject</span><span class="p">(</span>
+        <span class="n">xarray</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+        <span class="n">yarray</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+        <span class="n">xtype</span><span class="o">=</span><span class="n">xtype</span><span class="p">,</span>
+        <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
+        <span class="n">scat_quantity</span><span class="o">=</span><span class="s2">"x-ray"</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="apply_absorption_correction">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.labpdfprocapp.apply_absorption_correction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_absorption_correction</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Process all input files with absorption correction."""</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">input_paths</span><span class="p">:</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">load_metadata</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">_load_pattern</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">xtype</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+        <span class="n">correction</span> <span class="o">=</span> <span class="n">compute_cve</span><span class="p">(</span>
+            <span class="n">pattern</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">mud</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">xtype</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">xtype</span>
+        <span class="p">)</span>
+        <span class="n">correction</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">corrected_data</span> <span class="o">=</span> <span class="n">apply_corr</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">correction</span><span class="p">)</span>
+        <span class="n">corrected_data</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Absorption corrected input_data: </span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+        <span class="n">corrected_data</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">_save_corrected</span><span class="p">(</span><span class="n">corrected_data</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">output_correction</span><span class="p">:</span>
+            <span class="n">_save_correction</span><span class="p">(</span><span class="n">correction</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_parser">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.labpdfprocapp.create_parser">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_parser</span><span class="p">(</span><span class="n">use_gui</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">Parser</span> <span class="o">=</span> <span class="n">GooeyParser</span> <span class="k">if</span> <span class="n">use_gui</span> <span class="k">else</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span>
+
+    <span class="c1"># Force no colors when gui is running to avoid ANSI escape codes</span>
+    <span class="c1"># in Gooey output</span>
+    <span class="k">if</span> <span class="n">use_gui</span> <span class="ow">or</span> <span class="n">_running_in_gui</span><span class="p">():</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"NO_COLOR"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"1"</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"CLICOLOR"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"0"</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">"labpdfproc"</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Apply absorption corrections to laboratory X-ray diffraction "</span>
+            <span class="s2">"data prior to PDF analysis. Supports manual mu*d, "</span>
+            <span class="s2">"z-scan, or sample-based corrections."</span>
+        <span class="p">),</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawTextHelpFormatter</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subp</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">"command"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Correction method"</span>
+    <span class="p">)</span>
+
+    <span class="c1"># MUD parser</span>
+    <span class="n">mud_parser</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">"mud"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Correct diffraction data using known mu*d value"</span>
+    <span class="p">)</span>
+    <span class="n">mud_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"input"</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Input X-ray diffraction data file(s) or directory. "</span>
+            <span class="s2">"Can specify multiple files, directories, or use wildcards."</span>
+        <span class="p">),</span>
+        <span class="o">**</span><span class="p">({</span><span class="s2">"widget"</span><span class="p">:</span> <span class="s2">"MultiFileChooser"</span><span class="p">}</span> <span class="k">if</span> <span class="n">use_gui</span> <span class="k">else</span> <span class="p">{}),</span>
+    <span class="p">)</span>
+    <span class="n">mud_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"mud"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"mu*d value"</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">"mud"</span>
+    <span class="p">)</span>
+    <span class="n">_add_common_args</span><span class="p">(</span><span class="n">mud_parser</span><span class="p">,</span> <span class="n">use_gui</span><span class="p">)</span>
+
+    <span class="c1"># ZSCAN parser</span>
+    <span class="n">zscan_parser</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">"zscan"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Correct diffraction data using a z-scan measurement"</span>
+    <span class="p">)</span>
+    <span class="n">zscan_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"input"</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Input X-ray diffraction data file(s) or directory. "</span>
+            <span class="s2">"Can specify multiple files, directories, or use wildcards."</span>
+        <span class="p">),</span>
+        <span class="o">**</span><span class="p">({</span><span class="s2">"widget"</span><span class="p">:</span> <span class="s2">"MultiFileChooser"</span><span class="p">}</span> <span class="k">if</span> <span class="n">use_gui</span> <span class="k">else</span> <span class="p">{}),</span>
+    <span class="p">)</span>
+    <span class="n">zscan_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"z_scan_file"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Z-scan measurement file. "</span>
+            <span class="s2">"See diffpy.labpdfproc documentation for more information."</span>
+        <span class="p">),</span>
+        <span class="o">**</span><span class="p">({</span><span class="s2">"widget"</span><span class="p">:</span> <span class="s2">"FileChooser"</span><span class="p">}</span> <span class="k">if</span> <span class="n">use_gui</span> <span class="k">else</span> <span class="p">{}),</span>
+    <span class="p">)</span>
+    <span class="n">_add_common_args</span><span class="p">(</span><span class="n">zscan_parser</span><span class="p">,</span> <span class="n">use_gui</span><span class="p">)</span>
+
+    <span class="c1"># SAMPLE parser</span>
+    <span class="n">sample_parser</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">"sample"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Correct diffraction data using sample composition/density"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">sample_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"input"</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">"+"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Input X-ray diffraction data file(s) or directory. "</span>
+            <span class="s2">"Can specify multiple files, directories, or use wildcards."</span>
+        <span class="p">),</span>
+        <span class="o">**</span><span class="p">({</span><span class="s2">"widget"</span><span class="p">:</span> <span class="s2">"MultiFileChooser"</span><span class="p">}</span> <span class="k">if</span> <span class="n">use_gui</span> <span class="k">else</span> <span class="p">{}),</span>
+    <span class="p">)</span>
+    <span class="n">sample_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"sample_composition"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Chemical formula, e.g. Fe2O3"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">sample_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"sample_mass_density"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Sample mass density in capillary (g/cm^3). "</span>
+            <span class="s2">"If unsure, a good estimate is ~1/3 of the "</span>
+            <span class="s2">"theoretical packing fraction density."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">sample_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"diameter"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Outer diameter of the capillary in mm"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">_add_common_args</span><span class="p">(</span><span class="n">sample_parser</span><span class="p">,</span> <span class="n">use_gui</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_old_api_conversion</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Convert `sample` command arguments to previous format so</span>
+<span class="sd">    functions can accept them without modification."""</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">"sample"</span><span class="p">:</span>
+        <span class="c1"># Convert sample args to theoretical_from_density format</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">load_wavelength_from_config_file</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">set_wavelength</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">energy_kev</span> <span class="o">=</span> <span class="mf">12.398</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">wavelength</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">energy_kev</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">theoretical_from_density</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">sample_composition</span><span class="si">}</span><span class="s2">,"</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">energy_kev</span><span class="si">}</span><span class="s2">,"</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">sample_mass_density</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">args</span>
+
+
+<span class="nd">@Gooey</span><span class="p">(</span>
+    <span class="n">program_name</span><span class="o">=</span><span class="s2">"labpdfproc"</span><span class="p">,</span>
+    <span class="n">required_cols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">optional_cols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">show_sidebar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_args_gui</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">use_gui</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="get_args_cli">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.labpdfprocapp.get_args_cli">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_args_cli</span><span class="p">(</span><span class="n">override</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">(</span><span class="n">use_gui</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">argv</span> <span class="o">=</span> <span class="n">override</span> <span class="k">if</span> <span class="n">override</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">argv</span> <span class="k">if</span> <span class="n">arg</span> <span class="o">!=</span> <span class="s2">"--ignore-gooey"</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../api/diffpy.labpdfproc.html#diffpy.labpdfproc.labpdfprocapp.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">use_gui</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="s2">"--gui"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">get_args_gui</span><span class="p">()</span> <span class="k">if</span> <span class="n">use_gui</span> <span class="k">else</span> <span class="n">get_args_cli</span><span class="p">()</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">_handle_old_api_conversion</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">preprocessing_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">apply_absorption_correction</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, The Trustees of Columbia University in the City of New York.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
