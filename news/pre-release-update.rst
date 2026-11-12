@@ -4,7 +4,7 @@
 
 **Changed:**
 
-* Changed namespaces = false to namespaces = true to suppress a setuptools warning. 
+* Changed namespaces = false to namespaces = true to suppress a setuptools warning.
 
 **Deprecated:**
 
