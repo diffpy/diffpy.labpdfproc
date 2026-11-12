@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=62.0", "setuptools-git-versioning>=2.0"]
+requires = ["setuptools>=77", "setuptools-git-versioning>=2.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -17,13 +17,14 @@ maintainers = [
 description = "Tools for processing x-ray powder diffraction data from laboratory sources."
 keywords = ['powder XRD', 'absorption correction', 'PDF', 'diffpy']
 readme = "README.rst"
+license = "BSD-3-Clause"
+license-files = ["LICENSE*.rst", "AUTHORS.rst"]
 requires-python = ">=3.12, <3.15"
 classifiers = [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: BSD License',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
@@ -49,7 +50,7 @@ dirty_template = "{tag}"
 where = ["src"]  # list of folders that contain the packages (["."] by default)
 include = ["*"]  # package names should match these glob patterns (["*"] by default)
 exclude = ["diffpy.labpdfproc.tests*"]  # exclude packages matching these glob patterns (empty by default)
-namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+namespaces = true  # to disable scanning PEP 420 namespaces (true by default)
 
 [tool.setuptools.package-data]
 "diffpy.labpdfproc" = ["data/*"]
