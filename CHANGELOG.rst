@@ -4,6 +4,34 @@ Release notes
 
 .. current developments
 
+0.4.0
+=====
+
+**Added:**
+
+* Added license = "BSD-3-Clause" and license-files = ["LICENSE*.rst", "AUTHORS.rst"] in pyproject.toml.
+
+**Changed:**
+
+* Changed namespaces = false to namespaces = true to suppress a setuptools warning.
+* Changed output file behavior to raise an error early if the saved file exists.
+* Changed saved file name from ``_corrected.chi`` to ``-mud-corrected.chi``.
+* Changed saved file name from ``_cve.chi`` to ``-cve.chi``.
+
+**Deprecated:**
+
+* Removed the License :: OSI Approved :: BSD License classifier from pyproject.toml.
+
+**Fixed:**
+
+* migrated `labpdfproc` to a latest scikit-package level
+
+**Removed:**
+
+* Removed include src/diffpy/labpdfproc/data * from Manifest.in.
+* Removed support for Python 3.10 and 3.11.
+
+
 0.3.1
 =====
 
